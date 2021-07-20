@@ -1,0 +1,26 @@
+{
+    "name": "nwidart/category",
+    "description": "",
+    "require": {
+        "alibayat/laravel-categorizable": "1.0.x-dev"
+    },
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Category\\": ""
+        }
+    }
+}
