@@ -17,19 +17,19 @@ class CreateProductsTable extends Migration
             $table->id();
             $table->string('title');
             $table->string('slug')->nullable();
-            $table->string('sku');
+            $table->string('sku')->nullable();
             $table->string('description');
-            $table->string('body');
-            $table->json('related_products');
+            $table->text('body')->nullable();
+            $table->json('related_products')->nullable();
             $table->unsignedTinyInteger('tax_status')->default(0); // 0 means contains no tax
             $table->unsignedTinyInteger('virtual')->default(0); // 0 means it's not a virtual product
             $table->unsignedTinyInteger('downloadable')->default(0); // 0 means it's not downloadable
             $table->unsignedTinyInteger('publish')->default(0); // 0 means it is not published yet
 
-            $table->unsignedBigInteger('quantity');
-            $table->unsignedBigInteger('min_quantity');
-            $table->unsignedDecimal('price', 15, 2);
-            $table->unsignedDecimal('final_price', 15, 2);
+            $table->unsignedBigInteger('quantity')->nullable();
+            $table->unsignedBigInteger('min_quantity')->nullable();
+            $table->unsignedDecimal('price', 15, 2)->nullable();
+            $table->unsignedDecimal('final_price', 15, 2)->nullable();
             $table->timestamps();
         });
     }

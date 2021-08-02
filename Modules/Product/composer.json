@@ -7,6 +7,9 @@
             "email": "n.widart@gmail.com"
         }
     ],
+    "require-dev": {
+        "phpunit/phpunit": "^9.3.3"
+    },
     "extra": {
         "laravel": {
             "providers": [],
@@ -16,6 +19,9 @@
         }
     },
     "autoload": {
+        "classmap": [
+            "Modules/Product/Repository"
+        ],
         "psr-4": {
             "Modules\\Product\\": ""
         }

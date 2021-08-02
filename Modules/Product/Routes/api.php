@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Modules\Product\Http\Controllers\api\v1\ProductController;
+use Modules\Product\Http\Controllers\Api\V1\ProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,6 +19,10 @@ use Modules\Product\Http\Controllers\api\v1\ProductController;
 //     return $request->user();
 // });
 
-Route::prefix('api/v1')->group(function () {
-    Route::get('users/{id}', [ProductController::class, 'index']);
+Route::prefix('/v1/product')->group(function () {
+    Route::get('/', [ProductController::class, 'index'])->name('product.all');
+    Route::post('/create', [ProductController::class, 'create'])->name('product.create');
+    Route::post('/update/{product}', [ProductController::class, 'update'])->name('product.update');
+    Route::post('/delete/{product}', [ProductController::class, 'destroy'])->name('product.delete');
+    // Route::post('/delete/{product}', [ProductController::class, 'destroy'])->name('product.delete');
 });
