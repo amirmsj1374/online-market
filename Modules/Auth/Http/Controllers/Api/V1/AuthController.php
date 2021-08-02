@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Auth\Http\Controllers\Api\V1;
 
 use App\Models\User;
+use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
@@ -16,10 +18,9 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'email' => ['required', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'confirmed']
         ]);
 
@@ -29,14 +30,13 @@ class AuthController extends Controller
             'password' => bcrypt($request->password)
         ]);
 
-        return response()->json(['message' => 'اطلاعات کاربر جدید ثبت شد'], 200);
+        return response()->json(['message' => 'اطلاعات کاربر جدید ثبت شد'], 201);
     }
 
     public function login(Request $request)
     {
 
         $credentials = $request->only('email', 'password');
-        Log::info(['request' => $request->all()]);
         if (!$token = auth()->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
@@ -67,12 +67,12 @@ class AuthController extends Controller
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL() * 60
-        ]);
+        ], 200);
     }
 
 
     /**
-     * send email for reset password 
+     * send email for reset password
      *
      * @param  mixed $request
      * @return void
@@ -90,7 +90,7 @@ class AuthController extends Controller
         if ($status === Password::RESET_LINK_SENT) {
             return response()->json([
                 'message' => 'لطفا ایمیل خود را چک کنید'
-            ], Response::HTTP_OK);
+            ], 200);
         }
 
         return response()->json([
