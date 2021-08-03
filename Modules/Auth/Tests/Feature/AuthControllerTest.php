@@ -77,6 +77,6 @@ class AuthControllerTest extends TestCase
         $this->register_user($user);
         $this->login_user($user);
         $this->logout_user($user);
-        // $this->forgot_password($user);
+        $this->forgot_password($user);
     }
 }

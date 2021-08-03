@@ -43,7 +43,7 @@ class ProductController extends Controller
         $request->validate([
             'title' => 'required|string',
             'description' => 'required|string',
-            'body' => 'required|string',
+            'body' => 'nullable|string',
         ]);
 
         // $product = (new ProductRepository($request))->create();
