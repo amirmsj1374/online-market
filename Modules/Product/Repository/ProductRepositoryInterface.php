@@ -13,4 +13,5 @@ interface ProductRepositoryInterface
     public function updateImages();
     public function updateTags($request, $product);
     public function updateCategory($request, $product);
+    public function updateDownloads($request, $product);
 }
