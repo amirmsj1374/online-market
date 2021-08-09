@@ -15,10 +15,6 @@ use Modules\Product\Http\Controllers\Api\V1\ProductController;
 |
 */
 
-// Route::middleware('auth:api')->get('/product', function (Request $request) {
-//     return $request->user();
-// });
-
 Route::prefix('/v1/product')->group(function () {
     Route::get('/', [ProductController::class, 'index'])->name('product.all');
     Route::post('/create', [ProductController::class, 'create'])->name('product.create');
