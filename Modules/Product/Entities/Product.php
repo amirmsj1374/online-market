@@ -22,4 +22,9 @@ class Product extends Model
     {
         return ProductFactory::new();
     }
+
+    public function downloads()
+    {
+        return $this->hasMany(Download::class);
+    }
 }

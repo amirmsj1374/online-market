@@ -58,6 +58,10 @@ class ProductControllerTest extends TestCase
                 'description' => 'توضیخات مختصر',
                 'body'        => 'توضیخ کامل',
                 'price'       => 12000,
+                'links'       => [
+                    [ 'title' => 'first', 'url' => 'google.com' ],
+                    [ 'title' => 'second', 'url' => 'youtube.com' ]
+                ],
             ]);
 
         $response->assertStatus(200);

@@ -46,6 +46,11 @@ class ProductRepository implements ProductRepositoryInterface
             $this->updateCategory($request, $product);
         }
 
+        // update downladable links of product
+        if (!is_null($request->links)) {
+            $this->updateDownloads($request, $product);
+        }
+
         return $product;
     }
     public function updateTags($request, $product)
@@ -58,5 +63,14 @@ class ProductRepository implements ProductRepositoryInterface
     public function updateCategory($request, $product)
     {
         $product->syncCategories($request->categories);
+    }
+    public function updateDownloads($request, $product)
+    {
+        foreach ($product->downloads as $download) {
+            $download->delete();
+        }
+        foreach ($request->links as $link) {
+            $product->downloads()->create($link);
+        }
     }
 }
