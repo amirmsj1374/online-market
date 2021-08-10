@@ -4,7 +4,9 @@ namespace Modules\Product\Http\Controllers\Api\V1;
 
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Log;
 use Modules\Product\Entities\Product;
 use Modules\Product\Repository\ProductRepository;
 use Modules\Product\Repository\ProductRepositoryInterface;
@@ -38,7 +40,9 @@ class ProductController extends Controller
      */
     public function create(Request $request)
     {
-        // return view('product::create');
+        Log::info([
+            'create product' => $request->all()
+        ]);
 
         $request->validate([
             'title' => 'required|string',
@@ -46,12 +50,12 @@ class ProductController extends Controller
             'body' => 'nullable|string',
         ]);
 
-        // $product = (new ProductRepository($request))->create();
+        $product = ($this->repository)->create($request);
 
         return response()->json([
             // 'product' => $product,
             'message' => 'محصول با موفقیت ایجاد شد'
-        ], 201);
+        ], Response::HTTP_CREATED);
     }
 
     /**
