@@ -16,20 +16,20 @@ class ProductRepository implements ProductRepositoryInterface
 
     public function create($request)
     {
-        $product = Product::create([
-            'title'       => $request->title,
-            'description' => $request->description,
-            'body'        => $request->body,
-        ]);
+        $product = Product::create($request->all());
 
         // update tags
         $this->updateTags($request, $product);
 
         // update categories of product
-        if (!is_null($request->categories)) {
-            $this->updateCategory($request, $product);
-        }
+        // if (!is_null($request->categories)) {
+        //     $this->updateCategory($request, $product);
+        // }
 
+        // update downladable links of product
+        if (!is_null($request->links)) {
+            $this->updateDownloads($request, $product);
+        }
         return $product;
     }
 
@@ -42,9 +42,9 @@ class ProductRepository implements ProductRepositoryInterface
         $this->updateTags($request, $product);
 
         // update categories of product
-        if (!is_null($request->categories)) {
-            $this->updateCategory($request, $product);
-        }
+        // if (!is_null($request->categories)) {
+        //     $this->updateCategory($request, $product);
+        // }
 
         // update downladable links of product
         if (!is_null($request->links)) {
