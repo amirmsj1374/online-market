@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Modules\Category\Http\Controllers\Api\V1\CategoryController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -13,3 +15,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
+Route::prefix('/v1/category')->name('category')->group(function () {
+    Route::get('/index', [CategoryController::class, 'index'])->name('all');
+    Route::post('/create', [CategoryController::class, 'create'])->name('create');
+    Route::post('/edit', [CategoryController::class, 'edit'])->name('edit');
+    Route::post('/delete/{category}', [CategoryController::class, 'destroy'])->name('delete');
+});
