@@ -40,6 +40,22 @@ class ProductController extends Controller
      */
     public function create(Request $request)
     {
+
+
+        if ($request->hasFile('images')) {
+
+            $request->validate([
+
+                'images' => 'image|mimes:jpeg,jpg,png|max:125000',
+
+            ]);
+
+            // Log::info([
+            //     'iimages' => $request->images
+            // ]);
+        }
+
+
         $request->validate([
             'title' => 'required|string',
             'description' => 'required|string',
@@ -55,7 +71,7 @@ class ProductController extends Controller
             'final_price' => 'nullable',
         ]);
 
-        $product = ($this->repository)->create($request);
+        // $product = ($this->repository)->create($request);
 
         return response()->json([
             // 'product' => $product,
