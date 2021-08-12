@@ -40,14 +40,19 @@ class ProductController extends Controller
      */
     public function create(Request $request)
     {
-        Log::info([
-            'create product' => $request->all()
-        ]);
-
         $request->validate([
             'title' => 'required|string',
             'description' => 'required|string',
             'body' => 'nullable|string',
+            'sku' => 'nullable|string',
+            'tax_status' => 'nullable|boolean',
+            'virtual' => 'nullable|boolean',
+            'downloadable' => 'nullable|boolean',
+            'publish' => 'nullable|boolean',
+            'quantity' => 'nullable',
+            'min_quantity' => 'nullable',
+            'price' => 'nullable',
+            'final_price' => 'nullable',
         ]);
 
         $product = ($this->repository)->create($request);
