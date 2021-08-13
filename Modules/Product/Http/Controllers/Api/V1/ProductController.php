@@ -28,10 +28,11 @@ class ProductController extends Controller
     public function index()
     {
         $products = resolve(ProductRepository::class)->index();
+
         return response()->json([
             'products' => $products,
             'message' => 'every thing is good'
-        ], 200);
+        ], Response::HTTP_OK);
     }
 
     /**
@@ -40,11 +41,6 @@ class ProductController extends Controller
      */
     public function create(Request $request)
     {
-         
-        Log::info([
-            'create product' => $request->all()
-        ]);
-
 
         if ($request->hasFile('images')) {
 
@@ -53,10 +49,6 @@ class ProductController extends Controller
                 'images' => 'image|mimes:jpeg,jpg,png|max:125000',
 
             ]);
-
-            // Log::info([
-            //     'iimages' => $request->images
-            // ]);
         }
 
 
@@ -72,26 +64,6 @@ class ProductController extends Controller
             // 'product' => $product,
             'message' => 'محصول با موفقیت ایجاد شد'
         ], Response::HTTP_CREATED);
-    }
-
-    /**
-     * Show the specified resource.
-     * @param int $id
-     * @return Renderable
-     */
-    public function show($id)
-    {
-        return view('product::show');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     * @param int $id
-     * @return Renderable
-     */
-    public function edit($id)
-    {
-        return view('product::edit');
     }
 
     /**
@@ -122,7 +94,7 @@ class ProductController extends Controller
         return response()->json([
             'product' => $product,
             'message' => 'محصول با موفقیت ویرایش شد'
-        ], 200);
+        ], Response::HTTP_OK);
     }
 
     /**
@@ -135,6 +107,6 @@ class ProductController extends Controller
         $product->delete();
         return response()->json([
             'message' => 'محصول با موفقیت حذف شد'
-        ], 200);
+        ], Response::HTTP_OK);
     }
 }

@@ -11,7 +11,7 @@ class ProductRepository implements ProductRepositoryInterface
 {
     public function index()
     {
-        return Product::all();
+        return Product::orderBy('id','desc')->paginate(10);
     }
 
     public function create($request)
