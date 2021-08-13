@@ -7,7 +7,7 @@ use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
-
+use Illuminate\Support\Facades\Log;
 
 use function PHPUnit\Framework\isEmpty;
 
@@ -30,6 +30,9 @@ class CategoryController extends Controller
      */
     public function create(Request $request)
     {
+        $request->validate([
+            'name' => 'required|string',
+        ]);
 
         if (is_null($request->parent)) {
 
@@ -55,6 +58,11 @@ class CategoryController extends Controller
      */
     public function edit(Request $request)
     {
+        $request->validate([
+            'name' => 'required|string',
+            'id'   => 'required',
+        ]);
+
         $category = Category::findById($request->id);
 
         if ($category->count() > 0) {
@@ -81,17 +89,17 @@ class CategoryController extends Controller
     public function destroy($id)
     {
         $category = Category::findById($id);
+
         if ($category->count() > 0) {
             $category->delete();
 
             return response()->json([
                 'items' => Category::all()
             ], Response::HTTP_OK);
+        } else {
+            return response()->json([
+                'message' => 'اطلاعات وارد شده صحیح نمی باشد'
+            ], Response::HTTP_NOT_FOUND);
         }
-
-
-        return response()->json([
-            'message' => 'اطلاعات وارد شده صحیح نمی باشد'
-        ], Response::HTTP_NOT_FOUND);
     }
 }

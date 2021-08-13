@@ -1,6 +1,10 @@
 {
     "name": "nwidart/product",
     "description": "",
+    "require": {
+        "spatie/laravel-medialibrary": "^9.0.0",
+        "cviebrock/eloquent-sluggable": "^8.0"
+    },
     "authors": [
         {
             "name": "Nicolas Widart",
@@ -13,9 +17,7 @@
     "extra": {
         "laravel": {
             "providers": [],
-            "aliases": {
-
-            }
+            "aliases": {}
         }
     },
     "autoload": {

@@ -15,6 +15,8 @@ class CreateProductsTable extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
+
+
             $table->string('title');
             $table->string('slug')->nullable();
             $table->string('sku')->nullable();
@@ -30,6 +32,14 @@ class CreateProductsTable extends Migration
             $table->unsignedBigInteger('min_quantity')->nullable();
             $table->unsignedDecimal('price', 15, 2)->nullable();
             $table->unsignedDecimal('final_price', 15, 2)->nullable();
+
+
+            //transport part
+            $table->integer('length')->default(0);
+            $table->integer('width')->default(0);
+            $table->integer('height')->default(0);
+            $table->integer('weight')->default(0);
+
             $table->timestamps();
         });
     }

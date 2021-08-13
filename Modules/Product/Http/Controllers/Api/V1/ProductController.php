@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Log;
 use Modules\Product\Entities\Product;
 use Modules\Product\Repository\ProductRepository;
 use Modules\Product\Repository\ProductRepositoryInterface;
+use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
@@ -40,33 +41,55 @@ class ProductController extends Controller
      */
     public function create(Request $request)
     {
-        Log::info(['$request' => $request->all()]);
-        if ($request->hasFile('images')) {
+        // Log::info(['last request' => $request->all()]);
 
-            $request->validate([
+        if ($request->hasFile('images') && count($request->images) > 0) {
 
-                'images' => 'image|mimes:jpeg,jpg,png|max:200000',
+            $validator = Validator::make(
+                $request->all(),
+                [
+                    'images.*' => 'required|mimes:jpg,jpeg,png,bmp|max:2000'
+                ],
+                [
+                    'images.*.required' => 'لطفا فقط فایل های تصیری را وارد کنید',
+                    'images.*.mimes' => 'تصاویر باید از نوع[jpeg,jpg,bnp] باشد',
+                    'images.*.max' => 'حداکثر حجم فیل باید2MB  باشد',
+                ]
+            );
 
-            ]);
+            if ($validator->fails()) {
+                return response()->json([
+                    'errors' => $validator->getMessageBag()->toArray()
+                ], Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
         }
 
-
         $request->validate([
+
             'title' => 'required|string',
             'description' => 'required|string',
             'body' => 'nullable|string',
+            'tags' => 'nullable',
+            
+            'quantity' => 'nullable',
+            'price' => 'nullable',
             'sku' => 'nullable|string',
+
+            'length' => 'nullable',
+            'width' => 'nullable',
+            'height' => 'nullable',
+            'weight' => 'nullable',
+
             'tax_status' => 'nullable|boolean',
             'virtual' => 'nullable|boolean',
             'downloadable' => 'nullable|boolean',
             'publish' => 'nullable|boolean',
-            'quantity' => 'nullable',
             'min_quantity' => 'nullable',
-            'price' => 'nullable',
             'final_price' => 'nullable',
         ]);
 
-        $product = ($this->repository)->create($request);
+
+        $this->repository->create($request);
 
         return response()->json([
             'message' => 'محصول با موفقیت ایجاد شد'
