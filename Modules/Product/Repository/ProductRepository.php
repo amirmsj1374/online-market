@@ -4,6 +4,7 @@ namespace Modules\Product\Repository;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Modules\Product\Entities\Attribute;
 use Modules\Product\Entities\Product;
 use Modules\Product\Repository\ProductRepositoryInterface;
 
@@ -28,7 +29,12 @@ class ProductRepository implements ProductRepositoryInterface
 
         // update downladable links of product
         if (!is_null($request->links)) {
-            $this->updateDownloads($request, $product);
+            $this->updateDownloads($request->links, $product);
+        }
+
+        // update attributes of product
+        if (!is_null($request->input('attributes'))) {
+            $this->attachAttributesToProduct($request->input('attributes'), $product);
         }
         return $product;
     }
@@ -64,13 +70,31 @@ class ProductRepository implements ProductRepositoryInterface
     {
         $product->syncCategories($request->categories);
     }
-    public function updateDownloads($request, $product)
+    public function updateDownloads($links, $product)
     {
         foreach ($product->downloads as $download) {
             $download->delete();
         }
-        foreach ($request->links as $link) {
-            $product->downloads()->create($link);
+        foreach ($links as $link) {
+            $product->downloads()->create(json_decode($link, true));
         }
+    }
+
+    public function attachAttributesToProduct($attributes, $product): void
+    {
+
+        $collection = collect($attributes);
+        $collection->each(function ($item) use ($product) {
+            Log::info([
+                'attrs' => $item
+            ]);
+            if (is_null(json_decode($item, true)['key']) || is_null(json_decode($item, true)['value'])) return;
+            $attr = Attribute::firstOrCreate(['key' => json_decode($item, true)['key']]);
+            $attr_value = $attr->values()->firstOrCreate(['value' => json_decode($item, true)['value']]);
+            Log::info([
+                'relation' => $product->attributes
+            ]);
+            $product->attributes()->attach($attr->id, ['value_id' => $attr_value->id]);
+        });
     }
 }

@@ -23,6 +23,13 @@ class Product extends Model
         return ProductFactory::new();
     }
 
+    public function attributes()
+    {
+        return $this->belongsToMany(Attribute::class)
+            ->using(ProductAttributeValues::class)
+            ->withPivot(['value_id']);
+    }
+
     public function downloads()
     {
         return $this->hasMany(Download::class);
