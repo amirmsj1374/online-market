@@ -31,7 +31,6 @@ class ProductController extends Controller
 
         return response()->json([
             'products' => $products,
-            'message' => 'every thing is good'
         ], Response::HTTP_OK);
     }
 
@@ -41,12 +40,12 @@ class ProductController extends Controller
      */
     public function create(Request $request)
     {
-
+        Log::info(['$request' => $request->all()]);
         if ($request->hasFile('images')) {
 
             $request->validate([
 
-                'images' => 'image|mimes:jpeg,jpg,png|max:125000',
+                'images' => 'image|mimes:jpeg,jpg,png|max:200000',
 
             ]);
         }
@@ -67,10 +66,9 @@ class ProductController extends Controller
             'final_price' => 'nullable',
         ]);
 
-        // $product = ($this->repository)->create($request);
+        $product = ($this->repository)->create($request);
 
         return response()->json([
-            // 'product' => $product,
             'message' => 'محصول با موفقیت ایجاد شد'
         ], Response::HTTP_CREATED);
     }
