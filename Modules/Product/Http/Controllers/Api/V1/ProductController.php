@@ -28,7 +28,10 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = resolve(ProductRepository::class)->index();
+        // Log::info([
+        //     'images' => Product::find(1)-
+        // ]);
+        $products = ($this->repository)->index();
 
         return response()->json([
             'products' => $products,
@@ -70,7 +73,7 @@ class ProductController extends Controller
             'description' => 'required|string',
             'body' => 'nullable|string',
             'tags' => 'nullable',
-            
+
             'quantity' => 'nullable',
             'price' => 'nullable',
             'sku' => 'nullable|string',

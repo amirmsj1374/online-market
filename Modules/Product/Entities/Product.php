@@ -96,4 +96,9 @@ class Product extends Model implements HasMedia
     {
         return $this->hasMany(Download::class);
     }
+
+    public function images()
+    {
+        return $this->getFirstMedia('product-gallery');
+    }
 }

@@ -16,7 +16,7 @@ class ProductRepository implements ProductRepositoryInterface
      */
     public function index()
     {
-        return Product::orderBy('id', 'desc')->paginate(10);
+        return Product::with('categories')->orderBy('id', 'desc')->paginate(10);
     }
 
     /**
@@ -151,5 +151,34 @@ class ProductRepository implements ProductRepositoryInterface
 
             $product->attributes()->attach($attr->id, ['value_id' => $attr_value->id]);
         });
+    }
+
+    public function AddImageProductCollection($products)
+    {
+
+        $dataProducts = collect();
+
+        //example for paginate
+        // Account::paginate($request->page)->map(function ($item, $key) use($dataAccount) {
+        //     $dataAccount->put($key, $item);
+        // });
+
+        foreach ($products as $article) {
+
+
+            $dataProducts->push($article);
+        }
+
+        foreach ($dataProducts as $dataArticle) {
+
+
+            if ($dataArticle->getFirstMedia('article')) {
+
+
+                $dataArticle['images'] = $dataArticle->getFirstMedia('product-gallery')->getFullUrl();
+            }
+        }
+
+        return $dataProducts;
     }
 }
