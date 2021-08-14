@@ -12,18 +12,18 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/AliBayat/Laravel-Categorizable.git",
-                "reference": "dc6daede0f8f866a3dc4a3a69c72876919ae5669"
+                "reference": "35251020a0ec62384165eecb41698f06db3add49"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/AliBayat/Laravel-Categorizable/zipball/dc6daede0f8f866a3dc4a3a69c72876919ae5669",
-                "reference": "dc6daede0f8f866a3dc4a3a69c72876919ae5669",
+                "url": "https://api.github.com/repos/AliBayat/Laravel-Categorizable/zipball/35251020a0ec62384165eecb41698f06db3add49",
+                "reference": "35251020a0ec62384165eecb41698f06db3add49",
                 "shasum": ""
             },
             "require": {
                 "illuminate/database": "^7.0|^8.0",
                 "illuminate/support": "^7.0|^8.0",
-                "kalnoy/nestedset": "^5.0",
+                "kalnoy/nestedset": "^6.0",
                 "php": "^7.2",
                 "spatie/laravel-sluggable": "^2.2"
             },
@@ -65,7 +65,7 @@
                 "issues": "https://github.com/AliBayat/Laravel-Categorizable/issues",
                 "source": "https://github.com/AliBayat/Laravel-Categorizable/tree/master"
             },
-            "time": "2021-06-01T11:02:15+00:00"
+            "time": "2021-08-14T03:49:48+00:00"
         },
         {
             "name": "asm89/stack-cors",
@@ -328,16 +328,16 @@
         },
         {
             "name": "dflydev/dot-access-data",
-            "version": "v3.0.0",
+            "version": "v3.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dflydev/dflydev-dot-access-data.git",
-                "reference": "e04ff030d24a33edc2421bef305e32919dd78fc3"
+                "reference": "0992cc19268b259a39e86f296da5f0677841f42c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dflydev/dflydev-dot-access-data/zipball/e04ff030d24a33edc2421bef305e32919dd78fc3",
-                "reference": "e04ff030d24a33edc2421bef305e32919dd78fc3",
+                "url": "https://api.github.com/repos/dflydev/dflydev-dot-access-data/zipball/0992cc19268b259a39e86f296da5f0677841f42c",
+                "reference": "0992cc19268b259a39e86f296da5f0677841f42c",
                 "shasum": ""
             },
             "require": {
@@ -397,9 +397,9 @@
             ],
             "support": {
                 "issues": "https://github.com/dflydev/dflydev-dot-access-data/issues",
-                "source": "https://github.com/dflydev/dflydev-dot-access-data/tree/v3.0.0"
+                "source": "https://github.com/dflydev/dflydev-dot-access-data/tree/v3.0.1"
             },
-            "time": "2021-01-01T22:08:42+00:00"
+            "time": "2021-08-13T13:06:58+00:00"
         },
         {
             "name": "doctrine/inflector",
@@ -1230,22 +1230,22 @@
         },
         {
             "name": "kalnoy/nestedset",
-            "version": "v5.0.4",
+            "version": "v6.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/lazychaser/laravel-nestedset.git",
-                "reference": "cd0fecb79d2df8192fb4e1db264b2172a5b4280f"
+                "reference": "f5351234588a20b14134980552b1bf6dccb3e733"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lazychaser/laravel-nestedset/zipball/cd0fecb79d2df8192fb4e1db264b2172a5b4280f",
-                "reference": "cd0fecb79d2df8192fb4e1db264b2172a5b4280f",
+                "url": "https://api.github.com/repos/lazychaser/laravel-nestedset/zipball/f5351234588a20b14134980552b1bf6dccb3e733",
+                "reference": "f5351234588a20b14134980552b1bf6dccb3e733",
                 "shasum": ""
             },
             "require": {
-                "illuminate/database": "~5.7.0|~5.8.0|^6.0|^7.0|^8.41",
-                "illuminate/events": "~5.7.0|~5.8.0|^6.0|^7.0|^8.41",
-                "illuminate/support": "~5.7.0|~5.8.0|^6.0|^7.0|^8.41",
+                "illuminate/database": "^7.0|^8.0",
+                "illuminate/events": "^7.0|^8.0",
+                "illuminate/support": "^7.0|^8.0",
                 "php": ">=7.1.3"
             },
             "require-dev": {
@@ -1287,9 +1287,9 @@
             ],
             "support": {
                 "issues": "https://github.com/lazychaser/laravel-nestedset/issues",
-                "source": "https://github.com/lazychaser/laravel-nestedset/tree/v5.0.4"
+                "source": "https://github.com/lazychaser/laravel-nestedset/tree/v6.0.0"
             },
-            "time": "2021-05-28T07:05:38+00:00"
+            "time": "2021-05-28T07:08:55+00:00"
         },
         {
             "name": "laravel/framework",
@@ -7413,16 +7413,16 @@
         },
         {
             "name": "nunomaduro/collision",
-            "version": "v5.7.0",
+            "version": "v5.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nunomaduro/collision.git",
-                "reference": "0f0f46b6345ee788325b5ce9d53c4e851b2293a0"
+                "reference": "0c3c393462eada1233513664e2d22bb9f69ca393"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nunomaduro/collision/zipball/0f0f46b6345ee788325b5ce9d53c4e851b2293a0",
-                "reference": "0f0f46b6345ee788325b5ce9d53c4e851b2293a0",
+                "url": "https://api.github.com/repos/nunomaduro/collision/zipball/0c3c393462eada1233513664e2d22bb9f69ca393",
+                "reference": "0c3c393462eada1233513664e2d22bb9f69ca393",
                 "shasum": ""
             },
             "require": {
@@ -7497,7 +7497,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2021-08-12T13:56:54+00:00"
+            "time": "2021-08-13T14:23:01+00:00"
         },
         {
             "name": "phar-io/manifest",
