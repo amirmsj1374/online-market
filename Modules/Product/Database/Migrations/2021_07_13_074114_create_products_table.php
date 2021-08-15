@@ -35,10 +35,10 @@ class CreateProductsTable extends Migration
 
 
             //transport part
-            $table->integer('length')->default(0);
-            $table->integer('width')->default(0);
-            $table->integer('height')->default(0);
-            $table->integer('weight')->default(0);
+            $table->integer('length')->nullable();
+            $table->integer('width')->nullable();
+            $table->integer('height')->nullable();
+            $table->integer('weight')->nullable();
 
             $table->timestamps();
         });

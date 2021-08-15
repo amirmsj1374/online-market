@@ -18,7 +18,7 @@ class ProductRepository implements ProductRepositoryInterface
     public function index()
     {
         // return Product::with('categories')->orderBy('id', 'desc')->paginate(10);
-        return $this->AddImageProductCollection(Product::with('categories')->orderBy('id', 'desc')->paginate(10));
+        return $this->AddImageProductCollection(Product::with('categories')->orderBy('id', 'desc')->paginate(8));
     }
 
     /**
@@ -33,8 +33,11 @@ class ProductRepository implements ProductRepositoryInterface
 
         $product = Product::create($request->all());
 
-        foreach ($request->images as $key => $value) {
-            $product->addMedia($value)->toMediaCollection('product-gallery');
+        // if the request has images
+        if ($request->hasFile('images') && count($request->images) > 0) {
+            foreach ($request->images as $key => $value) {
+                $product->addMedia($value)->toMediaCollection('product-gallery');
+            }
         }
 
         // update tags
@@ -167,7 +170,7 @@ class ProductRepository implements ProductRepositoryInterface
             }
             $product['images'] =  $images;
         }
-       
+
         return $products;
     }
 }
