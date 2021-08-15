@@ -3,6 +3,7 @@
 namespace Modules\Product\Repository;
 
 use AliBayat\LaravelCategorizable\Category;
+use Illuminate\Support\Facades\Log;
 use Modules\Product\Entities\Attribute;
 use Modules\Product\Entities\Product;
 use Modules\Product\Repository\ProductRepositoryInterface;
@@ -16,7 +17,8 @@ class ProductRepository implements ProductRepositoryInterface
      */
     public function index()
     {
-        return Product::with('categories')->orderBy('id', 'desc')->paginate(10);
+        // return Product::with('categories')->orderBy('id', 'desc')->paginate(10);
+        return $this->AddImageProductCollection(Product::with('categories')->orderBy('id', 'desc')->paginate(10));
     }
 
     /**
@@ -156,29 +158,16 @@ class ProductRepository implements ProductRepositoryInterface
     public function AddImageProductCollection($products)
     {
 
-        $dataProducts = collect();
-
-        //example for paginate
-        // Account::paginate($request->page)->map(function ($item, $key) use($dataAccount) {
-        //     $dataAccount->put($key, $item);
-        // });
-
-        foreach ($products as $article) {
-
-
-            $dataProducts->push($article);
-        }
-
-        foreach ($dataProducts as $dataArticle) {
-
-
-            if ($dataArticle->getFirstMedia('article')) {
-
-
-                $dataArticle['images'] = $dataArticle->getFirstMedia('product-gallery')->getFullUrl();
+        foreach ($products as $product) {
+            $images = [];
+            if ($product->getFirstMedia('product-gallery')) {
+                foreach ($product->getMedia('product-gallery') as $key => $image) {
+                    $images[$key] = $image->getFullUrl();
+                }
             }
+            $product['images'] =  $images;
         }
-
-        return $dataProducts;
+       
+        return $products;
     }
 }

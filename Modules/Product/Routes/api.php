@@ -20,5 +20,5 @@ Route::prefix('/v1/product')->group(function () {
     Route::post('/create', [ProductController::class, 'create'])->name('product.create');
     Route::post('/update/{product}', [ProductController::class, 'update'])->name('product.update');
     Route::post('/delete/{product}', [ProductController::class, 'destroy'])->name('product.delete');
-    // Route::post('/delete/{product}', [ProductController::class, 'destroy'])->name('product.delete');
+    Route::post('/change/status/{product}', [ProductController::class, 'chnageStatus'])->name('product.chnage.status');
 });

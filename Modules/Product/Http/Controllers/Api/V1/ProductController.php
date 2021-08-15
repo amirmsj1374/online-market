@@ -28,9 +28,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        // Log::info([
-        //     'images' => Product::find(1)-
-        // ]);
+
         $products = ($this->repository)->index();
 
         return response()->json([
@@ -44,7 +42,7 @@ class ProductController extends Controller
      */
     public function create(Request $request)
     {
-        // Log::info(['last request' => $request->all()]);
+        Log::info(['last request' => $request->all()]);
 
         if ($request->hasFile('images') && count($request->images) > 0) {
 
@@ -130,6 +128,19 @@ class ProductController extends Controller
         ], Response::HTTP_OK);
     }
 
+    public function chnageStatus(Product $product)
+    {
+        Log::info(['chnageStatus product' => $product]);
+        $product->update([
+            'publish' => $product->publish === 0 ? 1 : 0
+        ]);
+
+        return response()->json([
+            'product' => Product::all(),
+            'message' => 'وضعیت محصول تغییر کرد'
+        ], Response::HTTP_OK);
+    }
+
     /**
      * Remove the specified resource from storage.
      * @param int $id
@@ -137,9 +148,12 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
+       
         $product->delete();
         return response()->json([
             'message' => 'محصول با موفقیت حذف شد'
         ], Response::HTTP_OK);
     }
+
+
 }
