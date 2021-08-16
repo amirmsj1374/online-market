@@ -18,7 +18,7 @@ class ProductRepository implements ProductRepositoryInterface
     public function index()
     {
         // return Product::with('categories')->orderBy('id', 'desc')->paginate(10);
-        return $this->AddImageProductCollection(Product::with('categories')->orderBy('id', 'desc')->paginate(8));
+        return $this->AddImageProductCollection(Product::with('categories')->orderBy('id', 'desc')->paginate(2));
     }
 
     /**

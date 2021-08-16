@@ -130,7 +130,6 @@ class ProductController extends Controller
 
     public function chnageStatus(Product $product)
     {
-        Log::info(['chnageStatus product' => $product]);
         $product->update([
             'publish' => $product->publish === 0 ? 1 : 0
         ]);
