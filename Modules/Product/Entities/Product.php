@@ -35,6 +35,11 @@ class Product extends Model implements HasMedia
         'width',
         'height',
         'weight',
+        'imagesUrl',
+    ];
+
+    protected $casts = [
+        'imagesUrl' => 'array',
     ];
 
     /**

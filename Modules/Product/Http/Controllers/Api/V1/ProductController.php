@@ -42,7 +42,7 @@ class ProductController extends Controller
      */
     public function create(Request $request)
     {
-        Log::info(['last request' => $request->all()]);
+       
 
         if ($request->hasFile('images') && count($request->images) > 0) {
 

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Log;
 use Modules\Product\Entities\Attribute;
 use Modules\Product\Entities\Product;
 use Modules\Product\Repository\ProductRepositoryInterface;
+use Illuminate\Support\Facades\Storage;
 
 class ProductRepository implements ProductRepositoryInterface
 {
@@ -17,8 +18,8 @@ class ProductRepository implements ProductRepositoryInterface
      */
     public function index()
     {
-        // return Product::with('categories')->orderBy('id', 'desc')->paginate(10);
-        return $this->AddImageProductCollection(Product::with('categories')->orderBy('id', 'desc')->paginate(2));
+        return $this->AddImageProductCollection(Product::with('categories')
+            ->orderBy('id', 'desc')->paginate(2));
     }
 
     /**
@@ -29,13 +30,20 @@ class ProductRepository implements ProductRepositoryInterface
      */
     public function create($request)
     {
+       
+        if (strpos($request->body, 'src') !== false) {
+           
+            preg_match_all('@src="([^"]+)"@', $request->body, $match);
 
+            $request->request->add(['imagesUrl' =>  $match[1]]); //add request
+
+        }
 
         $product = Product::create($request->all());
 
         // if the request has images
         if ($request->hasFile('images') && count($request->images) > 0) {
-            foreach ($request->images as $key => $value) {
+            foreach ($request->images as  $value) {
                 $product->addMedia($value)->toMediaCollection('product-gallery');
             }
         }
@@ -69,6 +77,36 @@ class ProductRepository implements ProductRepositoryInterface
      */
     public function update($request, $product)
     {
+
+        if ($product->imagesUrl == null) {
+
+            if (strpos($request->body, 'src') !== false) {
+                preg_match_all('@src="([^"]+)"@', $request->body, $match);
+
+                $request->request->add(['imagesUrl' =>  $match[1]]); //add request
+            }
+
+        }else{
+            //check if image on body was inserted
+            if (strpos($request->body, 'img') !== false) {
+                //fatch url from img
+                preg_match_all('@src="([^"]+)"@', $request->body, $match);
+
+                //check if fatch url and exist url get diffrent  and return link
+                    $result = array_diff($product->imagesUrl, $match[1]);
+                // return (['result' => $result, '$match' => $match[1], 'imagesUrl' => $product->imagesUrl]);
+
+                //get link from result and delete
+                foreach ($result as $imgurl) {
+                    $path = str_replace('"', '', $imgurl);
+                    Storage::delete('/public' . $path);
+                }
+                //set agin img to imageUrl for ckeck
+                $request->request->add(['imagesUrl' =>  $match[1]]); //add request
+            }
+        }
+
+
         $product->update($request->all());
 
         // update tags

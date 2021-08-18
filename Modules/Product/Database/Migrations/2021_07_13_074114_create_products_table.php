@@ -40,6 +40,8 @@ class CreateProductsTable extends Migration
             $table->integer('height')->nullable();
             $table->integer('weight')->nullable();
 
+            $table->text('imagesUrl')->nullable();
+
             $table->timestamps();
         });
     }
