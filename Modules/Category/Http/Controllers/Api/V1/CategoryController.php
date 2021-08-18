@@ -19,8 +19,9 @@ class CategoryController extends Controller
      */
     public function index()
     {
+        $categories = Category::tree();
         return response()->json([
-            'items' => Category::all()->toArray()
+            'items' => $categories
         ], Response::HTTP_OK);
     }
 
