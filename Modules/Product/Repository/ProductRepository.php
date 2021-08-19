@@ -19,7 +19,20 @@ class ProductRepository implements ProductRepositoryInterface
     public function index()
     {
         return $this->AddImageProductCollection(Product::with('categories')
-            ->orderBy('id', 'desc')->paginate(2));
+        ->orderBy('id', 'desc')->paginate(5));
+    }
+
+    /**
+     * Show
+     *
+     * @return void
+     */
+    public function show(Product $product)
+    {
+        // $product->with(['categories', 'tags', 'downloads', 'attributes'])
+        return $this->AddImageProductCollection($product, true)
+            ->load('categories', 'tags', 'downloads', 'attributes');
+
     }
 
 
@@ -32,9 +45,9 @@ class ProductRepository implements ProductRepositoryInterface
      */
     public function create($request)
     {
-       
+
         if (strpos($request->body, 'src') !== false) {
-           
+
             preg_match_all('@src="([^"]+)"@', $request->body, $match);
 
             $request->request->add(['imagesUrl' =>  $match[1]]); //add request
@@ -198,19 +211,30 @@ class ProductRepository implements ProductRepositoryInterface
         });
     }
 
-    public function AddImageProductCollection($products)
+    public function AddImageProductCollection($productData, $single = false)
     {
 
-        foreach ($products as $product) {
+        if ($single) {
             $images = [];
-            if ($product->getFirstMedia('product-gallery')) {
-                foreach ($product->getMedia('product-gallery') as $key => $image) {
+            if ($productData->getFirstMedia('product-gallery')) {
+                foreach ($productData->getMedia('product-gallery') as $key => $image) {
                     $images[$key] = $image->getFullUrl();
                 }
             }
-            $product['images'] =  $images;
-        }
+            $productData['images'] =  $images;
+        } else {
 
-        return $products;
+            foreach ($productData as $product) {
+                $images = [];
+                if ($product->getFirstMedia('product-gallery')) {
+                    foreach ($product->getMedia('product-gallery') as $key => $image) {
+                        $images[$key] = $image->getFullUrl();
+                    }
+                }
+                $product['images'] =  $images;
+            }
+        }
+        return $productData;
+
     }
 }

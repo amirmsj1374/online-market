@@ -8,6 +8,7 @@ use Modules\Product\Entities\Product;
 interface ProductRepositoryInterface
 {
     public function index();
+    public function show(Product $product);
     public function update($request, $product);
     public function create($request);
     public function syncTags($request, $product);

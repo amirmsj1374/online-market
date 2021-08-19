@@ -44,6 +44,12 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
+        $product = ($this->repository)->show($product);
+
+        Log::info([
+            'product' => $product
+        ]);
+
         return response()->json([
             'product' => $product,
         ], Response::HTTP_OK);
