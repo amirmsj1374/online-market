@@ -22,6 +22,8 @@ class ProductRepository implements ProductRepositoryInterface
             ->orderBy('id', 'desc')->paginate(2));
     }
 
+
+
     /**
      * Create
      *

@@ -37,12 +37,24 @@ class ProductController extends Controller
     }
 
     /**
+     * show
+     *
+     * @param  mixed $product
+     * @return void
+     */
+    public function show(Product $product)
+    {
+        return response()->json([
+            'product' => $product,
+        ], Response::HTTP_OK);
+    }
+
+    /**
      * Show the form for creating a new resource.
      * @return Renderable
      */
     public function create(Request $request)
     {
-       
 
         if ($request->hasFile('images') && count($request->images) > 0) {
 
@@ -89,7 +101,6 @@ class ProductController extends Controller
             'final_price' => 'nullable',
         ]);
 
-
         $this->repository->create($request);
 
         return response()->json([
@@ -105,6 +116,7 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
+
         $data = $request->validate([
             'title' => 'required|string',
             'description' => 'required|string',
@@ -128,6 +140,12 @@ class ProductController extends Controller
         ], Response::HTTP_OK);
     }
 
+    /**
+     * chnageStatus
+     *
+     * @param  mixed $product
+     * @return void
+     */
     public function chnageStatus(Product $product)
     {
         $product->update([
@@ -153,6 +171,4 @@ class ProductController extends Controller
             'message' => 'محصول با موفقیت حذف شد'
         ], Response::HTTP_OK);
     }
-
-
 }

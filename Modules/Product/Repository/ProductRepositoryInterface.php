@@ -10,7 +10,6 @@ interface ProductRepositoryInterface
     public function index();
     public function update($request, $product);
     public function create($request);
-    // public function updateImages();
     public function syncTags($request, $product);
     public function syncCategories($request, $product);
     public function syncDownloads($links, $product);
