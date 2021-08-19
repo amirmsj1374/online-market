@@ -26,4 +26,13 @@ class TemporaryController extends Controller
             'url' => asset($url)
         ]);
     }
+
+    public function test()
+    {
+        $directories = Storage::disk('public')->directories('temporary');
+        foreach ($directories as $key => $directory) {
+            unset($directory);
+        }
+        dd($directories);
+    }
 }
