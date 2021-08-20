@@ -10,6 +10,7 @@ use Spatie\Tags\HasTags;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Cviebrock\EloquentSluggable\Sluggable;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class Product extends Model implements HasMedia
@@ -102,6 +103,4 @@ class Product extends Model implements HasMedia
     {
         return $this->hasMany(Download::class);
     }
-
-   
 }

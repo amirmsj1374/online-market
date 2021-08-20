@@ -3,6 +3,7 @@
 namespace Modules\Product\Repository;
 
 use AliBayat\LaravelCategorizable\Category;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Modules\Product\Entities\Attribute;
 use Modules\Product\Entities\Product;
@@ -18,8 +19,8 @@ class ProductRepository implements ProductRepositoryInterface
      */
     public function index()
     {
-        return $this->AddImageProductCollection(Product::with('categories')
-        ->orderBy('id', 'desc')->paginate(5));
+        $product = Product::with('categories', 'media')->orderBy('id', 'desc')->paginate(5);
+        return $this->AddExtraDataToProductCollection($product);
     }
 
     /**
@@ -29,10 +30,8 @@ class ProductRepository implements ProductRepositoryInterface
      */
     public function show(Product $product)
     {
-        // $product->with(['categories', 'tags', 'downloads', 'attributes'])
-        return $this->AddImageProductCollection($product, true)
-            ->load('categories', 'tags', 'downloads', 'attributes');
-
+        $product->load('categories', 'tags', 'downloads');
+        return $this->AddExtraDataToProductCollection($product, true);
     }
 
 
@@ -100,15 +99,14 @@ class ProductRepository implements ProductRepositoryInterface
 
                 $request->request->add(['imagesUrl' =>  $match[1]]); //add request
             }
-
-        }else{
+        } else {
             //check if image on body was inserted
             if (strpos($request->body, 'img') !== false) {
                 //fatch url from img
                 preg_match_all('@src="([^"]+)"@', $request->body, $match);
 
                 //check if fatch url and exist url get diffrent  and return link
-                    $result = array_diff($product->imagesUrl, $match[1]);
+                $result = array_diff($product->imagesUrl, $match[1]);
                 // return (['result' => $result, '$match' => $match[1], 'imagesUrl' => $product->imagesUrl]);
 
                 //get link from result and delete
@@ -211,7 +209,7 @@ class ProductRepository implements ProductRepositoryInterface
         });
     }
 
-    public function AddImageProductCollection($productData, $single = false)
+    public function AddExtraDataToProductCollection($productData, $single = false)
     {
 
         if ($single) {
@@ -234,7 +232,18 @@ class ProductRepository implements ProductRepositoryInterface
                 $product['images'] =  $images;
             }
         }
-        return $productData;
+        if ($single) {
+            $attributes = [];
+            foreach ($productData->attributes as $key => $value) {
 
+                $attributes[$key] = ['id' => $value->pivot->value->id, 'key' => $value->key, 'value' => $value->pivot->value->value];
+            }
+
+            $productData['attrs'] =  $attributes;
+        }
+
+
+
+        return $productData;
     }
 }
