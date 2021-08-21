@@ -29,10 +29,13 @@ class TemporaryController extends Controller
 
     public function test()
     {
-        $directories = Storage::disk('public')->directories('temporary');
-        foreach ($directories as $key => $directory) {
-            unset($directory);
-        }
-        dd($directories);
+        // $directories = Storage::disk('public')->directories('temporary');
+        // foreach ($directories as $key => $directory) {
+        //     unset($directory);
+        // }
+        // dd($directories);
+
+        // return ( \Modules\Product\Entities\Product::find(2)->tags);
+ 
     }
 }

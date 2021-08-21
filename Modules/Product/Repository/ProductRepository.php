@@ -30,7 +30,7 @@ class ProductRepository implements ProductRepositoryInterface
      */
     public function show(Product $product)
     {
-        $product->load('categories', 'tags', 'downloads');
+        $product->load('categories', 'downloads');
         return $this->AddExtraDataToProductCollection($product, true);
     }
 
@@ -147,7 +147,7 @@ class ProductRepository implements ProductRepositoryInterface
      */
     public function syncTags($request, $product)
     {
-        $product->syncTags($request->tags);
+        $product->syncTags($request->productTags);
     }
 
     /**
@@ -242,6 +242,9 @@ class ProductRepository implements ProductRepositoryInterface
             $productData['attrs'] =  $attributes;
         }
 
+        if ($single) {
+            $productData['productTags'] = $productData->tags->pluck('name');
+        }
 
 
         return $productData;
