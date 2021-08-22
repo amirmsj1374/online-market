@@ -138,6 +138,7 @@ class ProductController extends Controller
             'final_price' => 'nullable',
         ]);
 
+
         $product = ($this->repository)->update($request, $product);
 
         return response()->json([
@@ -147,12 +148,12 @@ class ProductController extends Controller
     }
 
     /**
-     * chnageStatus
+     * changeStatus
      *
      * @param  mixed $product
      * @return void
      */
-    public function chnageStatus(Product $product)
+    public function changeStatus(Product $product)
     {
         $product->update([
             'publish' => $product->publish === 0 ? 1 : 0
@@ -176,5 +177,16 @@ class ProductController extends Controller
         return response()->json([
             'message' => 'محصول با موفقیت حذف شد'
         ], Response::HTTP_OK);
+    }
+
+    public function deleteMedia(Request $request, Product $product)
+    {
+        // find image from prduct and chack with remove image and delelte
+        foreach ($product->getMedia('product-gallery') as $key => $image) {
+
+            if (in_array($image->getFullUrl(), $request->images)) {
+                $image->delete();
+            }
+        }
     }
 }
