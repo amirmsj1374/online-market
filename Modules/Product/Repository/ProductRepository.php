@@ -30,7 +30,7 @@ class ProductRepository implements ProductRepositoryInterface
      */
     public function show(Product $product)
     {
-        $product->load('categories', 'downloads');
+        $product->load('downloads');
         return $this->AddExtraDataToProductCollection($product, true);
     }
 
@@ -99,6 +99,7 @@ class ProductRepository implements ProductRepositoryInterface
 
                 $request->request->add(['imagesUrl' =>  $match[1]]); //add request
             }
+
         } else {
             //check if image on body was inserted
             if (strpos($request->body, 'img') !== false) {
@@ -135,6 +136,11 @@ class ProductRepository implements ProductRepositoryInterface
             $this->syncDownloads($request, $product);
         }
 
+        // update attributes of product
+        if (!is_null($request->input('attributes'))) {
+            $this->attachAttributesToProduct($request->input('attributes'), $product);
+        }
+
         return $product;
     }
 
@@ -159,13 +165,14 @@ class ProductRepository implements ProductRepositoryInterface
      */
     public function syncCategories($request, $product)
     {
-
-        $categoryCollect = [];
-        foreach ($request->categories as $category_id) {
-            $categoryCollect = Category::findById($category_id);
+       
+        $category = [];
+        foreach ($request->categories as $key => $category_id) {
+            Log::info(['category' => $category_id]);
+            $category[$key] = Category::findById($category_id);
         }
 
-        $product->syncCategories($categoryCollect);
+        $product->syncCategories($category);
     }
 
     /**
@@ -213,6 +220,7 @@ class ProductRepository implements ProductRepositoryInterface
     {
 
         if ($single) {
+            
             $images = [];
             if ($productData->getFirstMedia('product-gallery')) {
                 foreach ($productData->getMedia('product-gallery') as $key => $image) {
@@ -244,6 +252,9 @@ class ProductRepository implements ProductRepositoryInterface
 
         if ($single) {
             $productData['productTags'] = $productData->tags->pluck('name');
+               
+            $productData['category'] =  $productData->categories->pluck('id');
+
         }
 
 
