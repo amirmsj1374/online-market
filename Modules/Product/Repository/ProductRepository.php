@@ -57,7 +57,9 @@ class ProductRepository implements ProductRepositoryInterface
 
         // if the request has images
         if ($request->hasFile('images') && count($request->images) > 0) {
-            $this->syncImages($request->images, $product);
+            foreach ($request->images as  $value) {
+                $product->addMedia($value)->toMediaCollection('product-gallery');
+            }
         }
 
         // update tags
@@ -97,6 +99,7 @@ class ProductRepository implements ProductRepositoryInterface
 
                 $request->request->add(['imagesUrl' =>  $match[1]]); //add request
             }
+
         } else {
             //check if image on body was inserted
             if (strpos($request->body, 'img') !== false) {
@@ -135,13 +138,7 @@ class ProductRepository implements ProductRepositoryInterface
 
         // update attributes of product
         if (!is_null($request->input('attributes'))) {
-            $product->attributes()->detach();
             $this->attachAttributesToProduct($request->input('attributes'), $product);
-        }
-
-        // if the request has images
-        if ($request->hasFile('images') && count($request->images) > 0) {
-            $this->syncImages($request->images, $product);
         }
 
         return $product;
@@ -168,7 +165,7 @@ class ProductRepository implements ProductRepositoryInterface
      */
     public function syncCategories($request, $product)
     {
-
+       
         $category = [];
         foreach ($request->categories as $key => $category_id) {
             Log::info(['category' => $category_id]);
@@ -195,16 +192,6 @@ class ProductRepository implements ProductRepositoryInterface
         }
     }
 
-    public function syncImages($newImages, $product)
-    {
-        //third if exist new image add
-        foreach ($newImages as  $value) {
-            if (is_file($value)) {
-                $product->addMedia($value)->toMediaCollection('product-gallery');
-            }
-        }
-    }
-
     /**
      * Attach Attributes To Product
      *
@@ -225,7 +212,6 @@ class ProductRepository implements ProductRepositoryInterface
 
             $attr_value = $attr->values()->firstOrCreate(['value' => json_decode($item, true)['value']]);
 
-            //end attribute
             $product->attributes()->attach($attr->id, ['value_id' => $attr_value->id]);
         });
     }
@@ -234,7 +220,7 @@ class ProductRepository implements ProductRepositoryInterface
     {
 
         if ($single) {
-
+            
             $images = [];
             if ($productData->getFirstMedia('product-gallery')) {
                 foreach ($productData->getMedia('product-gallery') as $key => $image) {
@@ -266,11 +252,13 @@ class ProductRepository implements ProductRepositoryInterface
 
         if ($single) {
             $productData['productTags'] = $productData->tags->pluck('name');
-
+               
             $productData['category'] =  $productData->categories->pluck('id');
+
         }
 
 
         return $productData;
+
     }
 }

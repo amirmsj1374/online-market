@@ -62,6 +62,8 @@ class ProductController extends Controller
     public function create(Request $request)
     {
 
+        $request->request->set('price', str_replace(',','',$request->price));
+
         if ($request->hasFile('images') && count($request->images) > 0) {
 
             $validator = Validator::make(
@@ -123,7 +125,9 @@ class ProductController extends Controller
     public function update(Request $request, Product $product)
     {
 
-        $data = $request->validate([
+        $request->request->set('price', str_replace(',','',$request->price));
+
+        $request->validate([
             'title' => 'required|string',
             'description' => 'required|string',
             'body' => 'nullable|string',
