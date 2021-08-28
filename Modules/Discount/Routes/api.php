@@ -17,8 +17,12 @@ use Modules\Discount\Http\Controllers\Api\V1\DiscountController;
 
 Route::prefix('/v1/discount')->name('discount')->group(function () {
     // Route::get('/index', [DiscountController::class, 'index'])->name('all');
-    Route::get('/required', [DiscountController::class, 'Required'])->name('required');
-    Route::get('/search'  , [DiscountController::class, 'Search'])->name('search');
+    Route::prefix('/required')->name('required')->group(function () {
+
+        Route::get('/categories', [DiscountController::class, 'categories'])->name('categories');
+        Route::get('/products', [DiscountController::class, 'products'])->name('products');
+        Route::get('/users', [DiscountController::class, 'users'])->name('users');
+    });
 
     // Route::post('/create', [DiscountController::class, 'create'])->name('create');
     // Route::post('/edit', [DiscountController::class, 'edit'])->name('edit');

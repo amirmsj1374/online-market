@@ -10,6 +10,8 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Response;
 use Modules\Product\Entities\Product;
+use Illuminate\Pipeline\Pipeline;
+use Modules\Product\QueryFilter\Title;
 
 class DiscountController extends Controller
 {
@@ -23,43 +25,72 @@ class DiscountController extends Controller
     }
 
 
-    public function Required(Request $request)
+    public function products(Request $request)
     {
 
-        if ($request->input('type') === 'basket') {
 
-            $users = User::select('name', 'email', 'mobile', 'id')->where('type', 'user')->orderBy('id', 'desc')->paginate(5);
+        $products = app(Pipeline::class)
 
-            return response()->json([
-                'data' => $users
-            ], Response::HTTP_OK);
-        } else if ($request->input('type') === 'product') {
+            ->send(Product::query())
 
-            $products = Product::select('title', 'sku', 'id')->where('publish', '1')->orderBy('id', 'desc')->paginate(5);
+            ->through([
+                Title::class,
+            ])
 
-            return response()->json([
+            ->thenReturn()
+            ->paginate(1);
+
+        return response()->json(
+            [
                 'data' => $products
-            ], Response::HTTP_OK);
-        } else {
-
-            $categores = Category::select('id', 'name')->get();
-
-            return response()->json([
-                'data' => $categores
-            ], Response::HTTP_OK);
-        }
+            ],
+            Response::HTTP_OK
+        );
     }
-
-    public function Search(Request $request)
+    public function categories(Request $request)
     {
-        Log::info(['request' => $request->all()]);
 
-        if ($request->input('type') === 'basket') {
-            
-        } else if ($request->input('type') === 'product') {
 
-        }
+        $categories = app(Pipeline::class)
+
+            ->send(Category::query())
+
+            ->through([])
+
+            ->thenReturn()
+            ->get();
+
+        return response()->json(
+            [
+                'data' => $categories
+            ],
+            Response::HTTP_OK
+        );
     }
+    public function users(Request $request)
+    {
+
+
+        $users = app(Pipeline::class)
+
+            ->send(User::query())
+
+            ->through([
+                Name::class,
+            ])
+
+            ->thenReturn()
+            ->paginate(1);
+
+        return response()->json(
+            [
+                'data' => $users
+            ],
+            Response::HTTP_OK
+        );
+    }
+
+
 
     /**
      * Show the form for creating a new resource.
