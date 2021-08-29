@@ -2,10 +2,14 @@
 
 namespace App\Helpers;
 
-class SluggableHelper {
+use Illuminate\Support\Facades\Log;
 
-    public static function sluggableTranslate($string, $separator = '-') {
-        $_transliteration = ["/ö|œ/" => "e",
+class SluggableHelper
+{
+    public static function sluggableTranslate($string, $separator = '-')
+    {
+        $_transliteration = [
+            "/ö|œ/" => "e",
             "/ü/" => "e",
             "/Ä/" => "e",
             "/Ü/" => "e",
@@ -53,7 +57,8 @@ class SluggableHelper {
             "/Ĳ/" => "J",
             "/ĳ/" => "j",
             "/Œ/" => "E",
-            "/ƒ/" => ""];
+            "/ƒ/" => ""
+        ];
         $quotedReplacement = preg_quote($separator, '/');
         $merge = [
             '/[^\s\p{Zs}\p{Ll}\p{Lm}\p{Lo}\p{Lt}\p{Lu}\p{Nd}]/mu' => ' ',
@@ -64,5 +69,4 @@ class SluggableHelper {
         unset($_transliteration);
         return preg_replace(array_keys($map), array_values($map), $string);
     }
-    
 }
