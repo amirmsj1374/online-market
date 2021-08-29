@@ -14,6 +14,7 @@ use Illuminate\Pipeline\Pipeline;
 use Modules\Discount\Entities\Discount;
 use Modules\Product\QueryFilter\Title;
 use Modules\User\QueryFilter\Name;
+use Morilog\Jalali\Jalalian;
 
 class DiscountController extends Controller
 {
@@ -68,7 +69,7 @@ class DiscountController extends Controller
             ->through([])
 
             ->thenReturn()
-            ->paginate(1);
+            ->paginate(5);
 
         Log::info([
             'cateigory backend' => $categories
@@ -113,22 +114,23 @@ class DiscountController extends Controller
     {
 
         $request->request->set('amount', str_replace(',', '', $request->amount));
-
         $request->validate([
-
             'code' => 'nullable|string',
             'amount' => 'required',
             'maxDiscount' => 'nullable',
             'minPrice' => 'nullable',
             'measure' => 'required',
-            'description' => 'required|text',
+            'description' => 'required|string',
             'limit' => 'boolean',
             'type' => 'required',
             'data' => 'nullable',
-            'beginning' => 'date',
-            'expriration' => 'date',
+            'beginning' => 'required|date',
+            'expiration' => 'required|date',
 
         ]);
+
+        $request->request->set('expiration', Jalalian::fromFormat('Y-m-d H:i', $request->input('expiration'))->toCarbon());
+        $request->request->set('beginning', Jalalian::fromFormat('Y-m-d H:i', $request->input('beginning'))->toCarbon());
 
         Discount::create([
             'code' => $request->code,
@@ -141,11 +143,36 @@ class DiscountController extends Controller
             'type' => $request->type,
             'data' => $request->data,
             'beginning' => $request->beginning,
-            'expriration' => $request->expriration,
+            'expiration' => $request->expiration,
         ]);
 
-        return response()->json([
-            'message' => 'تخفیف ثبت شد '
+        if ($request->type === 'basket') {
+            if ($request->data === null) {
+                foreach (User::get() as $key => $user) {
+                    $profile  = $user->profile;
+                    if ($profile) {
+                        $newArray = $profile->discount_code;
+                        array_push($newArray, $request->code);
+                        $profile->discount_code = $newArray;
+                        $profile->save();
+                    } else {
+                        $user->profile()->create([
+                            'discount_code' => $request->code
+                        ]);
+                    }
+                }
+            } else {
+                foreach ($request->data as $key => $id) {
+                    $profile  = User::find($id)->profile()->firstOrCreate();
+                    $newArray = $profile->discount_code;
+                    array_push($newArray, $request->code);
+                    $profile->discount_code = $newArray;
+                    $profile->save();
+                }
+            }
+        }
+
+        return response()->json(['message' => 'تخفیف با موفقیت ثبت شد '
         ], Response::HTTP_OK);
     }
 

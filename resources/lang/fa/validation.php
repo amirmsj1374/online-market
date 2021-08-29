@@ -228,6 +228,9 @@ return [
         'imageThumb'            => 'تصویر شاخص',
         'order'                 => 'ترتیب',
         'g-recaptcha-response'  => 'اعتبار سنجی',
+        'expiration'            => 'تاریخ انقضا',
+        'beginning'             => 'تاریخ شروع',
+        'amount'                => 'مبلغ یا مقدار',
     ],
 ];
 

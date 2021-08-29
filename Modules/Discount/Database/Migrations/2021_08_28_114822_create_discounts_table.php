@@ -17,15 +17,15 @@ class CreateDiscountsTable extends Migration
             $table->id();
             $table->string('code')->nullable();
             $table->decimal('amount', 10, 2);
-            $table->decimal('maxDiscount', 10, 2);
-            $table->decimal('minPrice', 11, 2);
+            $table->decimal('maxDiscount', 10, 2)->nullable();
+            $table->decimal('minPrice', 11, 2)->nullable();
             $table->string('measure');
             $table->text('description')->nullable();
             $table->boolean('limit')->default();
             $table->string('type');
             $table->json('data'); // data can be array of categories or products or users
             $table->dateTime('beginning');
-            $table->dateTime('expriration');
+            $table->dateTime('expiration');
         });
     }
 

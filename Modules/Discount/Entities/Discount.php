@@ -9,8 +9,20 @@ class Discount extends Model
 {
     use HasFactory;
 
-    protected $fillable = [];
-    protected $timestamps = false;
+    protected $fillable = [
+        'code',
+        'amount',
+        'maxDiscount',
+        'minPrice',
+        'measure',
+        'description',
+        'limit',
+        'type',
+        'data',
+        'beginning',
+        'expiration',
+    ];
+    public $timestamps = false;
 
     protected static function newFactory()
     {
