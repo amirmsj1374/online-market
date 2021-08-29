@@ -2,7 +2,7 @@
 
 namespace Modules\Auth\Http\Controllers\Api\V1;
 
-use App\Models\User;
+
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Log;
+use Modules\User\Entities\User;
 
 class AuthController extends Controller
 {
@@ -23,7 +24,7 @@ class AuthController extends Controller
             'email' => ['required', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'confirmed']
         ]);
-
+        
         User::create([
             'name' => $request->name,
             'email' => $request->email,

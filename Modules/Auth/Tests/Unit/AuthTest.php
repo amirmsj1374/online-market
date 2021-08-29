@@ -2,12 +2,12 @@
 
 namespace Modules\Auth\Tests\Unit;
 
-use App\Models\User;
+use Modules\User\Entities\User;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class AuthControllerTest extends TestCase
+class AuthTest extends TestCase
 {
     /**
      * A unit test register user.

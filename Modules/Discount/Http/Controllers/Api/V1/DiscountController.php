@@ -3,7 +3,7 @@
 namespace Modules\Discount\Http\Controllers\Api\V1;
 
 use AliBayat\LaravelCategorizable\Category;
-use App\Models\User;
+use Modules\User\Entities\User;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -11,7 +11,9 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Response;
 use Modules\Product\Entities\Product;
 use Illuminate\Pipeline\Pipeline;
+use Modules\Discount\Entities\Discount;
 use Modules\Product\QueryFilter\Title;
+use Modules\User\QueryFilter\Name;
 
 class DiscountController extends Controller
 {
@@ -21,7 +23,15 @@ class DiscountController extends Controller
      */
     public function index()
     {
-        // return view('discount::index');
+
+        $discount = Discount::orderBy('id', 'desc')->paginate(5);
+
+        return response()->json(
+            [
+                'data' => $discount
+            ],
+            Response::HTTP_OK
+        );
     }
 
 
@@ -38,7 +48,7 @@ class DiscountController extends Controller
             ])
 
             ->thenReturn()
-            ->paginate(1);
+            ->paginate(5);
 
         return response()->json(
             [
@@ -80,7 +90,7 @@ class DiscountController extends Controller
             ])
 
             ->thenReturn()
-            ->paginate(1);
+            ->paginate(5);
 
         return response()->json(
             [
@@ -96,9 +106,44 @@ class DiscountController extends Controller
      * Show the form for creating a new resource.
      * @return Renderable
      */
-    public function create()
+    public function create(Request $request)
     {
-        // return view('discount::create');
+
+        $request->request->set('amount', str_replace(',', '', $request->amount));
+
+        $request->validate([
+
+            'code' => 'nullable|string',
+            'amount' => 'required',
+            'maxDiscount' => 'nullable',
+            'minPrice' => 'nullable',
+            'measure' => 'required',
+            'description' => 'required|text',
+            'limit' => 'boolean',
+            'type' => 'required',
+            'data' => 'nullable',
+            'beginning' => 'date',
+            'expriration' => 'date',
+
+        ]);
+
+        Discount::create([
+            'code' => $request->code,
+            'amount' => $request->amount,
+            'maxDiscount' => $request->maxDiscount,
+            'minPrice' => $request->minPrice,
+            'measure' => $request->measure,
+            'description' => $request->description,
+            'limit' => $request->limit,
+            'type' => $request->type,
+            'data' => $request->data,
+            'beginning' => $request->beginning,
+            'expriration' => $request->expriration,
+        ]);
+
+        return response()->json([
+            'message' => 'تخفیف ثبت شد '
+        ], Response::HTTP_OK);
     }
 
 
@@ -108,9 +153,11 @@ class DiscountController extends Controller
      * @param int $id
      * @return Renderable
      */
-    public function show($id)
+    public function show(Discount $discount)
     {
-        return view('discount::show');
+        return response()->json([
+            'discount' => $discount
+        ], Response::HTTP_OK);
     }
 
     /**
@@ -118,29 +165,58 @@ class DiscountController extends Controller
      * @param int $id
      * @return Renderable
      */
-    public function edit($id)
+    public function update(Request $request, Discount $discount)
     {
-        return view('discount::edit');
+        $request->request->set('amount', str_replace(',', '', $request->amount));
+
+        $request->validate([
+
+            'code' => 'nullable|string',
+            'amount' => 'required',
+            'maxDiscount' => 'nullable',
+            'minPrice' => 'nullable',
+            'measure' => 'required',
+            'description' => 'required|text',
+            'limit' => 'boolean',
+            'type' => 'required',
+            'data' => 'nullable',
+            'beginning' => 'date',
+            'expriration' => 'date',
+
+        ]);
+
+        $discount->update([
+            'code' => $request->code,
+            'amount' => $request->amount,
+            'maxDiscount' => $request->maxDiscount,
+            'minPrice' => $request->minPrice,
+            'measure' => $request->measure,
+            'description' => $request->description,
+            'limit' => $request->limit,
+            'type' => $request->type,
+            'data' => $request->data,
+            'beginning' => $request->beginning,
+            'expriration' => $request->expriration,
+        ]);
+
+        return response()->json([
+            'message' => 'تخفیف ویرایش شد '
+        ], Response::HTTP_OK);
     }
 
-    /**
-     * Update the specified resource in storage.
-     * @param Request $request
-     * @param int $id
-     * @return Renderable
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
+
 
     /**
      * Remove the specified resource from storage.
      * @param int $id
      * @return Renderable
      */
-    public function destroy($id)
+    public function destroy(Discount $discount)
     {
-        //
+
+        $discount->delete();
+        return response()->json([
+            'message' => 'اطلاعات تخفیف حذف شد'
+        ], Response::HTTP_OK);
     }
 }

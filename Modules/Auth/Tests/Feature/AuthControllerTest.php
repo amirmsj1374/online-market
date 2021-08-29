@@ -2,7 +2,7 @@
 
 namespace Modules\Auth\Tests\Feature;
 
-use App\Models\User;
+use Modules\User\Entities\User;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Product\Tests\Unit;
+namespace Modules\Product\Tests\Feature;
 
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -8,7 +8,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Log;
 use Modules\Product\Entities\Product;
 
-class ProductControllerTest extends TestCase
+class ProductTest extends TestCase
 {
     /**
      * A basic unit test example.

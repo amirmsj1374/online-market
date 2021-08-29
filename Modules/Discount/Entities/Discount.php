@@ -2,8 +2,8 @@
 
 namespace Modules\Discount\Entities;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Discount extends Model
 {
@@ -14,6 +14,6 @@ class Discount extends Model
 
     protected static function newFactory()
     {
-        return \Modules\Discount\Database\factories\DiscountFactory::new();
+        // return \Modules\Discount\Database\factories\DiscountFactory::new();
     }
 }

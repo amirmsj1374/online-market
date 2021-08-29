@@ -2,5 +2,6 @@
     "Category": true,
     "Product": true,
     "Auth": true,
-    "Discount": true
+    "Discount": true,
+    "User": true
 }

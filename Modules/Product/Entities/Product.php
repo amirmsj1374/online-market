@@ -5,13 +5,11 @@ namespace Modules\Product\Entities;
 use AliBayat\LaravelCategorizable\Categorizable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Modules\Product\Database\factories\ProductFactory;
 use Spatie\Tags\HasTags;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Cviebrock\EloquentSluggable\Sluggable;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
+use Modules\Product\Database\factories\ProductFactory;
 
 class Product extends Model implements HasMedia
 {
@@ -52,8 +50,6 @@ class Product extends Model implements HasMedia
     {
         return ProductFactory::new();
     }
-
-
 
     /**
      * registerMediaCollections

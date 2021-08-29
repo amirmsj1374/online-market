@@ -1,18 +1,29 @@
 <?php
 
-namespace App\Models;
+namespace Modules\User\Entities;
 
 use App\Notifications\ResetPasswordNotification;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Modules\User\Database\factories\UserFactory;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
 {
     use HasFactory, Notifiable;
 
+
+    /**
+     * Create a new factory instance for the model.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    protected static function newFactory()
+    {
+        return UserFactory::new();
+    }
     /**
      * The attributes that are mass assignable.
      *
@@ -64,10 +75,11 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
-    public function sendPasswordResetNotification($token) {
+    public function sendPasswordResetNotification($token)
+    {
 
-        $base=str_replace('api/v1/','',route('auth.password.reset'));
-        $url= $base.'?token='.$token;
+        $base = str_replace('api/v1/', '', route('auth.password.reset'));
+        $url = $base . '?token=' . $token;
 
         $this->notify(new ResetPasswordNotification($url));
     }

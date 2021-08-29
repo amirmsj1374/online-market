@@ -16,15 +16,16 @@ use Modules\Discount\Http\Controllers\Api\V1\DiscountController;
 */
 
 Route::prefix('/v1/discount')->name('discount')->group(function () {
-    // Route::get('/index', [DiscountController::class, 'index'])->name('all');
+    Route::get('/index', [DiscountController::class, 'index'])->name('index');
     Route::prefix('/required')->name('required')->group(function () {
-
         Route::get('/categories', [DiscountController::class, 'categories'])->name('categories');
         Route::get('/products', [DiscountController::class, 'products'])->name('products');
         Route::get('/users', [DiscountController::class, 'users'])->name('users');
     });
 
-    // Route::post('/create', [DiscountController::class, 'create'])->name('create');
-    // Route::post('/edit', [DiscountController::class, 'edit'])->name('edit');
-    // Route::post('/delete/{category}', [DiscountController::class, 'destroy'])->name('delete');
+    Route::post('/create', [DiscountController::class, 'create'])->name('create');
+    Route::post('/show/{discount}', [DiscountController::class, 'show'])->name('show');
+    Route::post('/update/{discount}', [DiscountController::class, 'update'])->name('update');
+
+    Route::post('/delete/{discount}', [DiscountController::class, 'destroy'])->name('delete');
 });

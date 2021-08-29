@@ -19,11 +19,11 @@ class CreateDiscountsTable extends Migration
             $table->decimal('amount', 10, 2);
             $table->decimal('maxDiscount', 10, 2);
             $table->decimal('minPrice', 11, 2);
-            $table->sting('measure');
+            $table->string('measure');
             $table->text('description')->nullable();
             $table->boolean('limit')->default();
             $table->string('type');
-            $table->array('data'); // data can be array of categories or products or users
+            $table->json('data'); // data can be array of categories or products or users
             $table->dateTime('beginning');
             $table->dateTime('expriration');
         });
