@@ -68,8 +68,11 @@ class DiscountController extends Controller
             ->through([])
 
             ->thenReturn()
-            ->get();
+            ->paginate(1);
 
+        Log::info([
+            'cateigory backend' => $categories
+        ]);
         return response()->json(
             [
                 'data' => $categories
