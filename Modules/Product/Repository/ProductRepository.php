@@ -79,6 +79,15 @@ class ProductRepository implements ProductRepositoryInterface
         if (!is_null($request->input('attributes'))) {
             $this->attachAttributesToProduct($request->input('attributes'), $product);
         }
+
+        if ($request->tax_status == 0) {
+            $final_price = $request->price;
+        } else {
+            $final_price = $request->price * 1.09;
+        }
+        $product->update([
+            'final_price' => $final_price
+        ]);
         return $product;
     }
 
@@ -165,7 +174,7 @@ class ProductRepository implements ProductRepositoryInterface
      */
     public function syncCategories($request, $product)
     {
-       
+
         $category = [];
         foreach ($request->categories as $key => $category_id) {
             Log::info(['category' => $category_id]);
@@ -220,7 +229,7 @@ class ProductRepository implements ProductRepositoryInterface
     {
 
         if ($single) {
-            
+
             $images = [];
             if ($productData->getFirstMedia('product-gallery')) {
                 foreach ($productData->getMedia('product-gallery') as $key => $image) {
@@ -252,7 +261,7 @@ class ProductRepository implements ProductRepositoryInterface
 
         if ($single) {
             $productData['productTags'] = $productData->tags->pluck('name');
-               
+
             $productData['category'] =  $productData->categories->pluck('id');
 
         }
