@@ -131,12 +131,12 @@ class DiscountController extends Controller
             'expiration' => 'required|string',
         ]);
 
-       
+
 
         $request->request->set('expiration', Jalalian::fromFormat('Y-m-d H:i', $request->input('expiration'))->toCarbon());
         $request->request->set('beginning', Jalalian::fromFormat('Y-m-d H:i', $request->input('beginning'))->toCarbon());
 
-        Discount::create([
+        $discount = Discount::create([
             'code' => $request->code,
             'amount' => $request->amount,
             'maxDiscount' => $request->maxDiscount,
@@ -155,45 +155,48 @@ class DiscountController extends Controller
 
             if (empty($request->selected) || $request->selected === null) {
                 foreach (User::get() as  $user) {
-                    $profile  = $user->profile;
-
-                    if ($profile) {
-                        $newProfileDiscountCode = $profile->discount_code;
-
-                        if (is_null($newProfileDiscountCode)) {
-                            $newProfileDiscountCode = [];
-                        }
-
-                        array_push($newProfileDiscountCode, $request->code);
-                        $profile->discount_code = $newProfileDiscountCode;
-                        $profile->save();
-                    } else {
-                        $user->profile()->create([
-                            'discount_code' => [$request->code]
-                        ]);
-                    }
+                    $this->saveDiscountCodeForUser($user, $request->code);
                 }
             } else {
                 foreach ($request->selected as $selected) {
                     $user  = User::find($selected['id']);
                     $profile = $user->profile;
 
-                    if ($profile) {
-                        $newProfileDiscountCode = $profile->discount_code;
-
-                        if (is_null($newProfileDiscountCode)) {
-                            $newProfileDiscountCode = [];
-                        }
-
-                        array_push($newProfileDiscountCode, $request->code);
-                        $profile->discount_code = $newProfileDiscountCode;
-                        $profile->save();
-                    } else {
-                        $user->profile()->create([
-                            'discount_code' => [$request->code]
-                        ]);
-                    }
+                    $this->saveDiscountCodeForUser($user, $request->code);
                 }
+            }
+        }
+
+
+        // update selected column by given ID of related table
+        $array = array();
+        foreach ($request->selected as $key => $selected) {
+            array_push($array, $selected['id']);
+        }
+        $discount->update([
+            'selected' => $array
+        ]);
+
+
+        if ($request->type == 'product') {
+            foreach ($request->selected as $key => $selected) {
+                $product = Product::find($selected['id']);
+                $this->saveFinalPriceForProduct($product, $request->measure, $request->amount);
+            }
+        }
+
+        if ($request->type == 'category') {
+            $products = collect();
+            foreach ($request->selected as $key => $selected) {
+                $data = Category::find($selected['id'])->entries(Product::class)->get();
+                if ($data->isNotEmpty()) {
+                    $products->push($data);
+                }
+            }
+            $products->flatten()->unique('id');
+
+            foreach ($products as $key => $product) {
+                $this->saveFinalPriceForProduct($product, $request->measure, $request->amount);
             }
         }
 
@@ -274,5 +277,42 @@ class DiscountController extends Controller
         return response()->json([
             'message' => 'اطلاعات تخفیف حذف شد'
         ], Response::HTTP_OK);
+    }
+
+    public function saveDiscountCodeForUser($user, $code)
+    {
+        $profile  = $user->profile;
+
+        if ($profile) {
+            $newProfileDiscountCode = $profile->discount_code;
+
+            if (is_null($newProfileDiscountCode)) {
+                $newProfileDiscountCode = [];
+            }
+
+            array_push($newProfileDiscountCode, $code);
+            $profile->discount_code = $newProfileDiscountCode;
+            $profile->save();
+        } else {
+            $user->profile()->create([
+                'discount_code' => [$code]
+            ]);
+        }
+    }
+
+    public function saveFinalPriceForProduct($product, $measure, $amount)
+    {
+        if ($measure === 'percent') {
+            Log::info(['selseceferd' => $product]);
+            $product->update([
+                'final_price' => $product->final_price * (100 - $amount) / 100
+            ]);
+        } else {
+            if ($amount > $product->final_price) {
+                $product->update([
+                    'final_price' => $product->final_price - $amount
+                ]);
+            }
+        }
     }
 }
