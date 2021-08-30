@@ -58,6 +58,7 @@ class DiscountController extends Controller
             Response::HTTP_OK
         );
     }
+
     public function categories(Request $request)
     {
 
@@ -81,6 +82,7 @@ class DiscountController extends Controller
             Response::HTTP_OK
         );
     }
+
     public function users(Request $request)
     {
 
@@ -112,10 +114,11 @@ class DiscountController extends Controller
      */
     public function create(Request $request)
     {
-
         $request->request->set('amount', str_replace(',', '', $request->amount));
+        $request->request->set('amount', str_replace('%', '', $request->amount));
+
         $request->validate([
-            'code' => 'nullable|string',
+            'code' => 'nullable|string|unique:discounts,code',
             'amount' => 'required',
             'maxDiscount' => 'nullable',
             'minPrice' => 'nullable',
@@ -123,11 +126,12 @@ class DiscountController extends Controller
             'description' => 'required|string',
             'limit' => 'boolean',
             'type' => 'required',
-            'data' => 'nullable',
-            'beginning' => 'required|date',
-            'expiration' => 'required|date',
-
+            'selected' => 'nullable',
+            'beginning' => 'required|string',
+            'expiration' => 'required|string',
         ]);
+
+       
 
         $request->request->set('expiration', Jalalian::fromFormat('Y-m-d H:i', $request->input('expiration'))->toCarbon());
         $request->request->set('beginning', Jalalian::fromFormat('Y-m-d H:i', $request->input('beginning'))->toCarbon());
@@ -141,38 +145,59 @@ class DiscountController extends Controller
             'description' => $request->description,
             'limit' => $request->limit,
             'type' => $request->type,
-            'data' => $request->data,
+            // 'selected' => $request->selected,
             'beginning' => $request->beginning,
             'expiration' => $request->expiration,
         ]);
 
         if ($request->type === 'basket') {
-            if ($request->data === null) {
-                foreach (User::get() as $key => $user) {
+
+            if (empty($request->selected) || $request->selected === null) {
+                foreach (User::get() as  $user) {
                     $profile  = $user->profile;
+
                     if ($profile) {
-                        $newArray = $profile->discount_code;
-                        array_push($newArray, $request->code);
-                        $profile->discount_code = $newArray;
+                        $newProfileDiscountCode = $profile->discount_code;
+
+                        if (is_null($newProfileDiscountCode)) {
+                            $newProfileDiscountCode = [];
+                        }
+
+                        array_push($newProfileDiscountCode, $request->code);
+                        $profile->discount_code = $newProfileDiscountCode;
                         $profile->save();
                     } else {
                         $user->profile()->create([
-                            'discount_code' => $request->code
+                            'discount_code' => [$request->code]
                         ]);
                     }
                 }
             } else {
-                foreach ($request->data as $key => $id) {
-                    $profile  = User::find($id)->profile()->firstOrCreate();
-                    $newArray = $profile->discount_code;
-                    array_push($newArray, $request->code);
-                    $profile->discount_code = $newArray;
-                    $profile->save();
+                foreach ($request->selected as $selected) {
+                    $user  = User::find($selected['id']);
+                    $profile = $user->profile;
+
+                    if ($profile) {
+                        $newProfileDiscountCode = $profile->discount_code;
+
+                        if (is_null($newProfileDiscountCode)) {
+                            $newProfileDiscountCode = [];
+                        }
+
+                        array_push($newProfileDiscountCode, $request->code);
+                        $profile->discount_code = $newProfileDiscountCode;
+                        $profile->save();
+                    } else {
+                        $user->profile()->create([
+                            'discount_code' => [$request->code]
+                        ]);
+                    }
                 }
             }
         }
 
-        return response()->json(['message' => 'تخفیف با موفقیت ثبت شد '
+        return response()->json([
+            'message' => 'تخفیف با موفقیت ثبت شد '
         ], Response::HTTP_OK);
     }
 
@@ -209,7 +234,7 @@ class DiscountController extends Controller
             'description' => 'required|text',
             'limit' => 'boolean',
             'type' => 'required',
-            'data' => 'nullable',
+            'selected' => 'nullable',
             'beginning' => 'date',
             'expriration' => 'date',
 
@@ -224,7 +249,7 @@ class DiscountController extends Controller
             'description' => $request->description,
             'limit' => $request->limit,
             'type' => $request->type,
-            'data' => $request->data,
+            'selected' => $request->selected,
             'beginning' => $request->beginning,
             'expriration' => $request->expriration,
         ]);

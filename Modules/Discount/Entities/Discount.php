@@ -18,7 +18,7 @@ class Discount extends Model
         'description',
         'limit',
         'type',
-        'data',
+        'selected',
         'beginning',
         'expiration',
     ];
