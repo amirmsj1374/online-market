@@ -21,7 +21,8 @@ class CreateDiscountsTable extends Migration
             $table->decimal('minPrice', 11, 2)->nullable();
             $table->string('measure');
             $table->text('description')->nullable();
-            $table->boolean('limit')->default();
+            $table->boolean('limit')->default(true);
+            $table->boolean('status')->default(true);
             $table->string('type');
             $table->json('selected')->nullable(); // data can be array of categories or products or users
             $table->dateTime('beginning');

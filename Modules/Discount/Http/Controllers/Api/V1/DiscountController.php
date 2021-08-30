@@ -29,7 +29,7 @@ class DiscountController extends Controller
 
         return response()->json(
             [
-                'data' => $discount
+                'discount' => $discount
             ],
             Response::HTTP_OK
         );
@@ -148,6 +148,7 @@ class DiscountController extends Controller
             // 'selected' => $request->selected,
             'beginning' => $request->beginning,
             'expiration' => $request->expiration,
+            // 'status' => true,
         ]);
 
         if ($request->type === 'basket') {

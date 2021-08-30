@@ -21,6 +21,7 @@ class Discount extends Model
         'selected',
         'beginning',
         'expiration',
+        'status'
     ];
     public $timestamps = false;
 
