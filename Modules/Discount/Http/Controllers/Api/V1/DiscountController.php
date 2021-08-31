@@ -15,6 +15,7 @@ use Modules\Discount\Entities\Discount;
 use Modules\Product\QueryFilter\Title;
 use Modules\User\QueryFilter\Name;
 use Morilog\Jalali\Jalalian;
+use Illuminate\Validation\Rule;
 
 class DiscountController extends Controller
 {
@@ -227,35 +228,30 @@ class DiscountController extends Controller
     public function update(Request $request, Discount $discount)
     {
         $request->request->set('amount', str_replace(',', '', $request->amount));
-
+        $request->request->set('amount', str_replace('%', '', $request->amount));
         $request->validate([
-
-            'code' => 'nullable|string',
+            'code' => [
+                'nullable',
+                'string',
+                Rule::unique('discounts')->ignore($discount->id),
+            ],
             'amount' => 'required',
-            'maxDiscount' => 'nullable',
-            'minPrice' => 'nullable',
             'measure' => 'required',
-            'description' => 'required|text',
-            'limit' => 'boolean',
-            'type' => 'required',
-            'selected' => 'nullable',
-            'beginning' => 'date',
-            'expriration' => 'date',
-
+            'description' => 'required|string',
+            'beginning' => 'required|string',
+            'expiration' => 'required|string',
         ]);
+        $request->request->set('expiration', Jalalian::fromFormat('Y-m-d H:i', $request->input('expiration'))->toCarbon());
+        $request->request->set('beginning', Jalalian::fromFormat('Y-m-d H:i', $request->input('beginning'))->toCarbon());
+
 
         $discount->update([
             'code' => $request->code,
             'amount' => $request->amount,
-            'maxDiscount' => $request->maxDiscount,
-            'minPrice' => $request->minPrice,
             'measure' => $request->measure,
             'description' => $request->description,
-            'limit' => $request->limit,
-            'type' => $request->type,
-            'selected' => $request->selected,
             'beginning' => $request->beginning,
-            'expriration' => $request->expriration,
+            'expiration' => $request->expiration,
         ]);
 
         return response()->json([
@@ -272,8 +268,12 @@ class DiscountController extends Controller
      */
     public function destroy(Discount $discount)
     {
-
-        $discount->delete();
+        Log::info(['discount del' => $discount]);
+        if ($discount->type === 'product') {
+        } else if ($discount->type === 'basket') {
+        } else if ($discount->type === 'category') {
+            $discount->delete();
+        }       
         return response()->json([
             'message' => 'اطلاعات تخفیف حذف شد'
         ], Response::HTTP_OK);
