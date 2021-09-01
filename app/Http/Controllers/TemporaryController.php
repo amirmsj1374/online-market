@@ -8,7 +8,9 @@ use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Modules\Discount\Entities\Discount;
 use Modules\Product\Entities\Product;
+use Modules\User\Entities\User;
 
 class TemporaryController extends Controller
 {
@@ -31,19 +33,6 @@ class TemporaryController extends Controller
 
     public function test()
     {
-        $array = [1, 4, 2, 5];
-        $products = collect();
-        foreach ($array as $key => $id) {
-            $data = Category::find($id)->entries(Product::class)->get();
-            if ($data->isNotEmpty()) {
-                $products->push($data);
-            }
-        }
-
-        // dd($products->flatten()->unique('id'));
-        foreach ($products->flatten()->unique('id') as $key => $value) {
-            dd($value->final_price);
-        }
 
         // $directories = Storage::disk('public')->directories('temporary');
         // foreach ($directories as $key => $directory) {
@@ -53,7 +42,6 @@ class TemporaryController extends Controller
 
         // return ( \Modules\Product\Entities\Product::find(2)->tags);
 
-
-
     }
+
 }

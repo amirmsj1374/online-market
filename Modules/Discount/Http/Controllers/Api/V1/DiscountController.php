@@ -72,9 +72,6 @@ class DiscountController extends Controller
             ->thenReturn()
             ->paginate(5);
 
-        Log::info([
-            'cateigory backend' => $categories
-        ]);
         return response()->json(
             [
                 'data' => $categories
@@ -96,7 +93,7 @@ class DiscountController extends Controller
             ])
 
             ->thenReturn()
-            ->paginate(5);
+            ->paginate(2);
 
         return response()->json(
             [
@@ -135,6 +132,9 @@ class DiscountController extends Controller
 
         $request->request->set('expiration', Jalalian::fromFormat('Y-m-d H:i', $request->input('expiration'))->toCarbon());
         $request->request->set('beginning', Jalalian::fromFormat('Y-m-d H:i', $request->input('beginning'))->toCarbon());
+        Log::info([
+            'selected_all' => $request->all()
+        ]);
 
         $discount = Discount::create([
             'code' => $request->code,
@@ -146,26 +146,10 @@ class DiscountController extends Controller
             'limit' => $request->limit,
             'type' => $request->type,
             // 'selected' => $request->selected,
+            'select_all' => $request->select_all,
             'beginning' => $request->beginning,
             'expiration' => $request->expiration,
         ]);
-
-        if ($request->type === 'basket') {
-
-            if (empty($request->selected) || $request->selected === null) {
-                foreach (User::get() as  $user) {
-                    $this->saveDiscountCodeForUser($user, $request->code);
-                }
-            } else {
-                foreach ($request->selected as $selected) {
-                    $user  = User::find($selected['id']);
-                    $profile = $user->profile;
-
-                    $this->saveDiscountCodeForUser($user, $request->code);
-                }
-            }
-        }
-
 
         // update selected column by given ID of related table
         $array = array();
@@ -175,29 +159,6 @@ class DiscountController extends Controller
         $discount->update([
             'selected' => $array
         ]);
-
-
-        if ($request->type == 'product') {
-            foreach ($request->selected as $key => $selected) {
-                $product = Product::find($selected['id']);
-                $this->saveFinalPriceForProduct($product, $request->measure, $request->amount);
-            }
-        }
-
-        if ($request->type == 'category') {
-            $products = collect();
-            foreach ($request->selected as $key => $selected) {
-                $data = Category::find($selected['id'])->entries(Product::class)->get();
-                if ($data->isNotEmpty()) {
-                    $products->push($data);
-                }
-            }
-            $products->flatten()->unique('id');
-
-            foreach ($products as $key => $product) {
-                $this->saveFinalPriceForProduct($product, $request->measure, $request->amount);
-            }
-        }
 
         return response()->json([
             'message' => 'تخفیف با موفقیت ثبت شد '
@@ -276,42 +237,5 @@ class DiscountController extends Controller
         return response()->json([
             'message' => 'اطلاعات تخفیف حذف شد'
         ], Response::HTTP_OK);
-    }
-
-    public function saveDiscountCodeForUser($user, $code)
-    {
-        $profile  = $user->profile;
-
-        if ($profile) {
-            $newProfileDiscountCode = $profile->discount_code;
-
-            if (is_null($newProfileDiscountCode)) {
-                $newProfileDiscountCode = [];
-            }
-
-            array_push($newProfileDiscountCode, $code);
-            $profile->discount_code = $newProfileDiscountCode;
-            $profile->save();
-        } else {
-            $user->profile()->create([
-                'discount_code' => [$code]
-            ]);
-        }
-    }
-
-    public function saveFinalPriceForProduct($product, $measure, $amount)
-    {
-        if ($measure === 'percent') {
-            Log::info(['selseceferd' => $product]);
-            $product->update([
-                'final_price' => $product->final_price * (100 - $amount) / 100
-            ]);
-        } else {
-            if ($amount > $product->final_price) {
-                $product->update([
-                    'final_price' => $product->final_price - $amount
-                ]);
-            }
-        }
     }
 }

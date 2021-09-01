@@ -4,6 +4,8 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Modules\Discount\Console\DiscountStartCommand;
+use Modules\Discount\Console\DiscountStopCommand;
 
 class Kernel extends ConsoleKernel
 {
@@ -24,7 +26,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->command(DiscountStartCommand::class)->everyMinute();
+        $schedule->command(DiscountStopCommand::class)->everyMinute();
     }
 
     /**
