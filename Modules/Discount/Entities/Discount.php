@@ -22,6 +22,7 @@ class Discount extends Model
         'select_all',
         'beginning',
         'expiration',
+        'status'
     ];
     public $timestamps = false;
 
