@@ -114,7 +114,12 @@ class DiscountController extends Controller
     {
         $request->request->set('amount', str_replace(',', '', $request->amount));
         $request->request->set('amount', str_replace('%', '', $request->amount));
+        $request->request->set('maxDiscount', str_replace(',', '', $request->maxDiscount));
+        $request->request->set('minPrice', str_replace(',', '', $request->minPrice));
 
+        Log::info([
+            'request' => $request->all()
+        ]);
         $request->validate([
             'code' => 'nullable|string|unique:discounts,code',
             'amount' => 'required',
@@ -147,7 +152,7 @@ class DiscountController extends Controller
             'limit' => $request->limit,
             'type' => $request->type,
             // 'selected' => $request->selected,
-            'select_all' => $request->select_all,
+            'select_all' => $request->selectAll,
             'beginning' => $request->beginning,
             'expiration' => $request->expiration,
             // 'status' => true,
@@ -188,6 +193,12 @@ class DiscountController extends Controller
      */
     public function update(Request $request, Discount $discount)
     {
+
+        if ($discount->status === 1) {
+            return response()->json([
+                'message' => 'ویرایش تخفیفات در حال اجرا میسر نمی باشد'
+            ], Response::HTTP_OK);
+        }
         $request->request->set('amount', str_replace(',', '', $request->amount));
         $request->request->set('amount', str_replace('%', '', $request->amount));
         $request->validate([
@@ -229,14 +240,77 @@ class DiscountController extends Controller
      */
     public function destroy(Discount $discount)
     {
-        Log::info(['discount del' => $discount]);
-        if ($discount->type === 'product') {
-        } else if ($discount->type === 'basket') {
-        } else if ($discount->type === 'category') {
+        if ($discount->status === 1) {
+            if ($discount->type === 'product') {
+                if ($discount->select_all === 1) {
+                    foreach (Product::get() as $product) {
+                        $this->changeFinalPriceFromProduct($product);
+                    }
+                } else {
+                    foreach (json_decode($discount->selected) as $id) {
+                        $product = Product::find($id);
+                        $this->changeFinalPriceFromProduct($product);
+                    }
+                }
+            } else if ($discount->type === 'basket') {
+                if ($discount->select_all === 1) {
+                    foreach (User::get() as  $user) {
+                        $this->removeDiscountCodeForUser($user, $discount->code);
+                    }
+                } else {
+                    foreach (json_decode($discount->selected) as $id) {
+                        $user  = User::find($id);
+                        $this->removeDiscountCodeForUser($user, $discount->code);
+                    }
+                }
+            } else if ($discount->type === 'category') {
+                $products = collect();
+                if ($discount->select_all === 1) {
+                    foreach (Category::get() as $category) {
+                        $data = $category->entries(Product::class)->get();
+                        if ($data->isNotEmpty()) {
+                            $products->push($data);
+                        }
+                    }
+                } else {
+                    foreach (json_decode($discount->selected) as $id) {
+                        $data = Category::find($id)->entries(Product::class)->get();
+                        if ($data->isNotEmpty()) {
+                            $products->push($data);
+                        }
+                    }
+                }
+                foreach ($products->flatten()->unique('id') as $product) {
+                    $this->changeFinalPriceFromProduct($product);
+                }
+            }
             $discount->delete();
-        }       
+        }
         return response()->json([
             'message' => 'اطلاعات تخفیف حذف شد'
         ], Response::HTTP_OK);
+    }
+
+    public function removeDiscountCodeForUser($user, $code)
+    {
+        $profile  = $user->profile;
+
+        if ($profile) {
+            $ProfileDiscountCode = $profile->discount_code;
+
+            if (!is_null($ProfileDiscountCode) || !empty($ProfileDiscountCode)) {
+
+
+                $profile->update([
+                    'discount_code' => array_diff($ProfileDiscountCode, [$code])
+                ]);
+            }
+        }
+    }
+    public function changeFinalPriceFromProduct($product)
+    {
+        $product->update([
+            'final_price' => $product->tax_status === 0 ? $product->price : $product->price * 1.09
+        ]);
     }
 }
