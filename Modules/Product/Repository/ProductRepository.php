@@ -9,6 +9,7 @@ use Modules\Product\Entities\Attribute;
 use Modules\Product\Entities\Product;
 use Modules\Product\Repository\ProductRepositoryInterface;
 use Illuminate\Support\Facades\Storage;
+use Modules\Discount\Entities\Discount;
 
 class ProductRepository implements ProductRepositoryInterface
 {
@@ -150,6 +151,10 @@ class ProductRepository implements ProductRepositoryInterface
             $this->attachAttributesToProduct($request->input('attributes'), $product);
         }
 
+        if ($request->input('price') != $product->price) {
+            $this->changeFinalPrice($product, $request->price, $request->tax_status);
+        }
+
         return $product;
     }
 
@@ -268,6 +273,25 @@ class ProductRepository implements ProductRepositoryInterface
 
 
         return $productData;
+    }
 
+    public function changeFinalPrice($product, $newPrice, $tax_status)
+    {
+        $final_price = $newPrice;
+        $discounts = Discount::where('status', 1)->get();
+        foreach ($discounts as $discount) {
+            if ($discount->select_all === 1) {
+                $final_price = calculatePriceWithTaxAndDiscount($newPrice, $product->price, $discount->amount, $discount->measure);
+            } elseif (in_array($product->id, json_decode($discount->selected))) {
+                $final_price = calculatePriceWithTaxAndDiscount($newPrice, $product->price, $discount->amount, $discount->measure);
+            }
+        }
+
+        if ($tax_status === 1) {
+            $final_price = $final_price * 1.09;
+        }
+
+        $product->final_price = $final_price;
+        $product->save();
     }
 }
