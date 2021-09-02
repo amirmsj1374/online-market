@@ -240,7 +240,6 @@ class DiscountController extends Controller
      */
     public function destroy(Discount $discount)
     {
-        if ($discount->status === 1) {
             if ($discount->type === 'product') {
                 if ($discount->select_all === 1) {
                     foreach (Product::get() as $product) {
@@ -282,7 +281,6 @@ class DiscountController extends Controller
                 }
                 foreach ($products->flatten()->unique('id') as $product) {
                     $this->changeFinalPriceFromProduct($product);
-                }
             }
             $discount->delete();
         }
