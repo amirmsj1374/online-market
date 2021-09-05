@@ -15,8 +15,10 @@ use Modules\Discount\Http\Controllers\Api\V1\DiscountController;
 |
 */
 
-Route::prefix('/v1/discount')->name('discount')->group(function () {
+Route::prefix('/v1/discount')->name('discount.')->group(function () {
+    
     Route::get('/', [DiscountController::class, 'index'])->name('index');
+
     Route::prefix('/required')->name('required')->group(function () {
         Route::get('/category', [DiscountController::class, 'categories'])->name('categories');
         Route::get('/product', [DiscountController::class, 'products'])->name('products');

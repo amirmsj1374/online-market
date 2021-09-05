@@ -31,7 +31,7 @@ class AuthController extends Controller
             'password' => bcrypt($request->password)
         ]);
 
-        return response()->json(['message' => 'اطلاعات کاربر جدید ثبت شد'], 201);
+        return response()->json(['message' => 'اطلاعات کاربر جدید ثبت شد'],  Response::HTTP_OK);
     }
 
     public function login(Request $request)
@@ -39,7 +39,7 @@ class AuthController extends Controller
 
         $credentials = $request->only('email', 'password');
         if (!$token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json(['error' => 'Unauthorized'],  Response::HTTP_UNAUTHORIZED);
         }
 
         return $this->respondWithToken($token);
@@ -68,7 +68,7 @@ class AuthController extends Controller
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL() * 60
-        ], 200);
+        ],  Response::HTTP_OK);
     }
 
 
@@ -91,7 +91,7 @@ class AuthController extends Controller
         if ($status === Password::RESET_LINK_SENT) {
             return response()->json([
                 'message' => 'لطفا ایمیل خود را چک کنید'
-            ], 200);
+            ], Response::HTTP_OK);
         }
 
         return response()->json([

@@ -23,9 +23,9 @@ Route::name('auth.')->prefix('auth')->group(function () {
     Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.reset');
 });
 
-Route::middleware('auth:api')->group(function () {
+Route::middleware('auth:api')->name('auth.')->group(function () {
     Route::prefix('auth')->group(function () {
-        Route::get('/user', [AuthController::class, 'user'])->name('auth.user');
-        Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
+        Route::get('/user', [AuthController::class, 'user'])->name('user');
+        Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     });
 });

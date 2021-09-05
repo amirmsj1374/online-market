@@ -15,8 +15,7 @@ use Modules\Category\Http\Controllers\Api\V1\CategoryController;
 |
 */
 
-
-Route::prefix('/v1/category')->name('category')->group(function () {
+Route::prefix('/v1/category')->name('category.')->group(function () {
     Route::get('/index', [CategoryController::class, 'index'])->name('all');
     Route::post('/create', [CategoryController::class, 'create'])->name('create');
     Route::post('/edit', [CategoryController::class, 'edit'])->name('edit');
