@@ -16,25 +16,25 @@ class Product extends Model implements HasMedia
     use HasFactory, HasTags, Categorizable, InteractsWithMedia, Sluggable;
 
     protected $fillable = [
-        'title',
-        'description',
         'body',
-        'quantity',
-        'price',
-        'final_price',
-        'sku',
-        'related_products',
-        'tax_status',
-        'publish',
-        'min_quantity',
+        'description',
         'downloadable',
-        'virtual',
-        'slug',
-        'length',
-        'width',
+        'final_price',
         'height',
-        'weight',
         'imagesUrl',
+        'length',
+        'min_quantity',
+        'price',
+        'publish',
+        'quantity',
+        'related_products',
+        'slug',
+        'sku',
+        'tax_status',
+        'title',
+        'virtual',
+        'weight',
+        'width',
     ];
 
     protected $casts = [
@@ -59,9 +59,6 @@ class Product extends Model implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('product-gallery');
-        // ->width(200)
-        // ->height(250);
-
     }
 
     /**

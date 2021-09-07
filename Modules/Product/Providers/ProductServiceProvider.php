@@ -4,6 +4,7 @@ namespace Modules\Product\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
+use Illuminate\Http\Response;
 use Modules\Product\QueryFilters\Filter;
 use Modules\Product\QueryFilters\Title;
 use Modules\Product\Repository\ProductRepository;
@@ -32,6 +33,15 @@ class ProductServiceProvider extends ServiceProvider
         $this->registerConfig();
         $this->registerViews();
         $this->loadMigrationsFrom(module_path($this->moduleName, 'Database/Migrations'));
+
+        // Response::macro('success', function ($message, $data) {
+        //     return ['status' => 200, 'message' => $message, 'product' => $data];
+        // });
+
+        // Response::macro('fail', function ($message) {
+        //     return ['message' => $message];
+        // });
+
     }
 
     /**

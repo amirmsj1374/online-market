@@ -3,8 +3,6 @@
 namespace Modules\Product\Repository;
 
 use AliBayat\LaravelCategorizable\Category;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Modules\Product\Entities\Attribute;
 use Modules\Product\Entities\Product;
 use Modules\Product\Repository\ProductRepositoryInterface;
@@ -13,36 +11,18 @@ use Modules\Discount\Entities\Discount;
 
 class ProductRepository implements ProductRepositoryInterface
 {
-    /**
-     * Index
-     *
-     * @return void
-     */
     public function index()
     {
         $product = Product::with('categories', 'media')->orderBy('id', 'desc')->paginate(5);
         return $this->AddExtraDataToProductCollection($product);
     }
 
-    /**
-     * Show
-     *
-     * @return void
-     */
     public function show(Product $product)
     {
         $product->load('downloads');
         return $this->AddExtraDataToProductCollection($product, true);
     }
 
-
-
-    /**
-     * Create
-     *
-     * @param  mixed $request
-     * @return void
-     */
     public function create($request)
     {
 
@@ -92,13 +72,6 @@ class ProductRepository implements ProductRepositoryInterface
         return $product;
     }
 
-    /**
-     * Update
-     *
-     * @param  mixed $request
-     * @param  mixed $product
-     * @return void
-     */
     public function update($request, $product)
     {
 
@@ -158,25 +131,11 @@ class ProductRepository implements ProductRepositoryInterface
         return $product;
     }
 
-    /**
-     * Sync Tags
-     *
-     * @param  mixed $request
-     * @param  mixed $product
-     * @return void
-     */
     public function syncTags($request, $product)
     {
         $product->syncTags($request->productTags);
     }
 
-    /**
-     * Sync Categories
-     *
-     * @param  mixed $request
-     * @param  mixed $product
-     * @return void
-     */
     public function syncCategories($request, $product)
     {
 
@@ -189,13 +148,6 @@ class ProductRepository implements ProductRepositoryInterface
         $product->syncCategories($category);
     }
 
-    /**
-     * Sync Downloads
-     *
-     * @param  mixed $links
-     * @param  mixed $product
-     * @return void
-     */
     public function syncDownloads($links, $product)
     {
         foreach ($product->downloads as $download) {
@@ -206,13 +158,7 @@ class ProductRepository implements ProductRepositoryInterface
         }
     }
 
-    /**
-     * Attach Attributes To Product
-     *
-     * @param  mixed $attributes
-     * @param  mixed $product
-     * @return void
-     */
+
     public function attachAttributesToProduct($attributes, $product): void
     {
 

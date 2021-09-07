@@ -15,7 +15,7 @@ use Modules\Product\Http\Controllers\Api\V1\ProductController;
 |
 */
 
-Route::prefix('/v1/product')->name('product.')->group(function () {
+Route::prefix('/v1/product')->group(function () {
 
     Route::get('/', [ProductController::class, 'index'])->name('all');
     Route::post('/create', [ProductController::class, 'create'])->name('create');
