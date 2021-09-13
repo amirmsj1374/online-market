@@ -6,9 +6,11 @@ use Modules\User\Entities\User;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Modules\Auth\Facades\UserProviderFacade;
 
 class AuthControllerTest extends TestCase
 {
+   
     /**
      * register user.
      *
@@ -16,6 +18,7 @@ class AuthControllerTest extends TestCase
      */
     public function register_user($user)
     {
+        //  $this->withoutExceptionHandling();
         $response = $this->postJson(route('auth.register'), [
             'name'                  => $user->name,
             'email'                 => $user->email,
@@ -23,6 +26,7 @@ class AuthControllerTest extends TestCase
             'password_confirmation' => 'password'
         ]);
         $response->assertStatus(201);
+
     }
     /**
      * login user.
@@ -62,7 +66,7 @@ class AuthControllerTest extends TestCase
         ]);
 
         $response->assertStatus(200);
-        // $this->assertEquals($response->getStatusCode(), 200);
+        $this->assertEquals($response->getStatusCode(), 200);
     }
 
     /**

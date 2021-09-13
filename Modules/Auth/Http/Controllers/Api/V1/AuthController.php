@@ -2,75 +2,53 @@
 
 namespace Modules\Auth\Http\Controllers\Api\V1;
 
-
-use Illuminate\Contracts\Support\Renderable;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Password;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
-use Illuminate\Auth\Events\PasswordReset;
-use Illuminate\Support\Facades\Log;
-use Modules\User\Entities\User;
+use Modules\Auth\Facades\AuthFacade;
+use Modules\Auth\Facades\ResponderFacade;
+use Modules\Auth\Facades\UserProviderFacade;
+use Modules\Auth\Http\Requests\ForgotRequest;
+use Modules\Auth\Http\Requests\LoginRequest;
+use Modules\Auth\Http\Requests\RegisterRequest;
+use Modules\Auth\Http\Requests\ResetPasswordRequest;
 
 class AuthController extends Controller
 {
 
-    public function register(Request $request)
+    public function register(RegisterRequest $request)
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'confirmed']
-        ]);
-        
-        User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password)
-        ]);
-
-        return response()->json(['message' => 'اطلاعات کاربر جدید ثبت شد'],  Response::HTTP_OK);
+        UserProviderFacade::generateNewUser($request);
+        return  ResponderFacade::createNewUser();
     }
 
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-
-        $credentials = $request->only('email', 'password');
-        if (!$token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'],  Response::HTTP_UNAUTHORIZED);
+        //check if user blocked
+        $this->checkUserIsGuest();
+        // validate user is guest
+        $status = UserProviderFacade::blockedUser($request->email);
+        if ($status) {
+            ResponderFacade::blockedUser()->throwResponse();
         }
 
-        return $this->respondWithToken($token);
+        $token = UserProviderFacade::checkUserEmailAndPassword($request);
+        return  ResponderFacade::respondWithToken($token);
     }
 
     public function user()
     {
-        return response()->json(auth()->user());
+        return ResponderFacade::user(auth()->user());
     }
 
     public function logout()
     {
-        auth()->logout();
-
-        return response()->json(['message' => 'Successfully logged out']);
+        UserProviderFacade::logout();
+        return ResponderFacade::logout();
     }
 
     public function refresh()
     {
-        return $this->respondWithToken(auth()->refresh());
+        return  ResponderFacade::respondWithToken(auth()->refresh());
     }
-
-    protected function respondWithToken($token)
-    {
-        return response()->json([
-            'access_token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60
-        ],  Response::HTTP_OK);
-    }
-
 
     /**
      * send email for reset password
@@ -78,27 +56,11 @@ class AuthController extends Controller
      * @param  mixed $request
      * @return void
      */
-    public function forgotPassword(Request $request)
+    public function forgotPassword(ForgotRequest $request)
     {
-
-        $request->validate([
-            'email' => 'required|email'
-        ]);
-
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
-        if ($status === Password::RESET_LINK_SENT) {
-            return response()->json([
-                'message' => 'لطفا ایمیل خود را چک کنید'
-            ], Response::HTTP_OK);
-        }
-
-        return response()->json([
-            'message' => 'اطلاعات یافت نشد'
-        ], Response::HTTP_NOT_FOUND);
+        UserProviderFacade::forgotPassword($request);
+        return ResponderFacade::forgotPasswordFailedSendmail();
     }
-
 
     /**
      * enter new password
@@ -106,37 +68,16 @@ class AuthController extends Controller
      * @param  mixed $request
      * @return void
      */
-    public function resetPassword(Request $request)
+    public function resetPassword(ResetPasswordRequest $request)
     {
+        UserProviderFacade::resetPassword($request);
+        return ResponderFacade::resetPasswordFailedSendmail();
+    }
 
-        $request->validate([
-            'token' => 'required',
-            'email' => 'required|email',
-            'password' => 'required|min:8|confirmed',
-        ]);
-
-
-        $status = Password::reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
-            function ($user, $password) {
-                $user->forceFill([
-                    'password' => Hash::make($password)
-                ])->setRememberToken(Str::random(60));
-
-                $user->save();
-
-                event(new PasswordReset($user));
-            }
-        );
-
-        if ($status === Password::PASSWORD_RESET) {
-            return response()->json([
-                'message' => 'اطلاعات با موفقیت تغییر کرد'
-            ], Response::HTTP_OK);
+    private function checkUserIsGuest()
+    {
+        if (AuthFacade::check()) {
+            ResponderFacade::youShouldBeGuest()->throwResponse();
         }
-
-        return response()->json([
-            'message' => 'اطلاعات وارد شده صحیح نمی باشد '
-        ], Response::HTTP_BAD_REQUEST);
     }
 }

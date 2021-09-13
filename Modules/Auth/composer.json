@@ -8,7 +8,8 @@
         }
     ],
     "require": {
-        "tymon/jwt-auth": "^1.0"
+        "tymon/jwt-auth": "^1.0",
+        "imanghafoori/laravel-smart-facades": "^1.*"
     },
     "extra": {
         "laravel": {
