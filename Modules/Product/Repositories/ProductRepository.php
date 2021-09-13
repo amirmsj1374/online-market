@@ -1,11 +1,11 @@
 <?php
 
-namespace Modules\Product\Repository;
+namespace Modules\Product\Repositories;
 
 use AliBayat\LaravelCategorizable\Category;
 use Modules\Product\Entities\Attribute;
 use Modules\Product\Entities\Product;
-use Modules\Product\Repository\ProductRepositoryInterface;
+use Modules\Product\Interfaces\ProductRepositoryInterface;
 use Illuminate\Support\Facades\Storage;
 use Modules\Discount\Entities\Discount;
 
