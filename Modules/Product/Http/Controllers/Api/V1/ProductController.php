@@ -2,28 +2,18 @@
 
 namespace Modules\Product\Http\Controllers\Api\V1;
 
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Modules\Product\Entities\Product;
-use Modules\Product\Repository\ProductRepositoryInterface;
 use Modules\Product\Http\Requests\ProductRequest;
+use Modules\Product\Facades\ProductRepositoryFacade;
 
 class ProductController extends Controller
 {
-
-    public $repository;
-
-    public function __construct(ProductRepositoryInterface $repository)
-    {
-        $this->repository = $repository;
-    }
-
     public function index()
     {
-
-        $products = ($this->repository)->index();
+        $products = ProductRepositoryFacade::index();
 
         return response()->json([
             'products' => $products,
@@ -32,7 +22,7 @@ class ProductController extends Controller
 
     public function show(Product $product)
     {
-        $product = ($this->repository)->show($product);
+        $product = ProductRepositoryFacade::show($product);
 
         return response()->json([
             'product' => $product,
@@ -41,7 +31,7 @@ class ProductController extends Controller
 
     public function create(ProductRequest $request)
     {
-        $this->repository->create($request);
+        ProductRepositoryFacade::create($request);
 
         return response()->json([
             'message' => 'محصول با موفقیت ایجاد شد'
@@ -50,7 +40,7 @@ class ProductController extends Controller
 
     public function update(ProductRequest $request, Product $product)
     {
-        $product = ($this->repository)->update($request, $product);
+        $product = ProductRepositoryFacade::update($request, $product);
 
         return response()->json([
             'product' => $product,

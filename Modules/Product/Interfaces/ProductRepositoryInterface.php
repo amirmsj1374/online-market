@@ -1,8 +1,7 @@
 <?php
 
-namespace Modules\Product\Repository;
+namespace Modules\Product\Interfaces;
 
-use Illuminate\Http\Request;
 use Modules\Product\Entities\Product;
 
 interface ProductRepositoryInterface

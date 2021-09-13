@@ -5,10 +5,11 @@ namespace Modules\Product\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Http\Response;
+use Modules\Product\Facades\ProductRepositoryFacade;
 use Modules\Product\QueryFilters\Filter;
 use Modules\Product\QueryFilters\Title;
-use Modules\Product\Repository\ProductRepository;
-use Modules\Product\Repository\ProductRepositoryInterface;
+use Modules\Product\Repositories\ProductRepository;
+use Modules\Product\Interfaces\ProductRepositoryInterface;
 
 class ProductServiceProvider extends ServiceProvider
 {
@@ -53,6 +54,7 @@ class ProductServiceProvider extends ServiceProvider
     {
         $this->app->register(RouteServiceProvider::class);
         $this->app->bind(ProductRepositoryInterface::class, ProductRepository::class, Filter::class, Title::class);
+        ProductRepositoryFacade::shouldProxyTo(ProductRepository::class);
     }
 
     /**
