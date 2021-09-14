@@ -2,7 +2,7 @@
 
 namespace Modules\Product\Facades;
 
-use Illuminate\Support\Facades\Facade;
+use Imanghafoori\SmartFacades\Facade;
 use Modules\Product\Entities\Product;
 
 /**
@@ -16,13 +16,5 @@ use Modules\Product\Entities\Product;
  */
 class ProductRepositoryFacade extends Facade
 {
-    protected static function getFacadeAccessor()
-    {
-        return static::class;
-    }
-
-    public static function shouldProxyTo($class)
-    {
-        app()->singleton(self::getFacadeAccessor(), $class);
-    }
+   
 }

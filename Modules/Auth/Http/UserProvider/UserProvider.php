@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Support\Facades\Log;
 
 class UserProvider
 {
@@ -22,20 +23,9 @@ class UserProvider
 
     public function blockedUser($email)
     {
-        $user = User::where('email', $email)->get() ?: new User;
+        $user = User::where('email', $email)->first() ?: new User;
 
-        return $user->status === 1 ? true : false;
-    }
-
-    public function checkUserEmailAndPassword($request)
-    {
-        $credentials = $request->only('email', 'password');
-
-        if (!$token = auth()->attempt($credentials)) {
-            return  ResponderFacade::notFoundUser();
-        }
-
-        return $token;
+        return $user->status === 0 ? true : false;
     }
 
     public function logout()
@@ -45,13 +35,14 @@ class UserProvider
 
     public function forgotPassword($request)
     {
-
         $status = Password::sendResetLink(
             $request->only('email')
         );
-
+       
         if ($status === Password::RESET_LINK_SENT) {
-            ResponderFacade::forgotPasswordSuccessSendEmail();
+            return ResponderFacade::forgotPasswordSuccessSendEmail();
+        } else {
+            return ResponderFacade::forgotPasswordFailedSendmail();
         }
     }
 
@@ -69,9 +60,11 @@ class UserProvider
                 event(new PasswordReset($user));
             }
         );
-
+       
         if ($status === Password::PASSWORD_RESET) {
             return ResponderFacade::resetPasswordSuccessSendEmail();
+        } else {
+            return ResponderFacade::resetPasswordFailedSendmail();
         }
     }
 }

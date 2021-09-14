@@ -3,104 +3,69 @@
 namespace Modules\Category\Http\Controllers\Api\V1;
 
 use AliBayat\LaravelCategorizable\Category;
-use Illuminate\Contracts\Support\Renderable;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Log;
+use Modules\Category\Facades\ResponderFacade;
+use Modules\Category\Http\Requests\CreateRequest;
+use Modules\Category\Http\Requests\EditRequest;
 
-use function PHPUnit\Framework\isEmpty;
 
 class CategoryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     * @return Renderable
-     */
+
     public function index()
     {
         $categories = Category::tree();
-        return response()->json([
-            'items' => $categories
-        ], Response::HTTP_OK);
+        return  ResponderFacade::index($categories);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     * @return Renderable
-     */
-    public function create(Request $request)
+
+    public function create(CreateRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string',
-        ]);
 
         if (is_null($request->parent)) {
-
             Category::create(['name' => $request->name]);
         } else {
-
             Category::create(['name' => $request->name]);
             $parent = Category::findById($request->parent);
             $child = Category::findByName($request->name);
             $parent->appendNode($child);
         }
 
-        return response()->json([
-            'items' => Category::all()
-        ], Response::HTTP_CREATED);
+        return  ResponderFacade::getAllCategory();
     }
 
 
-    /**
-     * edit
-     *
-     * @return void
-     */
-    public function edit(Request $request)
+
+    public function edit(EditRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string',
-            'id'   => 'required',
-        ]);
 
         $category = Category::findById($request->id);
 
         if ($category->count() > 0) {
+
             $category->update([
                 'name' => $request->name
             ]);
 
-            return response()->json([
-                'items' => Category::all()
-            ], Response::HTTP_OK);
+            return  ResponderFacade::getAllCategory();
         }
 
-
-        return response()->json([
-            'message' => 'اطلاعات وارد شده صحیح نمی باشد'
-        ], Response::HTTP_NOT_FOUND);
+        return  ResponderFacade::editFailed();
     }
 
-    /**
-     * Remove the specified resource from storage.
-     * @param int $id
-     * @return Renderable
-     */
+
     public function destroy($id)
     {
         $category = Category::findById($id);
 
         if ($category->count() > 0) {
+
             $category->delete();
 
-            return response()->json([
-                'items' => Category::all()
-            ], Response::HTTP_OK);
+            return  ResponderFacade::getAllCategory();
         } else {
-            return response()->json([
-                'message' => 'اطلاعات وارد شده صحیح نمی باشد'
-            ], Response::HTTP_NOT_FOUND);
+
+            return  ResponderFacade::destroyFailed();
         }
     }
 }

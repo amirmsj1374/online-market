@@ -3,49 +3,36 @@
 namespace Modules\Product\Http\Controllers\Api\V1;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Modules\Product\Entities\Product;
 use Modules\Product\Http\Requests\ProductRequest;
 use Modules\Product\Facades\ProductRepositoryFacade;
+use Modules\Product\Facades\ResponderFacade;
 
 class ProductController extends Controller
 {
     public function index()
     {
         $products = ProductRepositoryFacade::index();
-
-        return response()->json([
-            'products' => $products,
-        ], Response::HTTP_OK);
+        return ResponderFacade::index($products);
     }
 
     public function show(Product $product)
     {
         $product = ProductRepositoryFacade::show($product);
-
-        return response()->json([
-            'product' => $product,
-        ], Response::HTTP_OK);
+        return ResponderFacade::show($product);
     }
 
     public function create(ProductRequest $request)
     {
         ProductRepositoryFacade::create($request);
-
-        return response()->json([
-            'message' => 'محصول با موفقیت ایجاد شد'
-        ], Response::HTTP_CREATED);
+        return ResponderFacade::createSuccess();
     }
 
     public function update(ProductRequest $request, Product $product)
     {
         $product = ProductRepositoryFacade::update($request, $product);
-
-        return response()->json([
-            'product' => $product,
-            'message' => 'محصول با موفقیت ویرایش شد'
-        ], Response::HTTP_OK);
+        return ResponderFacade::updateSuccess($product);
     }
 
     public function changeStatus(Product $product)
@@ -54,19 +41,13 @@ class ProductController extends Controller
             'publish' => $product->publish === 0 ? 1 : 0
         ]);
 
-        return response()->json([
-            'product' => Product::all(),
-            'message' => 'وضعیت محصول تغییر کرد'
-        ], Response::HTTP_OK);
+        return ResponderFacade::changeStatus();
     }
 
     public function destroy(Product $product)
     {
         $product->delete();
-
-        return response()->json([
-            'message' => 'محصول با موفقیت حذف شد'
-        ], Response::HTTP_OK);
+        return ResponderFacade::destroyProduct();
     }
 
     /*

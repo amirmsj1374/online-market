@@ -4,6 +4,7 @@ namespace Modules\Category\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
+use Modules\Category\Facades\ResponderFacade;
 
 class CategoryServiceProvider extends ServiceProvider
 {
@@ -18,6 +19,16 @@ class CategoryServiceProvider extends ServiceProvider
     protected $moduleNameLower = 'category';
 
     /**
+     * Register the service provider.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        $this->app->register(RouteServiceProvider::class);
+        // ResponderFacade::shouldProxyTo(SessionAuth::class);
+    }
+    /**
      * Boot the application events.
      *
      * @return void
@@ -30,15 +41,7 @@ class CategoryServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(module_path($this->moduleName, 'Database/Migrations'));
     }
 
-    /**
-     * Register the service provider.
-     *
-     * @return void
-     */
-    public function register()
-    {
-        $this->app->register(RouteServiceProvider::class);
-    }
+
 
     /**
      * Register config.
@@ -51,7 +54,8 @@ class CategoryServiceProvider extends ServiceProvider
             module_path($this->moduleName, 'Config/config.php') => config_path($this->moduleNameLower . '.php'),
         ], 'config');
         $this->mergeConfigFrom(
-            module_path($this->moduleName, 'Config/config.php'), $this->moduleNameLower
+            module_path($this->moduleName, 'Config/config.php'),
+            $this->moduleNameLower
         );
     }
 

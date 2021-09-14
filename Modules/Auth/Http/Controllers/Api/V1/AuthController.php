@@ -30,7 +30,7 @@ class AuthController extends Controller
             ResponderFacade::blockedUser()->throwResponse();
         }
 
-        $token = UserProviderFacade::checkUserEmailAndPassword($request);
+        $token = AuthFacade::checkUserEmailAndPassword($request);
         return  ResponderFacade::respondWithToken($token);
     }
 
@@ -51,29 +51,30 @@ class AuthController extends Controller
     }
 
     /**
+     * 
      * send email for reset password
      *
-     * @param  mixed $request
-     * @return void
      */
     public function forgotPassword(ForgotRequest $request)
     {
-        UserProviderFacade::forgotPassword($request);
-        return ResponderFacade::forgotPasswordFailedSendmail();
+        UserProviderFacade::forgotPassword($request)->throwResponse();
     }
 
     /**
+     * 
      * enter new password
      *
-     * @param  mixed $request
-     * @return void
      */
     public function resetPassword(ResetPasswordRequest $request)
     {
-        UserProviderFacade::resetPassword($request);
-        return ResponderFacade::resetPasswordFailedSendmail();
+        UserProviderFacade::resetPassword($request)->throwResponse();
     }
 
+    /**
+     * 
+     * this method prevent user when login can not try login again
+     * 
+     */
     private function checkUserIsGuest()
     {
         if (AuthFacade::check()) {

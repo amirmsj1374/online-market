@@ -4,11 +4,8 @@ namespace Modules\Discount\Http\Controllers\Api\V1;
 
 use AliBayat\LaravelCategorizable\Category;
 use Modules\User\Entities\User;
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Http\Response;
 use Modules\Product\Entities\Product;
 use Illuminate\Pipeline\Pipeline;
 use Modules\Discount\Entities\Discount;
@@ -16,30 +13,19 @@ use Modules\Product\QueryFilter\Title;
 use Modules\User\QueryFilter\Name;
 use Morilog\Jalali\Jalalian;
 use Illuminate\Validation\Rule;
+use Modules\Discount\Facades\ResponderFacade;
 
 class DiscountController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     * @return Renderable
-     */
+
     public function index()
     {
-
         $discount = Discount::orderBy('id', 'desc')->paginate(5);
-
-        return response()->json(
-            [
-                'discount' => $discount
-            ],
-            Response::HTTP_OK
-        );
+        return ResponderFacade::index($discount);
     }
-
 
     public function products(Request $request)
     {
-
 
         $products = app(Pipeline::class)
 
@@ -52,12 +38,7 @@ class DiscountController extends Controller
             ->thenReturn()
             ->paginate(5);
 
-        return response()->json(
-            [
-                'data' => $products
-            ],
-            Response::HTTP_OK
-        );
+        return ResponderFacade::filterProduct($products);
     }
 
     public function categories(Request $request)
@@ -73,17 +54,11 @@ class DiscountController extends Controller
             ->thenReturn()
             ->paginate(5);
 
-        return response()->json(
-            [
-                'data' => $categories
-            ],
-            Response::HTTP_OK
-        );
+        return ResponderFacade::filtercategories($categories);
     }
 
     public function users(Request $request)
     {
-
 
         $users = app(Pipeline::class)
 
@@ -96,51 +71,12 @@ class DiscountController extends Controller
             ->thenReturn()
             ->paginate(2);
 
-        return response()->json(
-            [
-                'data' => $users
-            ],
-            Response::HTTP_OK
-        );
+        return ResponderFacade::filterUser($users);
     }
 
-
-
-    /**
-     * Show the form for creating a new resource.
-     * @return Renderable
-     */
     public function create(Request $request)
     {
-        $request->request->set('amount', str_replace(',', '', $request->amount));
-        $request->request->set('amount', str_replace('%', '', $request->amount));
-        $request->request->set('maxDiscount', str_replace(',', '', $request->maxDiscount));
-        $request->request->set('minPrice', str_replace(',', '', $request->minPrice));
-
-        Log::info([
-            'request' => $request->all()
-        ]);
-        $request->validate([
-            'code' => 'nullable|string|unique:discounts,code',
-            'amount' => 'required',
-            'maxDiscount' => 'nullable',
-            'minPrice' => 'nullable',
-            'measure' => 'required',
-            'description' => 'required|string',
-            'limit' => 'boolean',
-            'type' => 'required',
-            'selected' => 'nullable',
-            'beginning' => 'required|string',
-            'expiration' => 'required|string',
-        ]);
-
-
-
-        $request->request->set('expiration', Jalalian::fromFormat('Y-m-d H:i', $request->input('expiration'))->toCarbon());
-        $request->request->set('beginning', Jalalian::fromFormat('Y-m-d H:i', $request->input('beginning'))->toCarbon());
-        Log::info([
-            'selected_all' => $request->all()
-        ]);
+        $this->createValidate($request);
 
         $discount = Discount::create([
             'code' => $request->code,
@@ -167,40 +103,68 @@ class DiscountController extends Controller
             'selected' => $array
         ]);
 
-        return response()->json([
-            'message' => 'تخفیف با موفقیت ثبت شد '
-        ], Response::HTTP_OK);
+        return ResponderFacade::discountSuccessCreate();
     }
 
+    private function createValidate($request)
+    {
+
+        $request->request->set('amount', str_replace(',', '', $request->amount));
+        $request->request->set('amount', str_replace('%', '', $request->amount));
+        $request->request->set('maxDiscount', str_replace(',', '', $request->maxDiscount));
+        $request->request->set('minPrice', str_replace(',', '', $request->minPrice));
+        $request->request->set('expiration', Jalalian::fromFormat('Y-m-d H:i', $request->input('expiration'))->toCarbon());
+        $request->request->set('beginning', Jalalian::fromFormat('Y-m-d H:i', $request->input('beginning'))->toCarbon());
 
 
-    /**
-     * Show the specified resource.
-     * @param int $id
-     * @return Renderable
-     */
+        $request->validate([
+            'code' => 'nullable|string|unique:discounts,code',
+            'amount' => 'required',
+            'maxDiscount' => 'nullable',
+            'minPrice' => 'nullable',
+            'measure' => 'required',
+            'description' => 'required|string',
+            'limit' => 'boolean',
+            'type' => 'required',
+            'selected' => 'nullable',
+            'beginning' => 'required|string',
+            'expiration' => 'required|string',
+        ]);
+    }
+
     public function show(Discount $discount)
     {
-        return response()->json([
-            'discount' => $discount
-        ], Response::HTTP_OK);
+        return ResponderFacade::show($discount);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     * @param int $id
-     * @return Renderable
-     */
     public function update(Request $request, Discount $discount)
     {
 
         if ($discount->status === 1) {
-            return response()->json([
-                'message' => 'ویرایش تخفیفات در حال اجرا میسر نمی باشد'
-            ], Response::HTTP_OK);
+            return ResponderFacade::discountUpdateCondition();
         }
+
+        $this->updateValidation($request, $discount);
+
+        $discount->update([
+            'code' => $request->code,
+            'amount' => $request->amount,
+            'measure' => $request->measure,
+            'description' => $request->description,
+            'beginning' => $request->beginning,
+            'expiration' => $request->expiration,
+        ]);
+
+        return ResponderFacade::updateSuccess();
+    }
+
+    private function updateValidation($request, $discount)
+    {
         $request->request->set('amount', str_replace(',', '', $request->amount));
         $request->request->set('amount', str_replace('%', '', $request->amount));
+        $request->request->set('expiration', Jalalian::fromFormat('Y-m-d H:i', $request->input('expiration'))->toCarbon());
+        $request->request->set('beginning', Jalalian::fromFormat('Y-m-d H:i', $request->input('beginning'))->toCarbon());
+
         $request->validate([
             'code' => [
                 'nullable',
@@ -213,80 +177,62 @@ class DiscountController extends Controller
             'beginning' => 'required|string',
             'expiration' => 'required|string',
         ]);
-        $request->request->set('expiration', Jalalian::fromFormat('Y-m-d H:i', $request->input('expiration'))->toCarbon());
-        $request->request->set('beginning', Jalalian::fromFormat('Y-m-d H:i', $request->input('beginning'))->toCarbon());
-
-
-        $discount->update([
-            'code' => $request->code,
-            'amount' => $request->amount,
-            'measure' => $request->measure,
-            'description' => $request->description,
-            'beginning' => $request->beginning,
-            'expiration' => $request->expiration,
-        ]);
-
-        return response()->json([
-            'message' => 'تخفیف ویرایش شد '
-        ], Response::HTTP_OK);
     }
 
-
-
-    /**
-     * Remove the specified resource from storage.
-     * @param int $id
-     * @return Renderable
-     */
     public function destroy(Discount $discount)
     {
-            if ($discount->type === 'product') {
-                if ($discount->select_all === 1) {
-                    foreach (Product::get() as $product) {
-                        $this->changeFinalPriceFromProduct($product);
-                    }
-                } else {
-                    foreach (json_decode($discount->selected) as $id) {
-                        $product = Product::find($id);
-                        $this->changeFinalPriceFromProduct($product);
-                    }
-                }
-            } else if ($discount->type === 'basket') {
-                if ($discount->select_all === 1) {
-                    foreach (User::get() as  $user) {
-                        $this->removeDiscountCodeForUser($user, $discount->code);
-                    }
-                } else {
-                    foreach (json_decode($discount->selected) as $id) {
-                        $user  = User::find($id);
-                        $this->removeDiscountCodeForUser($user, $discount->code);
-                    }
-                }
-            } else if ($discount->type === 'category') {
-                $products = collect();
-                if ($discount->select_all === 1) {
-                    foreach (Category::get() as $category) {
-                        $data = $category->entries(Product::class)->get();
-                        if ($data->isNotEmpty()) {
-                            $products->push($data);
-                        }
-                    }
-                } else {
-                    foreach (json_decode($discount->selected) as $id) {
-                        $data = Category::find($id)->entries(Product::class)->get();
-                        if ($data->isNotEmpty()) {
-                            $products->push($data);
-                        }
-                    }
-                }
-                foreach ($products->flatten()->unique('id') as $product) {
+        if ($discount->type === 'product') {
+
+            if ($discount->select_all === 1) {
+                foreach (Product::get() as $product) {
                     $this->changeFinalPriceFromProduct($product);
+                }
+            } else {
+                foreach (json_decode($discount->selected) as $id) {
+                    $product = Product::find($id);
+                    $this->changeFinalPriceFromProduct($product);
+                }
             }
+        } else if ($discount->type === 'basket') {
+
+            if ($discount->select_all === 1) {
+                foreach (User::get() as  $user) {
+                    $this->removeDiscountCodeForUser($user, $discount->code);
+                }
+            } else {
+                foreach (json_decode($discount->selected) as $id) {
+                    $user  = User::find($id);
+                    $this->removeDiscountCodeForUser($user, $discount->code);
+                }
+            }
+        } else if ($discount->type === 'category') {
+
+            $products = collect();
+
+            if ($discount->select_all === 1) {
+                foreach (Category::get() as $category) {
+                    $data = $category->entries(Product::class)->get();
+                    if ($data->isNotEmpty()) {
+                        $products->push($data);
+                    }
+                }
+            } else {
+                foreach (json_decode($discount->selected) as $id) {
+                    $data = Category::find($id)->entries(Product::class)->get();
+                    if ($data->isNotEmpty()) {
+                        $products->push($data);
+                    }
+                }
+            }
+
+            foreach ($products->flatten()->unique('id') as $product) {
+                $this->changeFinalPriceFromProduct($product);
+            }
+
             $discount->delete();
         }
-        return response()->json([
-            'message' => 'اطلاعات تخفیف حذف شد'
-        ], Response::HTTP_OK);
+
+        return ResponderFacade::destroyDiscount();
     }
 
     public function removeDiscountCodeForUser($user, $code)
@@ -305,6 +251,7 @@ class DiscountController extends Controller
             }
         }
     }
+
     public function changeFinalPriceFromProduct($product)
     {
         $product->update([

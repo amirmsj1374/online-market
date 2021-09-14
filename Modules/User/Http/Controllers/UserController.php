@@ -5,8 +5,7 @@ namespace Modules\User\Http\Controllers;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Modules\User\Entities\User;
-use Symfony\Component\HttpFoundation\Response;
+use Modules\User\Facades\ResponderFacade;
 
 class UserController extends Controller
 {
@@ -16,9 +15,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        return response()->json([
-            'users' => User::paginate(2)
-        ], Response::HTTP_OK);
+       return ResponderFacade::index();
     }
 
     /**

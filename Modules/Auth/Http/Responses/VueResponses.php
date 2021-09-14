@@ -68,7 +68,7 @@ class VueResponses
     public function forgotPasswordFailedSendmail()
     {
         return response()->json([
-            'message' => 'اطلاعات یافت نشد'
+            'message' => 'سیستم در حال پردازش اطلاعات است لطفا چند دقیقه دیگر مجددا تلاش فرمایید'
         ], Response::HTTP_NOT_FOUND);
     }
 
@@ -78,7 +78,7 @@ class VueResponses
             'message' => 'اطلاعات با موفقیت تغییر کرد'
         ], Response::HTTP_OK);
     }
-    
+
     public function resetPasswordFailedSendmail()
     {
         return response()->json([
