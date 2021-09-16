@@ -4,10 +4,8 @@ namespace Modules\Auth\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
-use Modules\Auth\Facades\AuthFacade;
-use Modules\Auth\Facades\UserProviderFacade;
-use Modules\Auth\Http\Authenticator\SessionAuth;
-use Modules\Auth\Http\UserProvider\UserProvider;
+use Modules\Auth\Facades\AuthProviderFacade;
+use Modules\Auth\Http\AuthProvider\JwtAuth;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -30,8 +28,7 @@ class AuthServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->register(RouteServiceProvider::class);
-        UserProviderFacade::shouldProxyTo(UserProvider::class);
-        AuthFacade::shouldProxyTo(SessionAuth::class);
+        AuthProviderFacade::shouldProxyTo(JwtAuth::class);
     }
 
     /**

@@ -3,9 +3,8 @@
 namespace Modules\Auth\Http\Controllers\Api\V1;
 
 use Illuminate\Routing\Controller;
-use Modules\Auth\Facades\AuthFacade;
 use Modules\Auth\Facades\ResponderFacade;
-use Modules\Auth\Facades\UserProviderFacade;
+use Modules\Auth\Facades\AuthProviderFacade;
 use Modules\Auth\Http\Requests\ForgotRequest;
 use Modules\Auth\Http\Requests\LoginRequest;
 use Modules\Auth\Http\Requests\RegisterRequest;
@@ -16,7 +15,7 @@ class AuthController extends Controller
 
     public function register(RegisterRequest $request)
     {
-        UserProviderFacade::generateNewUser($request);
+        AuthProviderFacade::generateNewUser($request);
         return  ResponderFacade::createNewUser();
     }
 
@@ -25,12 +24,12 @@ class AuthController extends Controller
         //check if user blocked
         $this->checkUserIsGuest();
         // validate user is guest
-        $status = UserProviderFacade::blockedUser($request->email);
+        $status = AuthProviderFacade::blockedUser($request->email);
         if ($status) {
             ResponderFacade::blockedUser()->throwResponse();
         }
 
-        $token = AuthFacade::checkUserEmailAndPassword($request);
+        $token = AuthProviderFacade::authenticationWithEmailAndPassword($request);
         return  ResponderFacade::respondWithToken($token);
     }
 
@@ -41,7 +40,7 @@ class AuthController extends Controller
 
     public function logout()
     {
-        UserProviderFacade::logout();
+        AuthProviderFacade::logout();
         return ResponderFacade::logout();
     }
 
@@ -57,7 +56,7 @@ class AuthController extends Controller
      */
     public function forgotPassword(ForgotRequest $request)
     {
-        UserProviderFacade::forgotPassword($request)->throwResponse();
+        AuthProviderFacade::forgotPassword($request)->throwResponse();
     }
 
     /**
@@ -67,7 +66,7 @@ class AuthController extends Controller
      */
     public function resetPassword(ResetPasswordRequest $request)
     {
-        UserProviderFacade::resetPassword($request)->throwResponse();
+        AuthProviderFacade::resetPassword($request)->throwResponse();
     }
 
     /**
@@ -77,7 +76,7 @@ class AuthController extends Controller
      */
     private function checkUserIsGuest()
     {
-        if (AuthFacade::check()) {
+        if (AuthProviderFacade::check()) {
             ResponderFacade::youShouldBeGuest()->throwResponse();
         }
     }

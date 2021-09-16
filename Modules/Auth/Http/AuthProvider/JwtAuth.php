@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Auth\Http\UserProvider;
+namespace Modules\Auth\Http\AuthProvider;
 
 use Modules\Auth\Facades\ResponderFacade;
 use Modules\User\Entities\User;
@@ -8,9 +8,9 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Auth\Events\PasswordReset;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
-class UserProvider
+class JwtAuth
 {
     public function generateNewUser($request)
     {
@@ -19,6 +19,22 @@ class UserProvider
             'email' => $request->email,
             'password' => bcrypt($request->password)
         ]);
+    }
+
+    public function check()
+    {
+        return Auth::check();
+    }
+
+    public function authenticationWithEmailAndPassword($request)
+    {
+        $credentials = $request->only('email', 'password');
+
+        if (!$token = auth()->attempt($credentials)) {
+            return  ResponderFacade::notFoundUser();
+        }
+
+        return $token;
     }
 
     public function blockedUser($email)
@@ -38,7 +54,7 @@ class UserProvider
         $status = Password::sendResetLink(
             $request->only('email')
         );
-       
+
         if ($status === Password::RESET_LINK_SENT) {
             return ResponderFacade::forgotPasswordSuccessSendEmail();
         } else {
@@ -60,7 +76,7 @@ class UserProvider
                 event(new PasswordReset($user));
             }
         );
-       
+
         if ($status === Password::PASSWORD_RESET) {
             return ResponderFacade::resetPasswordSuccessSendEmail();
         } else {

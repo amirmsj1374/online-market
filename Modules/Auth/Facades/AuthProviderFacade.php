@@ -2,7 +2,7 @@
 
 namespace Modules\Auth\Facades;
 
-class UserProviderFacade extends BaseFacade
+class AuthProviderFacade extends BaseFacade
 {
     
 }
