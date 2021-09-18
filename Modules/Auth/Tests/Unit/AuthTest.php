@@ -9,11 +9,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class AuthTest extends TestCase
 {
-    /**
-     * A unit test register user.
-     *
-     * @return void
-     */
+
     public function test_register_user()
     {
         $user = User::factory()->make();
@@ -23,32 +19,24 @@ class AuthTest extends TestCase
             'password'              => 'password',
             'password_confirmation' => 'password'
         ]);
-        $response->assertStatus(201);
+        $response->assertStatus(200);
     }
-    /**
-     * A unit test login user.
-     *
-     * @return void
-     */
+
     public function test_login_user()
     {
         $user = User::factory()->create();
-        $response = $this->actingAs($user)->postJson(route('auth.login'), [
+        $response = $this->postJson(route('auth.login'), [
             'email'                 => $user->email,
             'password'              => 'password',
             'password_confirmation' => 'password'
         ]);
         $response->assertStatus(200);
     }
-    /**
-     * A unit test logout user.
-     *
-     * @return void
-     */
+
     public function test_logout_user()
     {
         $user = User::factory()->create();
-        $this->actingAs($user)->postJson(route('auth.login'), [
+        $this->postJson(route('auth.login'), [
             'email'                 => $user->email,
             'password'              => 'password',
             'password_confirmation' => 'password'

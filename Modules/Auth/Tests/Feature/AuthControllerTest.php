@@ -10,7 +10,7 @@ use Modules\Auth\Facades\UserProviderFacade;
 
 class AuthControllerTest extends TestCase
 {
-   
+
     /**
      * register user.
      *
@@ -25,7 +25,7 @@ class AuthControllerTest extends TestCase
             'password'              => 'password',
             'password_confirmation' => 'password'
         ]);
-        $response->assertStatus(201);
+        $response->assertStatus(200);
 
     }
     /**
@@ -35,7 +35,7 @@ class AuthControllerTest extends TestCase
      */
     public function login_user($user)
     {
-        $response = $this->actingAs($user)->postJson(route('auth.login'), [
+        $response = $this->postJson(route('auth.login'), [
             'email'                 => $user->email,
             'password'              => 'password',
             'password_confirmation' => 'password'
@@ -49,7 +49,7 @@ class AuthControllerTest extends TestCase
      */
     public function logout_user($user)
     {
-        $response = $this->actingAs($user)->postJson(route('auth.logout'));
+        $response = $this->postJson(route('auth.logout'));
         $response->assertStatus(200);
     }
 
@@ -61,7 +61,7 @@ class AuthControllerTest extends TestCase
     public function forgot_password($user)
     {
         $user = User::factory()->create();
-        $response = $this->actingAs($user)->postJson(route('auth.forgot.password'), [
+        $response = $this->postJson(route('auth.forgot.password'), [
             'email' => $user->email,
         ]);
 

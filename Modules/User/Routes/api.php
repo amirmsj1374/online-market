@@ -17,4 +17,5 @@ use Modules\User\Http\Controllers\UserController;
 
 Route::prefix('/v1/user')->name('user.')->group(function () {
     Route::get('/', [UserController::class, 'index'])->name('all');
+    Route::post('/create', [UserController::class, 'create'])->name('create');
 });

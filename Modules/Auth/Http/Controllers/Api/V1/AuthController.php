@@ -3,6 +3,7 @@
 namespace Modules\Auth\Http\Controllers\Api\V1;
 
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Log;
 use Modules\Auth\Facades\ResponderFacade;
 use Modules\Auth\Facades\AuthProviderFacade;
 use Modules\Auth\Http\Requests\ForgotRequest;
@@ -21,9 +22,10 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request)
     {
-        //check if user blocked
-        $this->checkUserIsGuest();
         // validate user is guest
+        $this->checkUserIsGuest();
+
+        //check if user is blocked
         $status = AuthProviderFacade::blockedUser($request->email);
         if ($status) {
             ResponderFacade::blockedUser()->throwResponse();
@@ -50,7 +52,7 @@ class AuthController extends Controller
     }
 
     /**
-     * 
+     *
      * send email for reset password
      *
      */
@@ -60,7 +62,7 @@ class AuthController extends Controller
     }
 
     /**
-     * 
+     *
      * enter new password
      *
      */
@@ -70,9 +72,9 @@ class AuthController extends Controller
     }
 
     /**
-     * 
+     *
      * this method prevent user when login can not try login again
-     * 
+     *
      */
     private function checkUserIsGuest()
     {

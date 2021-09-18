@@ -84,6 +84,11 @@ class User extends Authenticatable implements JWTSubject
         $this->notify(new ResetPasswordNotification($url));
     }
 
+    public function setPasswordAttribute($value)
+    {
+        $this->attributes['password'] = bcrypt($value);
+    }
+
     public function profile()
     {
         return $this->hasOne(Profile::class);

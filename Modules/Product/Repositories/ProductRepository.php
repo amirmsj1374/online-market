@@ -3,6 +3,7 @@
 namespace Modules\Product\Repositories;
 
 use AliBayat\LaravelCategorizable\Category;
+use Illuminate\Support\Facades\Log;
 use Modules\Product\Entities\Attribute;
 use Modules\Product\Entities\Product;
 use Modules\Product\Interfaces\ProductRepositoryInterface;
@@ -116,7 +117,7 @@ class ProductRepository implements ProductRepositoryInterface
 
         // update downladable links of product
         if (!is_null($request->links)) {
-            $this->syncDownloads($request, $product);
+            $this->syncDownloads($request->links, $product);
         }
 
         // update attributes of product
@@ -141,7 +142,6 @@ class ProductRepository implements ProductRepositoryInterface
 
         $category = [];
         foreach ($request->categories as $key => $category_id) {
-            Log::info(['category' => $category_id]);
             $category[$key] = Category::findById($category_id);
         }
 
@@ -153,8 +153,8 @@ class ProductRepository implements ProductRepositoryInterface
         foreach ($product->downloads as $download) {
             $download->delete();
         }
-        foreach ($links as $link) {
-            $product->downloads()->create(json_decode($link, true));
+        foreach (json_decode($links, true) as $link) {
+            $product->downloads()->create($link);
         }
     }
 

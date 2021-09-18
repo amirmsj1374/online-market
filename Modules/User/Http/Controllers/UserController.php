@@ -5,7 +5,10 @@ namespace Modules\User\Http\Controllers;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Log;
+use Modules\User\Entities\User;
 use Modules\User\Facades\ResponderFacade;
+use Modules\User\Http\Requests\UserRequest;
 
 class UserController extends Controller
 {
@@ -22,59 +25,63 @@ class UserController extends Controller
      * Show the form for creating a new resource.
      * @return Renderable
      */
-    public function create()
+    public function create(UserRequest $request)
     {
-        return view('user::create');
+        $user = User::create([
+            'email'    => $request->email,
+            'mobile'   => $request->mobile,
+            'name'     => $request->name,
+            'password' => $request->password,
+            'status'   => $request->status,
+        ]);
+
+        $user->profile()->create([
+            'address'  => $request->address,
+            'city'     => $request->city,
+            'phone'    => $request->phone,
+            'province' => $request->province,
+        ]);
+
+
+        return ResponderFacade::createUserSuccess();
+
     }
 
-    /**
-     * Store a newly created resource in storage.
-     * @param Request $request
-     * @return Renderable
-     */
-    public function store(Request $request)
-    {
-        //
-    }
 
-    /**
-     * Show the specified resource.
-     * @param int $id
-     * @return Renderable
-     */
+
     public function show($id)
     {
-        return view('user::show');
+       //...
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     * @param int $id
-     * @return Renderable
-     */
-    public function edit($id)
+
+
+
+    public function update(UserRequest $request, User $user)
     {
-        return view('user::edit');
+        $user->update([
+            'email'    => $request->email,
+            'mobile'   => $request->mobile,
+            'name'     => $request->name,
+            'password' => $request->password,
+            'status'   => $request->status,
+        ]);
+
+        $user->profile->update([
+            'address'  => $request->address,
+            'city'     => $request->city,
+            'phone'    => $request->phone,
+            'province' => $request->province,
+        ]);
+
+        return ResponderFacade::updateUserSuccess();
+
     }
 
-    /**
-     * Update the specified resource in storage.
-     * @param Request $request
-     * @param int $id
-     * @return Renderable
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
 
-    /**
-     * Remove the specified resource from storage.
-     * @param int $id
-     * @return Renderable
-     */
-    public function destroy($id)
+    public function destroy(User $user)
     {
-        //
+        $user->delete();
+        return ResponderFacade::destroyUserSuccess();
     }
 }

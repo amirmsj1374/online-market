@@ -26,7 +26,7 @@ class CategoryServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->register(RouteServiceProvider::class);
-        // ResponderFacade::shouldProxyTo(SessionAuth::class);
+
     }
     /**
      * Boot the application events.
