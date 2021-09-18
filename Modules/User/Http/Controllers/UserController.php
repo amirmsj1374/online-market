@@ -2,29 +2,39 @@
 
 namespace Modules\User\Http\Controllers;
 
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Log;
 use Modules\User\Entities\User;
 use Modules\User\Facades\ResponderFacade;
 use Modules\User\Http\Requests\UserRequest;
+use Illuminate\Pipeline\Pipeline;
+use Modules\User\QueryFilter\Mobile;
+use Modules\User\QueryFilter\Name;
+use Modules\User\QueryFilter\Type;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     * @return Renderable
-     */
-    public function index()
+
+    public function index(Request $request)
     {
-       return ResponderFacade::index();
+
+        $users = app(Pipeline::class)
+
+            ->send(User::query())
+
+            ->through([
+                Type::class,
+                Mobile::class,
+                Name::class
+            ])
+
+            ->thenReturn()
+            ->with('profile')
+            ->paginate(2);
+
+        return ResponderFacade::index($users);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     * @return Renderable
-     */
     public function create(UserRequest $request)
     {
         $user = User::create([
@@ -44,18 +54,12 @@ class UserController extends Controller
 
 
         return ResponderFacade::createUserSuccess();
-
     }
 
-
-
-    public function show($id)
+    public function show(User $user)
     {
-       //...
+        return ResponderFacade::show($user);
     }
-
-
-
 
     public function update(UserRequest $request, User $user)
     {
@@ -75,9 +79,7 @@ class UserController extends Controller
         ]);
 
         return ResponderFacade::updateUserSuccess();
-
     }
-
 
     public function destroy(User $user)
     {

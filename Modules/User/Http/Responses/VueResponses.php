@@ -7,12 +7,16 @@ use Modules\User\Entities\User;
 
 class VueResponses
 {
-    public function index()
+    public function index($users)
     {
-        return response()->json(['users' => User::with('profile')->paginate(2)
-        ], Response::HTTP_OK);
+        return response()->json(
+            [
+                'data' => $users
+            ],
+            Response::HTTP_OK
+        );
     }
-
+ 
     public function createUserSuccess()
     {
         return response()->json([
@@ -26,6 +30,15 @@ class VueResponses
             'message' => 'کاربر مورد نظر با موفقیت ویرایش شد'
         ]);
     }
+
+    public function show($user)
+    {
+        return response()->json([
+            'user' => $user
+        ], Response::HTTP_OK);
+    }
+
+
     public function destroyUserSuccess()
     {
         return response()->json([
