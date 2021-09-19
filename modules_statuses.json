@@ -3,5 +3,6 @@
     "Product": true,
     "Auth": true,
     "Discount": true,
-    "User": true
+    "User": true,
+    "Order": true
 }
