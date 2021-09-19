@@ -42,6 +42,9 @@ class AuthController extends Controller
 
     public function logout()
     {
+        Log::info([
+            'sssss' => auth()->user(),
+        ]);
         AuthProviderFacade::logout();
         return ResponderFacade::logout();
     }
