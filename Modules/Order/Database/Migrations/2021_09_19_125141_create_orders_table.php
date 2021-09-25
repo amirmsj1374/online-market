@@ -17,7 +17,6 @@ class CreateOrdersTable extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->string('order_number'); //شناسه سفارش
             $table->integer('item_count'); //تعداد محصولات
             $table->tinyInteger('is_pay')->default(0); //وضعیت پرداخت
             $table->enum('status', ['preparation', 'posted', 'received', 'canceled']); //وضعیت سفارش
