@@ -18,6 +18,7 @@ use Modules\Product\Http\Controllers\Api\V1\ProductController;
 Route::prefix('/v1/product')->group(function () {
 
     Route::get('/', [ProductController::class, 'index'])->name('all');
+    Route::get('/filter', [ProductController::class, 'filterProducts'])->name('filter');
     Route::post('/create', [ProductController::class, 'create'])->name('create');
 
     Route::post('/show/{product}', [ProductController::class, 'show'])->name('show');

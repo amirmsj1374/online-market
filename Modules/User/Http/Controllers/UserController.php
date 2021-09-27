@@ -30,7 +30,7 @@ class UserController extends Controller
 
             ->thenReturn()
             ->with('profile')
-            ->paginate(2);
+            ->paginate(5);
 
         return ResponderFacade::index($users);
     }
@@ -85,5 +85,22 @@ class UserController extends Controller
     {
         $user->delete();
         return ResponderFacade::destroyUserSuccess();
+    }
+
+    public function filterUsers(Request $request)
+    {
+
+        $users = app(Pipeline::class)
+
+            ->send(User::query())
+
+            ->through([
+                Name::class,
+            ])
+
+            ->thenReturn()
+            ->paginate(7);
+
+        return ResponderFacade::filterUsers($users);
     }
 }

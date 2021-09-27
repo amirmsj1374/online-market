@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Modules\Order\Http\Controllers\Api\V1\OrderController;
+use Modules\Order\Http\Controllers\CartController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,4 +17,5 @@ use Modules\Order\Http\Controllers\Api\V1\OrderController;
 */
 Route::prefix('/v1/order')->name('order.')->group(function () {
     Route::get('/', [OrderController::class, 'index'])->name('all');
+    Route::post('/create', [CartController::class, 'create'])->name('create');
 });

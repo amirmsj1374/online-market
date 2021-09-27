@@ -3,12 +3,13 @@
 namespace Modules\Product\Repositories;
 
 use AliBayat\LaravelCategorizable\Category;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Pipeline\Pipeline;
 use Modules\Product\Entities\Attribute;
 use Modules\Product\Entities\Product;
 use Modules\Product\Interfaces\ProductRepositoryInterface;
 use Illuminate\Support\Facades\Storage;
 use Modules\Discount\Entities\Discount;
+use Modules\Product\QueryFilter\Title;
 
 class ProductRepository implements ProductRepositoryInterface
 {
@@ -239,5 +240,22 @@ class ProductRepository implements ProductRepositoryInterface
 
         $product->final_price = $final_price;
         $product->save();
+    }
+
+    public function filterProducts($request)
+    {
+
+        $products = app(Pipeline::class)
+
+            ->send(Product::query())
+
+            ->through([
+                Title::class,
+            ])
+
+            ->thenReturn()
+            ->paginate(7);
+
+        return $products;
     }
 }
