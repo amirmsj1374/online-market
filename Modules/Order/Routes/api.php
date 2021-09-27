@@ -1,9 +1,8 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Modules\Order\Http\Controllers\Api\V1\OrderController;
-use Modules\Order\Http\Controllers\CartController;
+use Modules\Order\Http\Controllers\Api\V1\CartController;
 
 /*
 |--------------------------------------------------------------------------

@@ -3,7 +3,7 @@
 namespace Modules\Order\Facades;
 
 use Imanghafoori\SmartFacades\Facade;
-use Modules\Auth\Http\Responses\VueResponses;
+use Modules\Order\Http\Responses\VueResponses;
 
 class ResponderFacade extends Facade
 {

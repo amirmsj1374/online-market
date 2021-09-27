@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\Product\Entities\Product;
 use Illuminate\Pipeline\Pipeline;
+use Illuminate\Support\Facades\Log;
 use Modules\Discount\Entities\Discount;
 use Modules\Product\QueryFilter\Title;
 use Modules\User\QueryFilter\Name;
@@ -108,7 +109,7 @@ class DiscountController extends Controller
 
     private function createValidate($request)
     {
-
+       
         $request->request->set('amount', str_replace(',', '', $request->amount));
         $request->request->set('amount', str_replace('%', '', $request->amount));
         $request->request->set('maxDiscount', str_replace(',', '', $request->maxDiscount));
@@ -127,8 +128,8 @@ class DiscountController extends Controller
             'limit' => 'boolean',
             'type' => 'required',
             'selected' => 'nullable',
-            'beginning' => 'required|string',
-            'expiration' => 'required|string',
+            'beginning' => 'required',
+            'expiration' => 'required',
         ]);
     }
 

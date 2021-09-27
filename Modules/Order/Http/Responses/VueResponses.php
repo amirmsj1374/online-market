@@ -13,5 +13,11 @@ class VueResponses
             'items' => $order
         ], Response::HTTP_OK);
     }
-   
+
+    public function create()
+    {
+        return response()->json([
+            'cart' => \Cart::session(auth()->id())->getContent()
+        ], Response::HTTP_OK);
+    }
 }

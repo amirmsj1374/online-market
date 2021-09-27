@@ -1,11 +1,12 @@
 <?php
 
-namespace Modules\Order\Http\Controllers;
+namespace Modules\Order\Http\Controllers\Api\V1;
 
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
+use Modules\Order\Facades\ResponderFacade;
 use Modules\Product\Entities\Product;
 
 class CartController extends Controller
@@ -27,12 +28,18 @@ class CartController extends Controller
     {
 
         \Cart::session(auth()->id())->clear();
-        $product = Product::find($request->product_id); // assuming you have a Product model with id, name, description & price
-        $rowId = '#' . str_pad(auth()->id(), 8, "0", STR_PAD_LEFT) . uniqid(); // generate a unique() row ID
+
+        foreach ($request->products as $item) {
+
+            $product = Product::find($item['id']);
+
+          
+            $rowId = '#' . str_pad($product->id, 8, "0", STR_PAD_LEFT) . uniqid(); // generate a unique() row ID
+          
 
 
-        foreach ($request->products as $product) {
-            $product = Product::find($product['id']);
+            $priceWithOutTax = $product->tax_status ? $product->final_price / 1.09 : $product->final_price;
+            $discount = $product->price - $priceWithOutTax;
 
             // add the product to cart
             \Cart::session(auth()->id())->add(array(
@@ -40,15 +47,16 @@ class CartController extends Controller
                 'name' => $product->title,
                 'price' => $product->final_price,
                 'quantity' => 1,
-                'attributes' => array(),
+                'attributes' => array(
+                    'price' => $product->price,
+                    'tax' => $product->tax_status ?: 1.09,
+                    'discount' => $discount,
+                ),
                 'associatedModel' => $product
             ));
         }
 
-
-        Log::info([
-            'items of cart' => \Cart::session(auth()->id())->getContent()
-        ]);
+        return ResponderFacade::create();
     }
 
     /**

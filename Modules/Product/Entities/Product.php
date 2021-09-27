@@ -61,6 +61,8 @@ class Product extends Model implements HasMedia
         $this->addMediaCollection('product-gallery');
     }
 
+
+
     /**
      * Return the sluggable configuration array for this model.
      *
