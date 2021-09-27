@@ -62,4 +62,10 @@ class ProductController extends Controller
             }
         }
     }
+
+    public function filterProducts(Request $request)
+    {
+        $products = ProductRepositoryFacade::filterProducts($request);
+        return ResponderFacade::filterProducts($products);
+    }
 }

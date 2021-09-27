@@ -51,4 +51,10 @@ class VueResponses
             'message' => 'محصول با موفقیت حذف شد'
         ], Response::HTTP_OK);
     }
+    public function filterProducts($products)
+    {
+        return response()->json([
+            'product' => $products,
+        ], Response::HTTP_OK);
+    }
 }

@@ -3,6 +3,8 @@
 namespace Modules\Category\Http\Controllers\Api\V1;
 
 use AliBayat\LaravelCategorizable\Category;
+use Illuminate\Http\Request;
+use Illuminate\Pipeline\Pipeline;
 use Illuminate\Routing\Controller;
 use Modules\Category\Facades\ResponderFacade;
 use Modules\Category\Http\Requests\CreateRequest;
@@ -67,5 +69,19 @@ class CategoryController extends Controller
 
             return  ResponderFacade::destroyFailed();
         }
+    }
+
+    public function filterCategories(Request $request)
+    {
+        $categories = app(Pipeline::class)
+
+            ->send(Category::query())
+
+            ->through([])
+
+            ->thenReturn()
+            ->paginate(7);
+
+        return ResponderFacade::filtercategories($categories);
     }
 }

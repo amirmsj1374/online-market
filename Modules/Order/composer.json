@@ -1,6 +1,9 @@
 {
     "name": "nwidart/order",
     "description": "",
+    "require": {
+        "darryldecode/cart": "^4.2"
+    },
     "authors": [
         {
             "name": "Nicolas Widart",

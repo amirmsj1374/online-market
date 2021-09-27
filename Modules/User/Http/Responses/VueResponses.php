@@ -16,7 +16,7 @@ class VueResponses
             Response::HTTP_OK
         );
     }
- 
+
     public function createUserSuccess()
     {
         return response()->json([
@@ -44,5 +44,12 @@ class VueResponses
         return response()->json([
             'message' => 'کاربر مورد نظر با موفقیت حذف شد'
         ]);
+    }
+
+    public function filterUsers($users)
+    {
+        return response()->json([
+            'user' => $users
+        ], Response::HTTP_OK);
     }
 }

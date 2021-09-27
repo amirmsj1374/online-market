@@ -35,4 +35,10 @@ class VueResponses
             'message' => 'اطلاعات وارد شده صحیح نمی باشد'
         ], Response::HTTP_NOT_FOUND);
     }
+    public function filterCategories($categories)
+    {
+        return response()->json([
+            'category' => $categories
+        ], Response::HTTP_OK);
+    }
 }
