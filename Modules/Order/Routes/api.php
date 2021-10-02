@@ -17,4 +17,5 @@ use Modules\Order\Http\Controllers\Api\V1\CartController;
 Route::prefix('/v1/order')->name('order.')->group(function () {
     Route::get('/', [OrderController::class, 'index'])->name('all');
     Route::post('/create', [CartController::class, 'create'])->name('create');
+    Route::post('/update', [CartController::class, 'update'])->name('update');
 });

@@ -33,13 +33,19 @@ class CartController extends Controller
 
             $product = Product::find($item['id']);
 
-          
+
             $rowId = '#' . str_pad($product->id, 8, "0", STR_PAD_LEFT) . uniqid(); // generate a unique() row ID
-          
+
 
 
             $priceWithOutTax = $product->tax_status ? $product->final_price / 1.09 : $product->final_price;
             $discount = $product->price - $priceWithOutTax;
+
+            Log::info([
+                'product' . $item['id'] => $discount,
+                '$priceWithOutTax'  => $priceWithOutTax,
+                'final_price'  =>  $product->final_price
+            ]);
 
             // add the product to cart
             \Cart::session(auth()->id())->add(array(
@@ -56,7 +62,7 @@ class CartController extends Controller
             ));
         }
 
-        return ResponderFacade::create();
+        return ResponderFacade::returnCartItems();
     }
 
     /**
@@ -95,9 +101,16 @@ class CartController extends Controller
      * @param int $id
      * @return Renderable
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        \Cart::session(auth()->id())->update($request->rowId, [
+            'quantity' => array(
+                'relative' => false,
+                'value' => $request->quantity,
+            ),
+        ]);
+
+        return ResponderFacade::returnCartItems();
     }
 
     /**
