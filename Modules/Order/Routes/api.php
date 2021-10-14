@@ -1,8 +1,13 @@
 <?php
 
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Session;
+use Modules\Order\Cart\Cart;
+use Modules\Order\Facades\ResponderFacade;
 use Modules\Order\Http\Controllers\Api\V1\OrderController;
 use Modules\Order\Http\Controllers\Api\V1\CartController;
+use Modules\Product\Entities\Product;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,8 +19,11 @@ use Modules\Order\Http\Controllers\Api\V1\CartController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
+// middleware('auth:api')->
+
 Route::prefix('/v1/order')->name('order.')->group(function () {
-    Route::get('/', [OrderController::class, 'index'])->name('all');
-    Route::post('/create', [CartController::class, 'create'])->name('create');
-    Route::post('/update', [CartController::class, 'update'])->name('update');
+    Route::get('/', [CartController::class, 'index'])->name('all');
+    Route::post('cart/add', [CartController::class, 'addToCart'])->name('cart.add');
+    Route::post('cart/update', [CartController::class, 'updateCart'])->name('cart.update');
 });

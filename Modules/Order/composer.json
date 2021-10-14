@@ -1,9 +1,7 @@
 {
     "name": "nwidart/order",
     "description": "",
-    "require": {
-        "darryldecode/cart": "^4.2"
-    },
+    "require": {},
     "authors": [
         {
             "name": "Nicolas Widart",
@@ -13,9 +11,7 @@
     "extra": {
         "laravel": {
             "providers": [],
-            "aliases": {
-
-            }
+            "aliases": {}
         }
     },
     "autoload": {

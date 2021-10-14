@@ -166,7 +166,7 @@ return [
          * Package Service Providers...
          */
         Tymon\JWTAuth\Providers\LaravelServiceProvider::class, // this is related to Auth Module
-
+        Modules\Order\Cart\CartServiceProvider::class,
         /*
          * Application Service Providers...
          */
@@ -175,7 +175,6 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        Darryldecode\Cart\CartServiceProvider::class
 
 
     ],
@@ -230,11 +229,8 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-
-        // cart
-        'Cart' => Darryldecode\Cart\Facades\CartFacade::class
-
-
+        //custome
+        'Cart' => Modules\Order\Cart\Cart::class,
     ],
 
 ];
