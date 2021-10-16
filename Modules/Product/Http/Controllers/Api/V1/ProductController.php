@@ -4,6 +4,7 @@ namespace Modules\Product\Http\Controllers\Api\V1;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Log;
 use Modules\Product\Entities\Product;
 use Modules\Product\Http\Requests\ProductRequest;
 use Modules\Product\Facades\ProductRepositoryFacade;
@@ -25,6 +26,9 @@ class ProductController extends Controller
 
     public function create(ProductRequest $request)
     {
+        Log::info([
+            'request all' => $request->all()
+        ]);
         ProductRepositoryFacade::create($request);
         return ResponderFacade::createSuccess();
     }

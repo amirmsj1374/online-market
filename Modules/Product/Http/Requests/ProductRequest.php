@@ -3,6 +3,7 @@
 namespace Modules\Product\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Log;
 
 class ProductRequest extends FormRequest
 {
@@ -13,10 +14,7 @@ class ProductRequest extends FormRequest
         'final_price'  => 'nullable',
         'height'       => 'nullable',
         'length'       => 'nullable',
-        'min_quantity' => 'nullable',
-        'price'        => 'nullable',
         'publish'      => 'nullable|boolean',
-        'quantity'     => 'nullable',
         'sku'          => 'nullable|string',
         'tags'         => 'nullable',
         'tax_status'   => 'nullable|boolean',
@@ -24,6 +22,10 @@ class ProductRequest extends FormRequest
         'virtual'      => 'nullable|boolean',
         'weight'       => 'nullable',
         'width'        => 'nullable',
+        'inventories'  => 'nullable',
+        // 'min_quantity' => 'nullable',
+        // 'quantity'     => 'nullable',
+        // 'price'        => 'nullable',
     ];
     /**
      * Get the validation rules that apply to the request.
@@ -32,7 +34,18 @@ class ProductRequest extends FormRequest
      */
     public function rules()
     {
-        $this->request->set('price', str_replace(',', '', $this->price));
+        foreach ($this->inventories as $key => $inventory) {
+
+            $inventories[$key] = json_decode($inventory, true);
+            $inventories[$key]['price'] = str_replace(',', '', $inventories[$key]['price']);
+        }
+
+        $this->request->set('inventories', $inventories);
+        // Log::info([
+        //     'key invne' => $this->request->input('inventories')
+        // ]);
+        // $this->request->all()['inventories'][$key]['price'] = str_replace(',', '', json_decode($inventory, true)['price']);
+        // $this->request->set('inventories.*' . '[price]', str_replace(',', '', json_decode($inventory, true)['price']));
 
         if ($this->hasFile('images') && count($this->images) > 0) {
             return array_merge($this->validationArray, ['images.*' => 'required|mimes:jpg,jpeg,png,bmp|max:2000']);

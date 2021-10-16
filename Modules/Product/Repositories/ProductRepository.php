@@ -16,13 +16,13 @@ class ProductRepository implements ProductRepositoryInterface
     public function index()
     {
         $product = Product::with('categories', 'media')->orderBy('id', 'desc')->paginate(5);
-        return $this->AddExtraDataToProductCollection($product);
+        return $this->addExtraDataToProductCollection($product);
     }
 
     public function show(Product $product)
     {
         $product->load('downloads');
-        return $this->AddExtraDataToProductCollection($product, true);
+        return $this->addExtraDataToProductCollection($product, true);
     }
 
     public function create($request)
@@ -63,14 +63,8 @@ class ProductRepository implements ProductRepositoryInterface
             $this->attachAttributesToProduct($request->input('attributes'), $product);
         }
 
-        if ($request->tax_status == 0) {
-            $final_price = $request->price;
-        } else {
-            $final_price = $request->price * 1.09;
-        }
-        $product->update([
-            'final_price' => $final_price
-        ]);
+        $this->addInventoryForProduct($request->inventories, $product, $request->tax_status);
+
         return $product;
     }
 
@@ -177,7 +171,7 @@ class ProductRepository implements ProductRepositoryInterface
         });
     }
 
-    public function AddExtraDataToProductCollection($productData, $single = false)
+    public function addExtraDataToProductCollection($productData, $single = false)
     {
 
         if ($single) {
@@ -220,6 +214,25 @@ class ProductRepository implements ProductRepositoryInterface
 
 
         return $productData;
+    }
+
+    public function addInventoryForProduct($inventories, $product, $tax_status)
+    {
+        foreach ($inventories as $inventory) {
+            if ($tax_status == 0) {
+                $final_price = $inventory['price'];
+            } else {
+                $final_price = $inventory['price'] * 1.09;
+            }
+            $product->inventories()->create([
+                'color' => $inventory['color'],
+                'size' => $inventory['size'],
+                'final_price' => $final_price,
+                'min_quantity' => $inventory['min_quantity'],
+                'price' => $inventory['price'],
+                'quantity' => $inventory['quantity'],
+            ]);
+        }
     }
 
     public function changeFinalPrice($product, $newPrice, $tax_status)

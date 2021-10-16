@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateOrderItemsTable extends Migration
+class CreateInventoriesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,18 +13,19 @@ class CreateOrderItemsTable extends Migration
      */
     public function up()
     {
-        Schema::create('order_items', function (Blueprint $table) {
+        Schema::create('inventories', function (Blueprint $table) {
             $table->id();
 
-           $table->unsignedBigInteger('product_id');
+            $table->unsignedBigInteger('product_id');
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
-            $table->unsignedBigInteger('order_id');
-            $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
-
-            $table->decimal('price', 11, 2)->nullable();
-            $table->string('quantity');
             $table->string('color')->nullable();
             $table->string('size')->nullable();
+            $table->unsignedBigInteger('quantity')->nullable();
+            $table->unsignedBigInteger('min_quantity')->nullable();
+            $table->unsignedDecimal('price', 15, 2)->nullable();
+            $table->unsignedDecimal('final_price', 15, 2)->nullable();
+            $table->unsignedDecimal('discount', 14, 2)->nullable();
+
             $table->timestamps();
         });
     }
@@ -36,6 +37,6 @@ class CreateOrderItemsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('order_items');
+        Schema::dropIfExists('inventories');
     }
 }

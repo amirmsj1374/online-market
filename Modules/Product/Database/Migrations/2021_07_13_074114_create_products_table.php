@@ -28,12 +28,6 @@ class CreateProductsTable extends Migration
             $table->unsignedTinyInteger('downloadable')->default(0); // 0 means it's not downloadable
             $table->unsignedTinyInteger('publish')->default(0); // 0 means it is not published yet
 
-            $table->unsignedBigInteger('quantity')->nullable();
-            $table->unsignedBigInteger('min_quantity')->nullable();
-            $table->unsignedDecimal('price', 15, 2)->nullable();
-            $table->unsignedDecimal('final_price', 15, 2)->nullable();
-
-
             //transport part
             $table->integer('length')->nullable();
             $table->integer('width')->nullable();

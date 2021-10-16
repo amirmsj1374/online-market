@@ -19,14 +19,10 @@ class Product extends Model implements HasMedia
         'body',
         'description',
         'downloadable',
-        'final_price',
         'height',
         'imagesUrl',
         'length',
-        'min_quantity',
-        'price',
         'publish',
-        'quantity',
         'related_products',
         'slug',
         'sku',
@@ -77,11 +73,6 @@ class Product extends Model implements HasMedia
         ];
     }
 
-    /**
-     * attributes
-     *
-     * @return void
-     */
     public function attributes()
     {
         return $this->belongsToMany(Attribute::class)
@@ -89,11 +80,11 @@ class Product extends Model implements HasMedia
             ->withPivot(['value_id']);
     }
 
-    /**
-     * downloads
-     *
-     * @return void
-     */
+    public function inventories()
+    {
+        return $this->hasMany(Inventory::class);
+    }
+
     public function downloads()
     {
         return $this->hasMany(Download::class);
