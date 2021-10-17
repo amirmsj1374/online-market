@@ -23,6 +23,7 @@ class CreateDiscountsTable extends Migration
             $table->text('description')->nullable();
             $table->boolean('select_all')->default(1);
             $table->boolean('limit')->default(false);
+            $table->boolean('status')->default(false);
             $table->string('type');
             $table->json('selected')->nullable(); // data can be array of categories or products or users
             $table->dateTime('beginning');

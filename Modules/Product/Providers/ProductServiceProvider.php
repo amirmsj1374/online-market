@@ -5,6 +5,7 @@ namespace Modules\Product\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\File;
 use Modules\Product\Facades\ProductRepositoryFacade;
 use Modules\Product\QueryFilters\Filter;
 use Modules\Product\QueryFilters\Title;
@@ -34,7 +35,7 @@ class ProductServiceProvider extends ServiceProvider
         $this->registerConfig();
         $this->registerViews();
         $this->loadMigrationsFrom(module_path($this->moduleName, 'Database/Migrations'));
-
+        $this->loadHelper();
         // Response::macro('success', function ($message, $data) {
         //     return ['status' => 200, 'message' => $message, 'product' => $data];
         // });
@@ -42,7 +43,7 @@ class ProductServiceProvider extends ServiceProvider
         // Response::macro('fail', function ($message) {
         //     return ['message' => $message];
         // });
-
+       
     }
 
     /**
@@ -126,5 +127,12 @@ class ProductServiceProvider extends ServiceProvider
             }
         }
         return $paths;
+    }
+
+    public function loadHelper()
+    {
+        if (File::exists(module_path($this->moduleName, 'Http/ProductHelpers.php'))) {
+            require module_path($this->moduleName, 'Http/ProductHelpers.php');
+        }
     }
 }

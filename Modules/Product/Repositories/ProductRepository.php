@@ -4,24 +4,27 @@ namespace Modules\Product\Repositories;
 
 use AliBayat\LaravelCategorizable\Category;
 use Illuminate\Pipeline\Pipeline;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Modules\Product\Entities\Attribute;
 use Modules\Product\Entities\Product;
 use Modules\Product\Interfaces\ProductRepositoryInterface;
 use Illuminate\Support\Facades\Storage;
 use Modules\Discount\Entities\Discount;
+use Modules\Product\Entities\Inventory;
 use Modules\Product\QueryFilter\Title;
 
 class ProductRepository implements ProductRepositoryInterface
 {
     public function index()
     {
-        $product = Product::with('categories', 'media')->orderBy('id', 'desc')->paginate(5);
+        $product = Product::with('categories', 'media', 'inventories')->orderBy('id', 'desc')->paginate(5);
         return $this->addExtraDataToProductCollection($product);
     }
 
     public function show(Product $product)
     {
-        $product->load('downloads');
+        $product->load('downloads', 'inventories');
         return $this->addExtraDataToProductCollection($product, true);
     }
 
@@ -70,6 +73,7 @@ class ProductRepository implements ProductRepositoryInterface
 
     public function update($request, $product)
     {
+        // Log::info(['requaest all' => $request->all()]);
 
         if ($product->imagesUrl == null) {
 
@@ -78,7 +82,6 @@ class ProductRepository implements ProductRepositoryInterface
 
                 $request->request->add(['imagesUrl' =>  $match[1]]); //add request
             }
-
         } else {
             //check if image on body was inserted
             if (strpos($request->body, 'img') !== false) {
@@ -120,12 +123,26 @@ class ProductRepository implements ProductRepositoryInterface
             $this->attachAttributesToProduct($request->input('attributes'), $product);
         }
 
-        if ($request->input('price') != $product->price) {
-            $this->changeFinalPrice($product, $request->price, $request->tax_status);
+
+        foreach ($request->inventories as $inventory) {
+            $oldInventory = Inventory::find($inventory['id']);
+            $result = changeFinalPrice($oldInventory, $inventory, $request->tax_status);
+            $oldInventory->update([
+                'color' => $inventory['color'],
+                'size' => $inventory['size'],
+                'final_price' => $result['final_price'],
+                'discount' => $result['discount'],
+                'min_quantity' => $inventory['min_quantity'],
+                'price' => $inventory['price'],
+                'quantity' => $inventory['quantity'],
+            ]);
         }
+
 
         return $product;
     }
+
+
 
     public function syncTags($request, $product)
     {
@@ -154,7 +171,7 @@ class ProductRepository implements ProductRepositoryInterface
     }
 
 
-    public function attachAttributesToProduct($attributes, $product): void
+    public function attachAttributesToProduct($attributes, $product)
     {
 
         $collection = collect($attributes);
@@ -167,7 +184,10 @@ class ProductRepository implements ProductRepositoryInterface
 
             $attr_value = $attr->values()->firstOrCreate(['value' => json_decode($item, true)['value']]);
 
+         
+            $product->attributes()->detach($attr->id, ['value_id' => $attr_value->id]);
             $product->attributes()->attach($attr->id, ['value_id' => $attr_value->id]);
+          
         });
     }
 
@@ -209,7 +229,6 @@ class ProductRepository implements ProductRepositoryInterface
             $productData['productTags'] = $productData->tags->pluck('name');
 
             $productData['category'] =  $productData->categories->pluck('id');
-
         }
 
 
@@ -235,24 +254,8 @@ class ProductRepository implements ProductRepositoryInterface
         }
     }
 
-    public function changeFinalPrice($product, $newPrice, $tax_status)
+    public function updateInventoryForProduct($inventories, $product, $tax_status)
     {
-        $final_price = $newPrice;
-        $discounts = Discount::where('status', 1)->get();
-        foreach ($discounts as $discount) {
-            if ($discount->select_all === 1) {
-                $final_price = calculatePriceWithTaxAndDiscount($newPrice, $product->price, $discount->amount, $discount->measure);
-            } elseif (in_array($product->id, json_decode($discount->selected))) {
-                $final_price = calculatePriceWithTaxAndDiscount($newPrice, $product->price, $discount->amount, $discount->measure);
-            }
-        }
-
-        if ($tax_status === 1) {
-            $final_price = $final_price * 1.09;
-        }
-
-        $product->final_price = $final_price;
-        $product->save();
     }
 
     public function filterProducts($request)

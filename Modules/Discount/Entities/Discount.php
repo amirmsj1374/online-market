@@ -26,6 +26,9 @@ class Discount extends Model
     ];
     public $timestamps = false;
 
+    protected $casts = [
+        'selected' => 'array',
+    ];
     protected static function newFactory()
     {
         // return \Modules\Discount\Database\factories\DiscountFactory::new();

@@ -88,11 +88,11 @@ class DiscountController extends Controller
             'description' => $request->description,
             'limit' => $request->limit,
             'type' => $request->type,
-            // 'selected' => $request->selected,
+            'selected' => $request->selected,
             'select_all' => $request->selectAll,
             'beginning' => $request->beginning,
             'expiration' => $request->expiration,
-            // 'status' => true,
+            'status' => false,
         ]);
 
         // update selected column by given ID of related table

@@ -26,9 +26,6 @@ class ProductController extends Controller
 
     public function create(ProductRequest $request)
     {
-        Log::info([
-            'request all' => $request->all()
-        ]);
         ProductRepositoryFacade::create($request);
         return ResponderFacade::createSuccess();
     }

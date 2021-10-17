@@ -3976,16 +3976,16 @@
         },
         {
             "name": "spatie/laravel-medialibrary",
-            "version": "9.7.5",
+            "version": "9.8.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-medialibrary.git",
-                "reference": "56cdcac0cbdbfaae227bf53f5d2a4ac6cbd1811a"
+                "reference": "b87d7695bb190f5947ef6c892d0a167e6e1c03f9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-medialibrary/zipball/56cdcac0cbdbfaae227bf53f5d2a4ac6cbd1811a",
-                "reference": "56cdcac0cbdbfaae227bf53f5d2a4ac6cbd1811a",
+                "url": "https://api.github.com/repos/spatie/laravel-medialibrary/zipball/b87d7695bb190f5947ef6c892d0a167e6e1c03f9",
+                "reference": "b87d7695bb190f5947ef6c892d0a167e6e1c03f9",
                 "shasum": ""
             },
             "require": {
@@ -4065,7 +4065,7 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/laravel-medialibrary/issues",
-                "source": "https://github.com/spatie/laravel-medialibrary/tree/9.7.5"
+                "source": "https://github.com/spatie/laravel-medialibrary/tree/9.8.2"
             },
             "funding": [
                 {
@@ -4077,7 +4077,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-10-02T22:40:50+00:00"
+            "time": "2021-10-12T22:33:09+00:00"
         },
         {
             "name": "spatie/laravel-sluggable",
