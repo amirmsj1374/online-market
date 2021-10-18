@@ -184,10 +184,10 @@ class ProductRepository implements ProductRepositoryInterface
 
             $attr_value = $attr->values()->firstOrCreate(['value' => json_decode($item, true)['value']]);
 
-         
+
             $product->attributes()->detach($attr->id, ['value_id' => $attr_value->id]);
             $product->attributes()->attach($attr->id, ['value_id' => $attr_value->id]);
-          
+
         });
     }
 

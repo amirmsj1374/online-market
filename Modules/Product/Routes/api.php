@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Modules\Product\Http\Controllers\Api\V1\InventoryController;
 use Modules\Product\Http\Controllers\Api\V1\ProductController;
 
 /*
@@ -28,4 +29,8 @@ Route::prefix('/v1/product')->group(function () {
     Route::post('/change/status/{product}', [ProductController::class, 'changeStatus'])->name('change.status');
 
     Route::post('/media/delete/{product}', [ProductController::class, 'deleteMedia'])->name('media.delete');
+});
+
+Route::prefix('/v1/inventory')->group(function () {
+    Route::get('/filter', [InventoryController::class, 'filter'])->name('inventory.filter');
 });

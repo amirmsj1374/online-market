@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
 use Modules\Order\Cart\Cart;
+use Modules\Product\Entities\Inventory;
 // use Modules\Order\Cart\Cart;
 use Modules\Product\Entities\Product;
 
@@ -30,7 +31,7 @@ class CartController extends Controller
                 $discount = $product['price'] - $priceWithOutTax;
 
                 //check qty for product
-                //check if product have price 
+                //check if product have price
 
                 // add the product to cart
                 // $cart = \Cart::session(auth()->id())->add(array(
@@ -88,7 +89,7 @@ class CartController extends Controller
             // ]);
 
             // return ResponderFacade::update();
-        
+
             // Cart::setTax($rowId, 9);
             Cart::setGlobalTax(9);
             Cart::setGlobalDiscount(0);
@@ -115,7 +116,7 @@ class CartController extends Controller
             // ]);
 
         }
-    
+
     */
 
     /*
@@ -159,28 +160,37 @@ class CartController extends Controller
             ]);
         */
 
+    public function index()
+    {
+        # code...
+    }
+
     public function addToCart(Request $request)
     {
 
-        $products = $request->products;
+        // cart should be clear for this user every time before make new cart
+        // Cart::delete($item);
 
-        foreach ($products as $item) {
-            $product = Product::find($item['id']);
-            $priceWithOutTax = $product['tax_status'] ? $product['final_price'] / 1.09 : $product['final_price'];
-            $discount = $product['price'] - $priceWithOutTax;
+        $inventories = $request->inventories;
 
+        foreach ($inventories as $item) {
+            $inventory = Inventory::find($item['id']);
+            $product = Product::find($item['product_id']);
 
-            if (!Cart::has($product)) {
+            if (!Cart::has($inventory)) {
                 Cart::add(
                     [
                         'name' => $product->title,
-                        'price' => $product->price,
+                        'price' => $inventory->price,
+                        'final_price' => $inventory->final_price,
+                        'discount' =>  $inventory->discount,
+                        'tax' => $product->tax_status ? 0.09 : 0,
                         'quantity' => 1,
-                        'inventory' => 5,
-                        'discount' => $discount,
-                        'tax' => $product['tax_status'] ?: 1.09,
+                        'max' => $inventory->quantity,
+                        'color' =>  $inventory->color,
+                        'size' =>  $inventory->size,
                     ],
-                    $product
+                    $inventory
                 );
             }
         }
@@ -198,11 +208,10 @@ class CartController extends Controller
         //Cart::count()
         // qty not equal with zero
 
-        $product = Product::find($request->id);
-        Log::info(['Cart::has($product)' => Cart::has($product)]);
-        if (Cart::has($product)) {
+        $inventory = Inventory::find($request->rowId);
+        if (Cart::has($inventory)) {
             Cart::update(
-                $product,
+                $inventory,
                 [
                     'quantity' =>  $request->orderQty,
                 ]
@@ -210,7 +219,6 @@ class CartController extends Controller
         }
 
 
-        Log::info(['cart items' => Cart::all()]);
         return response()->json([
             'cart' => Cart::all()
         ]);
