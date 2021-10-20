@@ -9,30 +9,31 @@ use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Cache;
 use Modules\Order\Entities\Cart;
 
+use function PHPUnit\Framework\isEmpty;
+
 class CartService
 {
 
     protected $cart;
     protected $cartType;
-
-    // protected $name = 'default';
+    protected $userKey;
+    protected $cartItems;
 
     public function __construct()
-    {
-        $this->cart = Cache::get('cart') ?? collect([]);
+    {        $this->cartItems = collect([]);
+
+    // $this->cart = Cache::get('cart') ?? collect([]);
     }
 
-    //shoud return type of database or cashe to 
-    public function cartStoreRecognizer()
-    { 
-        auth()->check()  ? $this->cartType ='database' : 'cache';
-        
-        // check if user auth store cart to data base or store to cashe 
-        if ($this->cartType==='database') {
-            $this->cart = Cart::where('identifier',auth()->id())->get() ?? collect([]);
-        } else {
-            $this->cart = Cache::get('cart') ?? collect([]);
-        }
+    public function createUserKey()
+    {
+        $this->userKey = $this->userKey ?? 'cart-' . Str::random(10);
+    }
+
+    public function identifyUser($userKey = null)
+    {
+       
+        $this->cart = Cache::get('cart-' . $userKey) ?? collect([]);
     }
 
     /**
@@ -42,6 +43,7 @@ class CartService
      */
     public function add(array $value, $obj = null)
     {
+
 
         if (!is_null($obj) && $obj instanceof Model) {
 
@@ -53,38 +55,45 @@ class CartService
         } elseif (!isset($value['id'])) {
 
             $value = array_merge($value, [
-                'id' => Str::random(10)
+                'id' => Str::random(10),
             ]);
         }
 
 
+        // //cartItem is collection 
+        // $cartItem = collect([]);
+
+        $this->cartItems->put($value['id'], $value);
 
         //cart is collection 
-        $this->cart->put($value['id'], $value);
-        
-        Cache::put('cart', $this->cart, now()->addMinutes(60));
+        $this->cart->put($this->userKey, $this->cartItems);
+
+
+
+        Cache::put('cart-' . $this->userKey, $this->cart, now()->addMinutes(60));
+
         return $this;
     }
 
     public function update($key, $options)
     {
-        Log::info(['get' => $this->get($key, false)]);
-        $item = collect($this->get($key, false));
+
+        $cartItem = collect($this->get($key, false));
 
         if (is_numeric($options)) {
-            $item = $item->merge([
-                'quantity' => $item['quantity'] + $options
+            $cartItem = $cartItem->merge([
+                'quantity' => $cartItem['quantity'] + $options
             ]);
         }
 
         // add color and size
         if (is_array($options)) {
-            $item = $item->merge([
+            $cartItem = $cartItem->merge([
                 'quantity' => $options['quantity']
             ]);
         }
 
-        $this->add($item->toArray());
+        $this->add($cartItem->toArray());
 
         return $this;
     }
@@ -97,6 +106,10 @@ class CartService
      */
     public function has($key)
     {
+
+        $this->createUserKey();
+        $this->identifyUser($this->userKey);
+
         if ($key instanceof Model) {
             return !is_null(
                 $this->cart->where('subject_id', $key->id)->where('subject_type', get_class($key))->first()
@@ -117,9 +130,11 @@ class CartService
 
     public function get($key, $withRelationship = true)
     {
+        Log::info(['cart data' => $this->cart]);
         $item = $key instanceof Model
             ? $this->cart->where('subject_id', $key->id)->where('subject_type', get_class($key))->first()
             : $this->cart->firstWhere('id', $key);
+        Log::info(['get item' => $item]);
         return $withRelationship ? $this->withRelationshipIfExist($item) : $item;
     }
 
@@ -144,7 +159,7 @@ class CartService
                 return $key != $item['id'];
             });
 
-            //            session()->put($this->name , $this->cart);
+            // session()->put($this->name , $this->cart);
             // $this->storeCookie();
 
             return true;
