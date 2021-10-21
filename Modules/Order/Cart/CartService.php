@@ -3,37 +3,39 @@
 namespace Modules\Order\Cart;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Modules\Order\Entities\Cart;
-
-use function PHPUnit\Framework\isEmpty;
 
 class CartService
 {
 
     protected $cart;
-    protected $cartType;
-    protected $userKey;
+    protected $userCartKey;
     protected $cartItems;
 
     public function __construct()
-    {        $this->cartItems = collect([]);
-
-    // $this->cart = Cache::get('cart') ?? collect([]);
+    {
+        $this->cartItems = collect([]);
     }
 
-    public function createUserKey()
+    public function createUserCartKey($userCartKey)
     {
-        $this->userKey = $this->userKey ?? 'cart-' . Str::random(10);
+        if ($userCartKey || $this->userCartKey) {
+            if ($userCartKey) {
+                $this->userCartKey = $userCartKey;
+            }
+        } else {
+            $this->userCartKey = 'cart-' . Str::random(10);
+        }
     }
 
-    public function identifyUser($userKey = null)
+    public function identifyUser($userCartKey = null)
     {
-       
-        $this->cart = Cache::get('cart-' . $userKey) ?? collect([]);
+        $this->cart = Cache::get('cart-' . $userCartKey) ?? collect([]);
+        Log::info(['$this->cart' => $this->cart]);
     }
 
     /**
@@ -60,26 +62,26 @@ class CartService
         }
 
 
-        // //cartItem is collection 
-        // $cartItem = collect([]);
+        // collection 
 
         $this->cartItems->put($value['id'], $value);
-
-        //cart is collection 
-        $this->cart->put($this->userKey, $this->cartItems);
+        $this->cart->put($this->userCartKey, $this->cartItems);
 
 
 
-        Cache::put('cart-' . $this->userKey, $this->cart, now()->addMinutes(60));
+        Cache::put('cart-' . $this->userCartKey, $this->cart, now()->addMinutes(60));
 
         return $this;
     }
 
     public function update($key, $options)
     {
-
+        Log::info(['$key ' => $key]);
+        Log::info(['options' => $options]);
         $cartItem = collect($this->get($key, false));
 
+        Log::info(['$cartItem' => $cartItem]);
+        
         if (is_numeric($options)) {
             $cartItem = $cartItem->merge([
                 'quantity' => $cartItem['quantity'] + $options
@@ -104,11 +106,11 @@ class CartService
      * @param  mixed $key
      * @return void
      */
-    public function has($key)
+    public function has($key, $userCartKey =  null)
     {
 
-        $this->createUserKey();
-        $this->identifyUser($this->userKey);
+        $this->createUserCartKey($userCartKey);
+        $this->identifyUser($this->userCartKey);
 
         if ($key instanceof Model) {
             return !is_null(
@@ -130,22 +132,26 @@ class CartService
 
     public function get($key, $withRelationship = true)
     {
-        Log::info(['cart data' => $this->cart]);
+
         $item = $key instanceof Model
-            ? $this->cart->where('subject_id', $key->id)->where('subject_type', get_class($key))->first()
-            : $this->cart->firstWhere('id', $key);
-        Log::info(['get item' => $item]);
+            ? $this->cart[$this->userCartKey]->where('subject_id', $key->id)->where('subject_type', get_class($key))->first()
+            : $this->cart[$this->userCartKey]->firstWhere('id', $key);
+
         return $withRelationship ? $this->withRelationshipIfExist($item) : $item;
     }
 
     public function all()
     {
-        $cart = $this->cart;
-        $cart = $cart->map(function ($item) {
+
+        $cart = $this->cart[$this->userCartKey]->map(function ($item) {
+
             return $this->withRelationshipIfExist($item);
         });
 
-        return $cart;
+        return [
+            'cart' => $cart,
+            'userCartKey' => $this->userCartKey
+        ];
     }
 
     public function delete($key)
