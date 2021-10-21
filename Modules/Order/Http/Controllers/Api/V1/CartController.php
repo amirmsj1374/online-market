@@ -51,8 +51,9 @@ class CartController extends Controller
         }
 
         return response()->json([
-            'cart' => Cart::all()
+            'data' => Cart::all()
         ]);
+        
         // }
 
         //delete all cart data
@@ -65,28 +66,37 @@ class CartController extends Controller
     public function updateCart(Request $request)
     {
 
-        Log::info(['$re' =>  $request->all()]);
+        Log::info(['is_null' => Cart::identifyUser($request->userCartKey)]);
+        Log::info(['isEmpty' => Cart::identifyUser($request->userCartKey)]);
+        if (is_null(Cart::identifyUser($request->userCartKey)) || Cart::identifyUser($request->userCartKey)->isEmpty()) {
+            return response()->json([
+                'message' => 'اطلاعات سبد خرید شما نامعتبر است سبد خرید جدید ایجاد کنید'
+            ],400);
+        }
+
+      
         // check qty  equal  or less then product qty
+
         // Cart::count()
+        //userCartKey
         // qty not equal with zero
 
         $inventory = Inventory::find($request->rowId);
-        Log::info(['$inventory' =>  $inventory]);
-        Log::info(['$has' =>  Cart::has($inventory)]);
+     
+       
 
-
-        if (Cart::has($inventory)) {
-            Cart::update(
-                $inventory,
-                [
-                    'quantity' =>  $request->orderQty,
-                ]
-            );
+        if (Cart::has($inventory,$request->userCartKey)) {
+            // Cart::update(
+            //     $inventory,
+            //     [
+            //         'quantity' =>  $request->orderQty,
+            //     ]
+            // );
         }
 
 
         return response()->json([
-            'cart' => Cart::all()
-        ]);
+            'data' => Cart::all()
+        ],200);
     }
 }
