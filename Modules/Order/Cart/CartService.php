@@ -34,8 +34,7 @@ class CartService
 
     public function identifyUser($userCartKey = null)
     {
-        $this->cart = Cache::get('cart-' . $userCartKey) ?? collect([]);
-        Log::info(['$this->cart' => $this->cart]);
+        return $this->cart = Cache::get('cart-' . $userCartKey) ?? collect([]);
     }
 
     /**
@@ -62,11 +61,10 @@ class CartService
         }
 
 
-        // collection 
+        // collection
 
         $this->cartItems->put($value['id'], $value);
         $this->cart->put($this->userCartKey, $this->cartItems);
-
 
 
         Cache::put('cart-' . $this->userCartKey, $this->cart, now()->addMinutes(60));
@@ -74,34 +72,38 @@ class CartService
         return $this;
     }
 
-    public function update($key, $options)
+    public function update($rowId, $options)
     {
-        Log::info(['$key ' => $key]);
-        Log::info(['options' => $options]);
-        $cartItem = collect($this->get($key, false));
+        // $data = $this->cart->map(function ($object1) {
+        //     return $object1->filter(function ($row) {
+        //         $row['quantity'] = 3;
+        //         Log::info([
+        //             'quantity' =>
+        //             $row['quantity']
+        //         ]);
+        //         return $row;
+        //     });
+        // });
 
-        Log::info(['$cartItem' => $cartItem]);
-        
+        Log::info([
+            'ssssssssssssss' => $this->cart[$this->userCartKey]->$rowId
+        ]);
+
+
         if (is_numeric($options)) {
-            $cartItem = $cartItem->merge([
-                'quantity' => $cartItem['quantity'] + $options
-            ]);
+            $this->cart[$this->userCartKey][$rowId]['quantity'] = $options;
         }
 
         // add color and size
         if (is_array($options)) {
-            $cartItem = $cartItem->merge([
-                'quantity' => $options['quantity']
-            ]);
+            $this->cart[$this->userCartKey][$rowId]['quantity'] = $options['quantity'];
         }
-
-        $this->add($cartItem->toArray());
 
         return $this;
     }
 
     /**
-     * check if product exist on the cart   
+     * check if product exist on the cart
      *
      * @param  mixed $key
      * @return void
@@ -112,15 +114,23 @@ class CartService
         $this->createUserCartKey($userCartKey);
         $this->identifyUser($this->userCartKey);
 
+
+
         if ($key instanceof Model) {
-            return !is_null(
-                $this->cart->where('subject_id', $key->id)->where('subject_type', get_class($key))->first()
-            );
+            if ($this->cart->has($this->userCartKey)) {
+                return !is_null(
+                    $this->cart[$this->userCartKey]->where('subject_id', $key->id)->where('subject_type', get_class($key))->first()
+                );
+            } else {
+                return !is_null(
+                    $this->cart->where('subject_id', $key->id)->where('subject_type', get_class($key))->first()
+                );
+            }
         }
 
-        return !is_null(
-            $this->cart->firstWhere('id', $key)
-        );
+        // return !is_null(
+        //     $this->cart[$this->userCartKey]->firstWhere('id', $key)
+        // );
     }
 
     public function count($key)
