@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Modules\Order\Entities\Cart;
 
+use function PHPSTORM_META\map;
+
 class CartService
 {
 
@@ -74,30 +76,34 @@ class CartService
 
     public function update($rowId, $options)
     {
-        // $data = $this->cart->map(function ($object1) {
-        //     return $object1->filter(function ($row) {
-        //         $row['quantity'] = 3;
-        //         Log::info([
-        //             'quantity' =>
-        //             $row['quantity']
-        //         ]);
-        //         return $row;
-        //     });
-        // });
 
-        Log::info([
-            'ssssssssssssss' => $this->cart[$this->userCartKey]->$rowId
-        ]);
+        
+        $cartItems = $this->cart[$this->userCartKey]->map(function ($cartItems) use ($rowId, $options) {
 
+            if ($cartItems['id'] == $rowId) {
 
-        if (is_numeric($options)) {
-            $this->cart[$this->userCartKey][$rowId]['quantity'] = $options;
-        }
+                //chnage product quantity
+                if (is_numeric($options)) {
+                    $cartItems['quantity'] = $options;
+                }
+                
+                // can update color and size
+                if (is_array($options)) {
+                    $cartItems['quantity'] = $options['quantity'];
+                }
+            }
 
-        // add color and size
-        if (is_array($options)) {
-            $this->cart[$this->userCartKey][$rowId]['quantity'] = $options['quantity'];
-        }
+            return $cartItems;
+        });
+
+      
+
+        unset($this->cart[$this->userCartKey]);
+        Cache::forget($this->userCartKey);
+
+         $this->cart->put($this->userCartKey, $cartItems);
+        Cache::put('cart-' . $this->userCartKey, $this->cart, now()->addMinutes(60));
+
 
         return $this;
     }
