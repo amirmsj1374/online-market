@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Modules\Order\Entities\Cart;
 
-use function PHPSTORM_META\map;
 
 class CartService
 {
@@ -44,16 +43,16 @@ class CartService
      * @param null $obj
      * @return $this
      */
-    public function add(array $value, $obj = null)
+    public function add(array $value, $model = null)
     {
 
 
-        if (!is_null($obj) && $obj instanceof Model) {
+        if (!is_null($model) && $model instanceof Model) {
 
             $value = array_merge($value, [
                 'id' => Str::random(10),
-                'subject_id' => $obj->id,
-                'subject_type' => get_class($obj)
+                'subject_id' => $model->id,
+                'subject_type' => get_class($model)
             ]);
         } elseif (!isset($value['id'])) {
 
@@ -101,7 +100,7 @@ class CartService
         unset($this->cart[$this->userCartKey]);
         Cache::forget($this->userCartKey);
 
-         $this->cart->put($this->userCartKey, $cartItems);
+        $this->cart->put($this->userCartKey, $cartItems);
         Cache::put('cart-' . $this->userCartKey, $this->cart, now()->addMinutes(60));
 
 
@@ -114,7 +113,7 @@ class CartService
      * @param  mixed $key
      * @return void
      */
-    public function has($key, $userCartKey =  null)
+    public function has($model, $userCartKey =  null)
     {
 
         $this->createUserCartKey($userCartKey);
@@ -122,14 +121,14 @@ class CartService
 
 
 
-        if ($key instanceof Model) {
+        if ($model instanceof Model) {
             if ($this->cart->has($this->userCartKey)) {
                 return !is_null(
-                    $this->cart[$this->userCartKey]->where('subject_id', $key->id)->where('subject_type', get_class($key))->first()
+                    $this->cart[$this->userCartKey]->where('subject_id', $model->id)->where('subject_type', get_class($model))->first()
                 );
             } else {
                 return !is_null(
-                    $this->cart->where('subject_id', $key->id)->where('subject_type', get_class($key))->first()
+                    $this->cart->where('subject_id', $model->id)->where('subject_type', get_class($model))->first()
                 );
             }
         }
@@ -139,11 +138,11 @@ class CartService
         // );
     }
 
-    public function count($key)
+    public function count($model)
     {
-        if (!$this->has($key)) return 0;
+        if (!$this->has($model)) return 0;
 
-        return $this->get($key)['quantity'];
+        return $this->get($model)['quantity'];
     }
 
     public function get($key, $withRelationship = true)
@@ -170,19 +169,19 @@ class CartService
         ];
     }
 
-    public function delete($key)
+    public function delete($model)
     {
-        if ($this->has($key)) {
-            $this->cart = $this->cart->filter(function ($item) use ($key) {
-                if ($key instanceof Model) {
-                    return ($item['subject_id'] != $key->id) && ($item['subject_type'] != get_class($key));
+        if ($this->has($model)) {
+            $this->cart = $this->cart->filter(function ($item) use ($model) {
+
+                if ($model instanceof Model) {
+                    return ($item['subject_id'] != $model->id) && ($item['subject_type'] != get_class($model));
                 }
 
-                return $key != $item['id'];
+                return $model != $item['id'];
             });
 
-            // session()->put($this->name , $this->cart);
-            // $this->storeCookie();
+           
 
             return true;
         }
@@ -192,8 +191,8 @@ class CartService
 
     public function flush()
     {
-        $this->cart = collect([]);
-        $this->storeCookie();
+        unset($this->cart[$this->userCartKey]);
+        Cache::forget($this->userCartKey);
 
         return $this;
     }
@@ -217,15 +216,4 @@ class CartService
         return $item;
     }
 
-    public function instance(string $name)
-    {
-        $this->cart = collect(json_decode(request()->cookie($name), true)) ?? collect([]);
-        $this->name = $name;
-        return $this;
-    }
-
-    protected function storeCookie(): void
-    {
-        Cookie::queue($this->name, $this->cart->toJson(), 60 * 24 * 7);
-    }
 }

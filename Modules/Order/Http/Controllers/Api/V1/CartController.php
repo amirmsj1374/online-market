@@ -5,20 +5,13 @@ namespace Modules\Order\Http\Controllers\Api\V1;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Session;
 use Modules\Order\Cart\Cart;
 use Modules\Product\Entities\Inventory;
-// use Modules\Order\Cart\Cart;
 use Modules\Product\Entities\Product;
-use Illuminate\Support\Facades\Cache;
 
 class CartController extends Controller
 {
 
-    public function index()
-    {
-        # code...
-    }
 
     public function addToCart(Request $request)
     {
@@ -69,7 +62,7 @@ class CartController extends Controller
         if (is_null(Cart::identifyUser($request->userCartKey)) || Cart::identifyUser($request->userCartKey)->isEmpty()) {
             return response()->json([
                 'message' => 'اطلاعات سبد خرید شما نامعتبر است سبد خرید جدید ایجاد کنید'
-            ],400);
+            ], 400);
         }
 
 
@@ -80,7 +73,7 @@ class CartController extends Controller
 
         $inventory = Inventory::find($request->inventoryId);
 
-        if (Cart::has($inventory,$request->userCartKey)) {
+        if (Cart::has($inventory, $request->userCartKey)) {
             Cart::update(
                 $request->rowId,
                 [
@@ -92,6 +85,30 @@ class CartController extends Controller
 
         return response()->json([
             'data' => Cart::all()
-        ],200);
+        ], 200);
+    }
+
+    public function delete(Request $request)
+    {
+        Log::info(['request' => $request->all()]);
+
+        $inventory = Inventory::find($request->inventoryId);
+
+        Log::info(['inventory' => $inventory]);
+
+        $result = Cart::delete($inventory);
+
+        return response()->json([
+            'data' => Cart::all()
+        ], 200);
+    }
+
+    public function flush()
+    {
+        $result = Cart::flush();
+
+        return response()->json([
+            'data' => Cart::all()
+        ], 200);
     }
 }

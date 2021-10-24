@@ -23,7 +23,8 @@ use Modules\Product\Entities\Product;
 // middleware('auth:api')->
 
 Route::prefix('/v1/order')->name('order.')->group(function () {
-    Route::get('/', [CartController::class, 'index'])->name('all');
     Route::post('cart/add', [CartController::class, 'addToCart'])->name('cart.add');
     Route::post('cart/update', [CartController::class, 'updateCart'])->name('cart.update');
+    Route::post('cart/delete', [CartController::class, 'delete'])->name('cart.delete');
+    Route::post('cart/flush', [CartController::class, 'flush'])->name('cart.flush');
 });
