@@ -76,7 +76,7 @@ class CartService
     public function update($rowId, $options)
     {
 
-        
+
         $cartItems = $this->cart[$this->userCartKey]->map(function ($cartItems) use ($rowId, $options) {
 
             if ($cartItems['id'] == $rowId) {
@@ -85,7 +85,7 @@ class CartService
                 if (is_numeric($options)) {
                     $cartItems['quantity'] = $options;
                 }
-                
+
                 // can update color and size
                 if (is_array($options)) {
                     $cartItems['quantity'] = $options['quantity'];
@@ -95,7 +95,7 @@ class CartService
             return $cartItems;
         });
 
-      
+
 
         unset($this->cart[$this->userCartKey]);
         Cache::forget($this->userCartKey);
@@ -157,6 +157,7 @@ class CartService
 
     public function all()
     {
+        if (!$this->cart->has($this->userCartKey)) return collect();
 
         $cart = $this->cart[$this->userCartKey]->map(function ($item) {
 
@@ -169,30 +170,37 @@ class CartService
         ];
     }
 
-    public function delete($model)
+    public function delete($rowId)
     {
-        if ($this->has($model)) {
-            $this->cart = $this->cart->filter(function ($item) use ($model) {
 
-                if ($model instanceof Model) {
-                    return ($item['subject_id'] != $model->id) && ($item['subject_type'] != get_class($model));
-                }
+        $this->cart[$this->userCartKey]->map(function ($cartItems) use ($rowId) {
 
-                return $model != $item['id'];
-            });
+            if ($cartItems['id'] == $rowId) {
+                unset($this->cart[$this->userCartKey][$rowId]);
+            }
+        });
 
-           
+        $newUserCart = $this->cart;
 
-            return true;
-        }
+        Cache::put('cart-' . $this->userCartKey, $this->cart, now()->addMinutes(60));
 
-        return false;
+        return $this;
+
     }
 
     public function flush()
     {
+
+        Log::info([
+            'flush method' => $this->userCartKey,
+            'cart for user' => $this->cart[$this->userCartKey]
+        ]);
         unset($this->cart[$this->userCartKey]);
-        Cache::forget($this->userCartKey);
+        Log::info([
+            'after flush' => $this->cart,
+        ]);
+
+        // Cache::forget($this->userCartKey);
 
         return $this;
     }

@@ -90,13 +90,18 @@ class CartController extends Controller
 
     public function delete(Request $request)
     {
-        Log::info(['request' => $request->all()]);
+        if (is_null(Cart::identifyUser($request->userCartKey)) || Cart::identifyUser($request->userCartKey)->isEmpty()) {
+            return response()->json([
+                'message' => 'اطلاعات سبد خرید شما نامعتبر است سبد خرید جدید ایجاد کنید'
+            ], 400);
+        }
 
         $inventory = Inventory::find($request->inventoryId);
 
-        Log::info(['inventory' => $inventory]);
+        if (Cart::has($inventory, $request->userCartKey)) {
+            $result = Cart::delete($request->rowId);
+        }
 
-        $result = Cart::delete($inventory);
 
         return response()->json([
             'data' => Cart::all()
