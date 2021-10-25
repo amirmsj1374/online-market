@@ -3,6 +3,7 @@
 namespace Modules\Order\Cart;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Cache;
@@ -35,7 +36,14 @@ class CartService
 
     public function identifyUser($userCartKey = null)
     {
-        return $this->cart = Cache::get('cart-' . $userCartKey) ?? collect([]);
+        if (Auth::check()) {
+            if (Cache::get('cart-' . $userCartKey)) {
+                $this->switchCartMode();
+            }
+            return $this->cart = Cart::where('user_id', auth()->id())->with('cartItems')->get() ?? collect([]);
+        } else {
+            return $this->cart = Cache::get('cart-' . $userCartKey) ?? collect([]);
+        }
     }
 
     /**
@@ -68,27 +76,38 @@ class CartService
         $this->cart->put($this->userCartKey, $this->cartItems);
 
 
-        Cache::put('cart-' . $this->userCartKey, $this->cart, now()->addMinutes(60));
+        if (Auth::check()) {
+            auth()->user()->cart()->cartItems()->create([
+                'inventory_id' => $value['inventory_id'],
+                'quantity' => $value['quantity'],
+                'discount' => $value['discount'],
+                'price' => $value['price'],
+                'final_price' => $value['final_price'],
+                'color' => $value['color'],
+                'size' => $value['size'],
+            ]);
+        } else {
+            Cache::put('cart-' . $this->userCartKey, $this->cart, now()->addMinutes(60));
+        }
+
 
         return $this;
     }
 
     public function update($rowId, $options)
     {
-
-
         $cartItems = $this->cart[$this->userCartKey]->map(function ($cartItems) use ($rowId, $options) {
 
             if ($cartItems['id'] == $rowId) {
 
                 //chnage product quantity
                 if (is_numeric($options)) {
-                    $cartItems['quantity'] = $options;
+                    $this->cart[$this->userCartKey][$rowId]['quantity'] = $options;
                 }
 
                 // can update color and size
                 if (is_array($options)) {
-                    $cartItems['quantity'] = $options['quantity'];
+                    $this->cart[$this->userCartKey][$rowId]['quantity'] = $options['quantity'];
                 }
             }
 
@@ -97,10 +116,14 @@ class CartService
 
 
 
-        unset($this->cart[$this->userCartKey]);
-        Cache::forget($this->userCartKey);
+        // unset($this->cart[$this->userCartKey]);
+        // Cache::forget($this->userCartKey);
 
-        $this->cart->put($this->userCartKey, $cartItems);
+        // $this->cart->put($this->userCartKey, $cartItems);
+        // if (Auth::check()) {
+        //     Cart::where('inventory_id', $this->cart[$this->userCartKey][$rowId]['inventory_id'])
+        //             ->where();
+        // }
         Cache::put('cart-' . $this->userCartKey, $this->cart, now()->addMinutes(60));
 
 
@@ -115,23 +138,28 @@ class CartService
      */
     public function has($model, $userCartKey =  null)
     {
-
         $this->createUserCartKey($userCartKey);
         $this->identifyUser($this->userCartKey);
+        Log::info(['infor cart' => $this->cart]);
+        return collect();
 
 
-
-        if ($model instanceof Model) {
-            if ($this->cart->has($this->userCartKey)) {
-                return !is_null(
-                    $this->cart[$this->userCartKey]->where('subject_id', $model->id)->where('subject_type', get_class($model))->first()
-                );
-            } else {
-                return !is_null(
-                    $this->cart->where('subject_id', $model->id)->where('subject_type', get_class($model))->first()
-                );
+        if (!Auth::check()) {
+            if ($model instanceof Model) {
+                if ($this->cart->has($this->userCartKey)) {
+                    return !is_null(
+                        $this->cart[$this->userCartKey]->where('subject_id', $model->id)->where('subject_type', get_class($model))->first()
+                    );
+                } else {
+                    return !is_null(
+                        $this->cart->where('subject_id', $model->id)->where('subject_type', get_class($model))->first()
+                    );
+                }
             }
+        } else {
+            return true;
         }
+
 
         // return !is_null(
         //     $this->cart[$this->userCartKey]->firstWhere('id', $key)
@@ -191,16 +219,9 @@ class CartService
     public function flush()
     {
 
-        Log::info([
-            'flush method' => $this->userCartKey,
-            'cart for user' => $this->cart[$this->userCartKey]
-        ]);
         unset($this->cart[$this->userCartKey]);
-        Log::info([
-            'after flush' => $this->cart,
-        ]);
 
-        // Cache::forget($this->userCartKey);
+        Cache::forget($this->userCartKey);
 
         return $this;
     }
@@ -222,6 +243,23 @@ class CartService
 
 
         return $item;
+    }
+
+    public function switchCartMode()
+    {
+        $cart = Cache::get('cart-' . $this->userCartKey);
+        foreach ($cart as $key => $item) {
+            auth()->user()->cart()->cartItems()->create([
+                'inventory_id' => $item->inventory_id,
+                'quantity' => $item->quantity,
+                'discount' => $item->discount,
+                'price' => $item->price,
+                'final_price' => $item->final_price,
+                'color' => $item->color,
+                'size' => $item->size,
+            ]);
+        }
+        $this->flush();
     }
 
 }

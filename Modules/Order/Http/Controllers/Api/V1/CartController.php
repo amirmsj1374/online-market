@@ -28,6 +28,7 @@ class CartController extends Controller
             if (!Cart::has($inventory)) {
                 Cart::add(
                     [
+                        'inventory_id'   => $inventory->id,
                         'name' => $product->title,
                         'price' => $inventory->price,
                         'final_price' => $inventory->final_price,

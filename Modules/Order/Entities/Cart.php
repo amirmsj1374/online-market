@@ -4,15 +4,22 @@ namespace Modules\Order\Entities;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Modules\Product\Entities\Inventory;
+use Modules\User\Entities\User;
 
 class Cart extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'identifier',
-        'instance',
-        'content'
+        'user_id',
+        'inventory_id',
+        'quantity',
+        'price',
+        'final_price',
+        'discount',
+        'color',
+        'size',
     ];
 
     protected static function newFactory()
@@ -20,13 +27,15 @@ class Cart extends Model
         return \Modules\Order\Database\factories\CartFactory::new();
     }
 
-    // public function setCartDataAttribute($value)
-    // {
-    //     $this->attributes['content'] = serialize($value);
-    // }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
-    // public function getCartDataAttribute($value)
-    // {
-    //     return unserialize($value);
-    // }
+    public function cartItems()
+    {
+        return $this->hasMany(CartItem::class);
+    }
+
+
 }

@@ -4,6 +4,7 @@ namespace Modules\Product\Entities;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Modules\Order\Entities\CartItem;
 
 class Inventory extends Model
 {
@@ -29,5 +30,9 @@ class Inventory extends Model
     public function products()
     {
         return $this->belongsTo(Product::class);
+    }
+    public function cartItems()
+    {
+        return $this->hasMany(CartItem::class);
     }
 }
