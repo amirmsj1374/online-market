@@ -15,16 +15,15 @@ class CartController extends Controller
 
     public function addToCart(Request $request)
     {
-        // Cache::flush();
-
+              
         $inventories = $request->inventories;
 
         // if (!empty($request->inventories)) {
         foreach ($inventories as $item) {
-
             $inventory = Inventory::find($item['id']);
             $product = Product::find($item['product_id']);
-
+           
+          
             if (!Cart::has($inventory)) {
                 Cart::add(
                     [
@@ -50,11 +49,7 @@ class CartController extends Controller
 
         // }
 
-        //delete all cart data
-
-        // return response()->json([
-        //     'cart' => Cart::all()
-        // ]);
+ 
     }
 
     public function updateCart(Request $request)
@@ -73,7 +68,6 @@ class CartController extends Controller
         // qty not equal with zero
 
         $inventory = Inventory::find($request->inventoryId);
-
         if (Cart::has($inventory, $request->userCartKey)) {
             Cart::update(
                 $request->rowId,
