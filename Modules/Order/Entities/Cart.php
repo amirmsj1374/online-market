@@ -13,13 +13,10 @@ class Cart extends Model
 
     protected $fillable = [
         'user_id',
-        'inventory_id',
+        'name',
         'quantity',
-        'price',
-        'final_price',
-        'discount',
-        'color',
-        'size',
+        'subject_id',
+        'subject_type'
     ];
 
     protected static function newFactory()
@@ -31,11 +28,5 @@ class Cart extends Model
     {
         return $this->belongsTo(User::class);
     }
-
-    public function cartItems()
-    {
-        return $this->hasMany(CartItem::class);
-    }
-
 
 }

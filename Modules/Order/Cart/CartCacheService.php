@@ -78,7 +78,7 @@ class CartCacheService
 
     public function update($rowId, $options)
     {
-       
+
         $cartItems = $this->cart[$this->userCartKey]->map(function ($cartItems) use ($rowId, $options) {
             if ($cartItems['id'] == $rowId) {
                 //chnage product quantity

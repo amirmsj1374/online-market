@@ -15,6 +15,7 @@ class CreateCartItemsTable extends Migration
     {
         Schema::create('cart_items', function (Blueprint $table) {
 
+            $table->string('name');
             $table->unsignedBigInteger('cart_id')->nullable();
             $table->foreign('cart_id')->references('id')->on('carts')->onDelete('cascade');
 

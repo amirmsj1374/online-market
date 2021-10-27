@@ -15,16 +15,16 @@ class CartController extends Controller
 
     public function addToCart(Request $request)
     {
-              
+
         $inventories = $request->inventories;
 
         // if (!empty($request->inventories)) {
         foreach ($inventories as $item) {
             $inventory = Inventory::find($item['id']);
             $product = Product::find($item['product_id']);
-           
-          
-            if (!Cart::has($inventory)) {
+
+
+            if (Cart::has($inventory)) {
                 Cart::add(
                     [
                         'inventory_id'   => $inventory->id,
@@ -49,7 +49,7 @@ class CartController extends Controller
 
         // }
 
- 
+
     }
 
     public function updateCart(Request $request)
@@ -73,7 +73,8 @@ class CartController extends Controller
                 $request->rowId,
                 [
                     'quantity' =>  $request->orderQty,
-                ]
+                ],
+                $request->inventoryId,
             );
         }
 
