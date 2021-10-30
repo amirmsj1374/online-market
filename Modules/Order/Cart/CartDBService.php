@@ -3,9 +3,6 @@
 namespace Modules\Order\Cart;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Modules\Order\Entities\Cart;
@@ -39,7 +36,8 @@ class CartDBService
         if (Cache::get('cart-' . $userCartKey)) {
             $this->switchCartMode();
         }
-        return $this->cart = Cart::where('user_id', auth()->id())->with('cartItems')->get() ?? collect([]);
+
+        return $this->cart = Cart::where('user_id', auth()->id())->get() ?? collect([]);
     }
 
     /**
@@ -54,47 +52,58 @@ class CartDBService
         if (!is_null($model) && $model instanceof Model) {
 
             $value = array_merge($value, [
-                'id' => Str::random(10),
                 'subject_id' => $model->id,
                 'subject_type' => get_class($model)
             ]);
-        } elseif (!isset($value['id'])) {
 
-            $value = array_merge($value, [
-                'id' => Str::random(10),
+            auth()->user()->carts()->firstOrCreate([
+                'name' => $value['name'],
+                'quantity' => $value['quantity'],
+                'subject_id' =>  $value['subject_id'],
+                'subject_type' => $value['subject_type']
+            ]);
+        } else {
+
+            auth()->user()->carts()->firstOrCreate([
+                'name' => $value['name'],
+                'quantity' => $value['quantity'],
+                'final_price' => $value['final_price'],
+                'discount' => $value['discount'],
+                'price' => $value['price'],
+                'tax' => $value['tax'],
+                'color' => $value['color'],
+                'size' => $value['size'],
             ]);
         }
-
-        $cart = auth()->user()->cart()->firstOrCreate();
-        $cart->cartItems()->firstOrCreate([
-            'inventory_id' => $value['inventory_id'],
-            'name' => $value['name'],
-            'quantity' => $value['quantity'],
-            'discount' => $value['discount'],
-            'price' => $value['price'],
-            'final_price' => $value['final_price'],
-            'color' => $value['color'],
-            'size' => $value['size'],
-            'subject_id' => $model->id,
-            'subject_type' => get_class($model)
-        ]);
     }
 
     public function update($rowId, $options, $inventoryId = null)
     {
 
-        $cart = auth()->user()->cart()->firstOrCreate();
+        $cart = auth()->user()->carts()->firstOrCreate();
+
         //chnage product quantity
         if (is_numeric($options)) {
-            $cart->cartItems()->where('inventory_id', $inventoryId)->update([
+
+            // $cart->cartItems()->where('inventory_id', $inventoryId)->update([
+            //     'quantity' => $options
+            // ]);
+
+            $cart->where('subject_id', $inventoryId)->update([
                 'quantity' => $options
             ]);
         }
 
         // can update color and size
         if (is_array($options)) {
-            $cart->cartItems()->where('inventory_id', $inventoryId)->update([
+            // $cart->cartItems()->where('inventory_id', $inventoryId)->update([
+            //     'quantity' => $options['quantity']
+            // ]);
+
+            $cart->where('subject_id', $inventoryId)->update([
+
                 'quantity' => $options['quantity']
+
             ]);
         }
     }
@@ -108,28 +117,79 @@ class CartDBService
     public function has($model, $userCartKey =  null)
     {
         $this->createUserCartKey($userCartKey);
+
+
         $this->identifyUser($this->userCartKey);
 
-        return true;
+        if ($model instanceof Model) {
+
+            if (auth()->user()->carts()->where('subject_id', $model->id)->count() > 0) {
+
+                return false;
+            }
+
+            return true;
+        }
+
+        // else{
+        //     if (auth()->user()->carts()->where('subject_id', $model->product_id)->count() > 0) {
+
+        //         return true;
+        //     } else {
+        //         return false;
+        //     }
+        // }
+    }
+
+    public function totalAmount($cart)
+    {
+        Log::info(['cart' => $cart]);
+        $sum = 0;
+        $discount = 0;
+        $payable = 0;
+        foreach ($cart as $key => $item) {
+            Log::info(['item' => $item]);
+            $sum += $item->price * $item->quantity;
+            $discount += $item->discount * $item->quantity;
+            $payable += $item->final_price * $item->quantity;
+        }
+
+        return  [
+            'sum' => $sum,
+            'discount' => $discount,
+            'payable' => $payable
+        ];
     }
 
     public function all()
     {
-        $cart = auth()->user()->cart->cartItems()->get();
 
-        // $cart = $cart->map(function ($item) {
+        $cart = auth()->user()->carts()->get();
 
-        //     return $this->withRelationshipIfExist($item);
-        // });
+        $cart = $cart->map(function ($item) {
 
-        Log::info([
-            'cart ma' => $cart
-        ]);
+            return $this->withRelationshipIfExist($item);
+            
+        });
+
+
+        $totalAmount = $this->totalAmount($cart);
 
         return [
-            'cart' => collect(),
-            'userCartKey' => auth()->user()->cart
+            'cart' => $cart,
+            'userCartKey' => auth()->user()->id,
+            'sum' => $totalAmount['sum'],
+            'discount' => $totalAmount['discount'],
+            'payable' => $totalAmount['payable']
         ];
+    }
+
+    public function delete($rowId = null, $itemId)
+    {
+
+        auth()->user()->carts()->where('id', $itemId)->delete();
+
+        return $this;
     }
 
     public function flush()
@@ -147,6 +207,7 @@ class CartDBService
     {
         if (isset($item['subject_id']) && isset($item['subject_type'])) {
             $class = $item['subject_type'];
+            //    new inventory()->find(1)
             $subject = (new $class())->find($item['subject_id']);
 
             $item[strtolower(class_basename($class))] = $subject;
@@ -165,7 +226,8 @@ class CartDBService
     {
         $cart = Cache::get('cart-' . $this->userCartKey);
         foreach ($cart as $key => $item) {
-            auth()->user()->cart()->cartItems()->create([
+
+            auth()->user()->carts()->create([
                 'inventory_id' => $item->inventory_id,
                 'name' => $item->name,
                 'quantity' => $item->quantity,

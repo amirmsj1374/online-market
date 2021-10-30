@@ -15,6 +15,12 @@ class Cart extends Model
         'user_id',
         'name',
         'quantity',
+        'price',
+        'final_price',
+        'discount',
+        'color',
+        'size',
+        'tax',
         'subject_id',
         'subject_type'
     ];

@@ -4,7 +4,6 @@ namespace Modules\Order\Http\Controllers\Api\V1;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Log;
 use Modules\Order\Cart\Cart;
 use Modules\Product\Entities\Inventory;
 use Modules\Product\Entities\Product;
@@ -16,27 +15,20 @@ class CartController extends Controller
     public function addToCart(Request $request)
     {
 
+
         $inventories = $request->inventories;
 
-        // if (!empty($request->inventories)) {
         foreach ($inventories as $item) {
             $inventory = Inventory::find($item['id']);
             $product = Product::find($item['product_id']);
 
 
+
             if (Cart::has($inventory)) {
                 Cart::add(
                     [
-                        'inventory_id'   => $inventory->id,
                         'name' => $product->title,
-                        'price' => $inventory->price,
-                        'final_price' => $inventory->final_price,
-                        'discount' =>  $inventory->discount,
-                        'tax' => $product->tax_status ? 0.09 : 0,
                         'quantity' => 1,
-                        'max' => $inventory->quantity,
-                        'color' =>  $inventory->color,
-                        'size' =>  $inventory->size,
                     ],
                     $inventory,
                 );
@@ -46,21 +38,16 @@ class CartController extends Controller
         return response()->json([
             'data' => Cart::all()
         ]);
-
-        // }
-
-
     }
 
     public function updateCart(Request $request)
     {
-
+       
         if (is_null(Cart::identifyUser($request->userCartKey)) || Cart::identifyUser($request->userCartKey)->isEmpty()) {
             return response()->json([
                 'message' => 'اطلاعات سبد خرید شما نامعتبر است سبد خرید جدید ایجاد کنید'
             ], 400);
         }
-
 
         // check qty  equal  or less then product qty
 
@@ -68,7 +55,7 @@ class CartController extends Controller
         // qty not equal with zero
 
         $inventory = Inventory::find($request->inventoryId);
-        if (Cart::has($inventory, $request->userCartKey)) {
+        if (!Cart::has($inventory, $request->userCartKey)) {
             Cart::update(
                 $request->rowId,
                 [
@@ -94,8 +81,8 @@ class CartController extends Controller
 
         $inventory = Inventory::find($request->inventoryId);
 
-        if (Cart::has($inventory, $request->userCartKey)) {
-            $result = Cart::delete($request->rowId);
+        if (!Cart::has($inventory, $request->userCartKey)) {
+            Cart::delete($request->rowId, $request->itemId);
         }
 
 
@@ -106,7 +93,7 @@ class CartController extends Controller
 
     public function flush()
     {
-        $result = Cart::flush();
+        Cart::flush();
 
         return response()->json([
             'data' => Cart::all()

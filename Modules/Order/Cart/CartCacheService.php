@@ -3,12 +3,8 @@
 namespace Modules\Order\Cart;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
-use Modules\Order\Entities\Cart;
 
 
 class CartCacheService
@@ -46,7 +42,7 @@ class CartCacheService
      */
     public function add(array $value, $model = null)
     {
-
+       
         if (!is_null($model) && $model instanceof Model) {
 
             $value = array_merge($value, [
@@ -67,18 +63,14 @@ class CartCacheService
         $this->cartItems->put($value['id'], $value);
         $this->cart->put($this->userCartKey, $this->cartItems);
 
-
-
         Cache::put('cart-' . $this->userCartKey, $this->cart, now()->addMinutes(60));
-
-
 
         return $this;
     }
 
     public function update($rowId, $options)
     {
-
+        
         $cartItems = $this->cart[$this->userCartKey]->map(function ($cartItems) use ($rowId, $options) {
             if ($cartItems['id'] == $rowId) {
                 //chnage product quantity
@@ -113,27 +105,36 @@ class CartCacheService
      */
     public function has($model, $userCartKey =  null)
     {
+
         $this->createUserCartKey($userCartKey);
         $this->identifyUser($this->userCartKey);
-
+       
         if ($model instanceof Model) {
+
             if ($this->cart->has($this->userCartKey)) {
-                return !is_null(
+
+                return  is_null(
                     $this->cart[$this->userCartKey]->where('subject_id', $model->id)->where('subject_type', get_class($model))->first()
                 );
+
             } else {
-                return !is_null(
-                    $this->cart->where('subject_id', $model->id)->where('subject_type', get_class($model))->first()
-                );
+                return true;
             }
-        }
+        } 
+        // else {
 
+        //     if ($this->cart->has($this->userCartKey)) {
 
+        //         return  is_null(
+        //             $this->cart[$this->userCartKey]->firstWhere('id', $this->userCartKey)
+        //         );
+        //     } else {
 
+        //         return true;
+        //     }
+        // }
 
-        // return !is_null(
-        //     $this->cart[$this->userCartKey]->firstWhere('id', $key)
-        // );
+        return $this;
     }
 
     public function count($model)
@@ -168,7 +169,7 @@ class CartCacheService
         ];
     }
 
-    public function delete($rowId)
+    public function delete($rowId, $itemId = null)
     {
 
         $this->cart[$this->userCartKey]->map(function ($cartItems) use ($rowId) {
@@ -177,8 +178,6 @@ class CartCacheService
                 unset($this->cart[$this->userCartKey][$rowId]);
             }
         });
-
-        $newUserCart = $this->cart;
 
         Cache::put('cart-' . $this->userCartKey, $this->cart, now()->addMinutes(60));
 
