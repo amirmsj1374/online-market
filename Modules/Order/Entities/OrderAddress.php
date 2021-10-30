@@ -9,10 +9,23 @@ class OrderAddress extends Model
 {
     use HasFactory;
 
-    protected $fillable = [];
-    
+    protected $fillable = [
+        'fullname',
+        'address',
+        'city',
+        'province',
+        'zipcode',
+        'phone',
+        'order_id',
+    ];
+
     protected static function newFactory()
     {
         return \Modules\Order\Database\factories\OrderAddressFactory::new();
+    }
+
+    public function order()
+    {
+        return $this->belongsTo(Order::class);
     }
 }

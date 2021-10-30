@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Modules\Order\Entities\Cart;
+use Modules\Order\Entities\Order;
 use Modules\User\Database\factories\UserFactory;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
@@ -98,5 +99,10 @@ class User extends Authenticatable implements JWTSubject
     public function carts()
     {
         return $this->hasMany(Cart::class);
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
     }
 }

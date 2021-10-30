@@ -143,15 +143,15 @@ class CartDBService
 
     public function totalAmount($cart)
     {
-        Log::info(['cart' => $cart]);
+        // Log::info(['cart' => $cart]);
         $sum = 0;
         $discount = 0;
         $payable = 0;
         foreach ($cart as $key => $item) {
-            Log::info(['item' => $item]);
-            $sum += $item->price * $item->quantity;
-            $discount += $item->discount * $item->quantity;
-            $payable += $item->final_price * $item->quantity;
+            $sum += ($item->inventory->price * $item->quantity);
+            $discount += ($item->inventory->discount * $item->quantity);
+            $payable += ($item->inventory->final_price * $item->quantity);
+
         }
 
         return  [
@@ -169,7 +169,7 @@ class CartDBService
         $cart = $cart->map(function ($item) {
 
             return $this->withRelationshipIfExist($item);
-            
+
         });
 
 
