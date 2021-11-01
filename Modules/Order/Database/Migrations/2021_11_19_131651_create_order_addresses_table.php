@@ -20,6 +20,7 @@ class CreateOrderAddressesTable extends Migration
             $table->string('city')->nullable();
             $table->string('province')->nullable();
             $table->string('zipcode')->nullable(); // کدپستی
+            $table->string('email')->nullable();
             $table->string('phone')->nullable();
             $table->unsignedBigInteger('order_id')->nullable();
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');

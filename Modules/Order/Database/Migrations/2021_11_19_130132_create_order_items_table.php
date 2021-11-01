@@ -21,9 +21,9 @@ class CreateOrderItemsTable extends Migration
             $table->unsignedBigInteger('order_id');
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
 
-            $table->decimal('price', 11, 2)->nullable();
-            $table->decimal('discount', 11, 2)->nullable();
-            $table->decimal('final_price', 11, 2)->nullable();
+            $table->decimal('price', 13, 2)->nullable();
+            $table->decimal('discount', 13, 2)->nullable();
+            $table->decimal('final_price', 13, 2)->nullable();
             $table->string('quantity');
             $table->string('color')->nullable();
             $table->string('size')->nullable();

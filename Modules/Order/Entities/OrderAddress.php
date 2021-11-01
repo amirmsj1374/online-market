@@ -16,6 +16,7 @@ class OrderAddress extends Model
         'province',
         'zipcode',
         'phone',
+        'email',
         'order_id',
     ];
 

@@ -42,5 +42,9 @@ class Order extends Model
     {
         return $this->belongsToMany(Inventory::class, 'order_items', 'order_id', 'inventory_id')->withPivot('quantity', 'price', 'final_price', 'discount', 'color', 'size');
     }
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
 
 }

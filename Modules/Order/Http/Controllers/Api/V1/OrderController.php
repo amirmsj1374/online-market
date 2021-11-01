@@ -8,6 +8,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
 use Modules\Order\Entities\Order;
 use Modules\Order\Facades\ResponderFacade;
+use Modules\Order\Http\Requests\OrderRequest;
 
 class OrderController extends Controller
 {
@@ -19,7 +20,7 @@ class OrderController extends Controller
     }
 
 
-    public function create(Request $request)
+    public function create(OrderRequest $request)
     {
         $order = auth()->user()->orders()->create([
             'item_count' => count($request->cart),
@@ -29,25 +30,31 @@ class OrderController extends Controller
         ]);
 
         foreach ($request->cart as $key => $item) {
-            $order->items()->create([
-                'inventory_id' => $item->inventory->id,
-                'quantity' => $item->quantity,
-                'final_price' => $item->final_price,
-                'price' => $item->price,
-                'dicsount' => $item->dicsount,
-                'color' => $item->color,
-                'size' => $item->size,
+
+            $order->orderItems()->create([
+                'inventory_id' => $item['inventory']['id'],
+                'quantity' => $item['quantity'],
+                'final_price' => $item['inventory']['final_price'],
+                'price' => $item['inventory']['price'],
+                'discount' => $item['inventory']['discount'] ?? 0,
+                'color' => $item['inventory']['color'],
+                'size' => $item['inventory']['size'],
             ]);
         }
 
         // dosent have zipcode
         $order->address()->create([
-            'fullname' => $request->form->name,
-            'address' => $request->form->address,
-            'city' => $request->form->city,
-            'province' => $request->form->province,
-            'phone' => $request->form->phone,
-            'email' => $request->form->email,
+            'fullname' => $request['form']['fullname'],
+            'address' => $request['form']['address'],
+            'zipcode' => $request['form']['zipcode'],
+            'city' => $request['form']['city'],
+            'province' => $request['form']['province'],
+            'phone' => $request['form']['phone'],
+            'email' => $request['form']['email'],
+        ]);
+
+        return response()->json([
+            'message' => 'سفارش با موفقیت در سیستم ثبت شد'
         ]);
 
     }
