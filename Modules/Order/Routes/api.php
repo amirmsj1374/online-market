@@ -1,13 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Session;
-use Modules\Order\Cart\Cart;
-use Modules\Order\Facades\ResponderFacade;
 use Modules\Order\Http\Controllers\Api\V1\OrderController;
 use Modules\Order\Http\Controllers\Api\V1\CartController;
-use Modules\Product\Entities\Product;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,5 +25,6 @@ Route::prefix('/v1/cart')->name('order.')->group(function () {
 });
 
 Route::prefix('/v1/order')->name('order.')->group(function () {
+    Route::get('/', [OrderController::class, 'index'])->name('cart.index');
     Route::post('/create', [OrderController::class, 'create'])->name('cart.create');
 });

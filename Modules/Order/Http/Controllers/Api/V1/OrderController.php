@@ -2,8 +2,6 @@
 
 namespace Modules\Order\Http\Controllers\Api\V1;
 
-use Illuminate\Contracts\Support\Renderable;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
 use Modules\Order\Entities\Order;
@@ -16,6 +14,7 @@ class OrderController extends Controller
     public function index()
     {
         $order = Order::orderBy('id', 'desc')->paginate(5);
+        // Log::info(['order' => $order]);
         return  ResponderFacade::index($order);
     }
 
@@ -24,7 +23,7 @@ class OrderController extends Controller
     {
         $order = auth()->user()->orders()->create([
             'item_count' => count($request->cart),
-            'status' => 'received',
+            'status' => 'preparation',
             'final_price' => $request->payable,
             'payment_method' => 'zarinpal',
         ]);
@@ -53,39 +52,6 @@ class OrderController extends Controller
             'email' => $request['form']['email'],
         ]);
 
-        return response()->json([
-            'message' => 'سفارش با موفقیت در سیستم ثبت شد'
-        ]);
-
-    }
-
-
-    public function store(Request $request)
-    {
-        //
-    }
-
-
-    public function show($id)
-    {
-        //
-    }
-
-
-    public function edit($id)
-    {
-        //
-    }
-
-
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-
-    public function destroy($id)
-    {
-        //
+        return  ResponderFacade::create();
     }
 }
