@@ -25,7 +25,8 @@ Route::prefix('/v1/cart')->name('order.')->group(function () {
 });
 
 Route::prefix('/v1/order')->name('order.')->group(function () {
-    Route::get('/', [OrderController::class, 'index'])->name('cart.index');
-    Route::get('/show/{order}', [OrderController::class, 'show'])->name('cart.show');
-    Route::post('/create', [OrderController::class, 'create'])->name('cart.create');
+    Route::get('/', [OrderController::class, 'index'])->name('order.index');
+    Route::get('/show/{order}', [OrderController::class, 'show'])->name('order.show');
+    Route::post('/create', [OrderController::class, 'create'])->name('order.create');
+    Route::post('/update/stauts/{order}', [OrderController::class, 'updateStatus'])->name('order.update.status');
 });

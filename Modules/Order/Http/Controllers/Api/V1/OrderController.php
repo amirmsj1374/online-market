@@ -4,6 +4,7 @@ namespace Modules\Order\Http\Controllers\Api\V1;
 
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
 use Modules\Order\Entities\Order;
 use Modules\Order\Facades\ResponderFacade;
 use Modules\Order\Http\Requests\OrderRequest;
@@ -63,6 +64,14 @@ class OrderController extends Controller
         ]);
 
         return  ResponderFacade::create();
+    }
+
+    public function updateStatus(Request $request, Order $order)
+    {
+
+        $order->update([
+            'status' => $request->status
+        ]);
     }
 
     public function attachInventoryData($items)
