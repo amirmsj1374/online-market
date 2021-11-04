@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Log;
 use Modules\Order\Entities\Order;
 use Modules\Order\Facades\ResponderFacade;
 use Modules\Order\Http\Requests\OrderRequest;
+use Modules\Product\Entities\Inventory;
 
 class OrderController extends Controller
 {
@@ -18,6 +19,15 @@ class OrderController extends Controller
         return  ResponderFacade::index($order);
     }
 
+    public function show(Order $order)
+    {
+        Log::info($this->attachInventoryData($order->orderItems));
+        return response()->json([
+            'order'  => $order,
+            'address' => $order->address,
+            'items'  => $this->attachInventoryData($order->orderItems)
+        ]);
+    }
 
     public function create(OrderRequest $request)
     {
@@ -53,5 +63,17 @@ class OrderController extends Controller
         ]);
 
         return  ResponderFacade::create();
+    }
+
+    public function attachInventoryData($items)
+    {
+        foreach ($items as $key => $item) {
+            $inventory = Inventory::find($item->inventory_id);
+            $item['title'] = $inventory->product->title;
+            $item['image'] =  $inventory->product->getFirstMedia('product-gallery') ?
+            $inventory->product->getFirstMedia('product-gallery')->getFullUrl() : '';
+        }
+
+        return $items;
     }
 }
