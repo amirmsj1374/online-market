@@ -33,7 +33,7 @@ class OrderController extends Controller
     {
         $order = auth()->user()->orders()->create([
             'item_count' => count($request->cart),
-            'status' => 'preparation',
+            'status' => 'prepration',
             'final_price' => $request->payable,
             'payment_method' => 'zarinpal',
         ]);

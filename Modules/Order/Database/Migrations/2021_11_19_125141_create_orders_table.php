@@ -19,7 +19,7 @@ class CreateOrdersTable extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->integer('item_count'); //تعداد آیتم ها
             $table->tinyInteger('is_pay')->default(0); //وضعیت پرداخت
-            $table->enum('status', ['preparation', 'posted', 'received', 'canceled']); //وضعیت سفارش
+            $table->enum('status', ['prepration', 'posted', 'received', 'canceled']); //وضعیت سفارش
             $table->decimal('final_price', 11, 2); //قیمت کل
             $table->string('payment_method');
             $table->string('payment_id')->nullable(); //شناسه پرداخت
