@@ -186,18 +186,26 @@ class CartDBService
 
     public function delete($rowId = null, $itemId)
     {
-
         auth()->user()->carts()->where('id', $itemId)->delete();
 
         return $this;
     }
 
-    public function flush()
+    public function flushCashe()
     {
 
         unset($this->cart[$this->userCartKey]);
 
         Cache::forget($this->userCartKey);
+
+        return $this;
+
+    }
+
+
+    public function flush()
+    {
+        Cart::where('user_id', auth()->id())->delete();
 
         return $this;
     }
@@ -238,6 +246,6 @@ class CartDBService
                 'size' => $item->size,
             ]);
         }
-        $this->flush();
+        $this->flushCashe();
     }
 }

@@ -8,6 +8,7 @@ use Modules\Order\Entities\Order;
 use Modules\Order\Facades\ResponderFacade;
 use Modules\Order\Http\Requests\OrderRequest;
 use Modules\Product\Entities\Inventory;
+use Modules\Order\Cart\Cart;
 
 class OrderController extends Controller
 {
@@ -31,6 +32,7 @@ class OrderController extends Controller
 
     public function create(OrderRequest $request)
     {
+        dd($request->all());
         $order = auth()->user()->orders()->create([
             'item_count' => count($request->cart),
             'status' => 'prepration',
@@ -62,6 +64,10 @@ class OrderController extends Controller
             'email' => $request['form']['email'],
         ]);
 
+        // remove cart table  and cashe 
+
+        Cart::flush();
+
         return  ResponderFacade::create();
     }
 
@@ -71,7 +77,7 @@ class OrderController extends Controller
             $inventory = Inventory::find($item->inventory_id);
             $item['title'] = $inventory->product->title;
             $item['image'] =  $inventory->product->getFirstMedia('product-gallery') ?
-            $inventory->product->getFirstMedia('product-gallery')->getFullUrl() : '';
+                $inventory->product->getFirstMedia('product-gallery')->getFullUrl() : '';
         }
 
         return $items;

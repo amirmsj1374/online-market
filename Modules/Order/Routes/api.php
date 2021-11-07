@@ -17,15 +17,15 @@ use Modules\Order\Http\Controllers\Api\V1\CartController;
 
 // middleware('auth:api')->
 
-Route::prefix('/v1/cart')->name('order.')->group(function () {
-    Route::post('/add', [CartController::class, 'addToCart'])->name('cart.add');
-    Route::post('/update', [CartController::class, 'updateCart'])->name('cart.update');
-    Route::post('/delete', [CartController::class, 'delete'])->name('cart.delete');
-    Route::post('/flush', [CartController::class, 'flush'])->name('cart.flush');
+Route::prefix('/v1/cart')->name('cart.')->group(function () {
+    Route::post('/add', [CartController::class, 'addToCart'])->name('add');
+    Route::post('/update', [CartController::class, 'updateCart'])->name('update');
+    Route::post('/delete', [CartController::class, 'delete'])->name('delete');
+    Route::post('/flush', [CartController::class, 'flush'])->name('flush');
 });
 
 Route::prefix('/v1/order')->name('order.')->group(function () {
-    Route::get('/', [OrderController::class, 'index'])->name('cart.index');
-    Route::get('/show/{order}', [OrderController::class, 'show'])->name('cart.show');
-    Route::post('/create', [OrderController::class, 'create'])->name('cart.create');
+    Route::get('/', [OrderController::class, 'index'])->name('index');
+    Route::get('/show/{order}', [OrderController::class, 'show'])->name('show');
+    Route::post('/create', [OrderController::class, 'create'])->name('create');
 });
