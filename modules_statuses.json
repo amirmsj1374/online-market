@@ -4,5 +4,6 @@
     "Auth": true,
     "Discount": true,
     "User": true,
-    "Order": true
+    "Order": true,
+    "Communication": true
 }

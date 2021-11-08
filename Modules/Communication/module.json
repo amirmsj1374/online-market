@@ -1,0 +1,13 @@
+{
+    "name": "Communication",
+    "alias": "communication",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Communication\\Providers\\CommunicationServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}
