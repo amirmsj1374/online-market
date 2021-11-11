@@ -33,7 +33,6 @@ class OrderController extends Controller
 
     public function create(OrderRequest $request)
     {
-        dd($request->all());
         $order = auth()->user()->orders()->create([
             'item_count' => count($request->cart),
             'status' => 'prepration',
@@ -65,7 +64,7 @@ class OrderController extends Controller
             'email' => $request['form']['email'],
         ]);
 
-        // remove cart table  and cashe 
+        // remove cart table  and cashe
 
         Cart::flush();
 
