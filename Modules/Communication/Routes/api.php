@@ -18,5 +18,7 @@ use Modules\Communication\Http\Controllers\CommunicationController;
 Route::prefix('/v1/communication')->name('communication.')->group(function () {
 
     Route::get('/product', [CommunicationController::class, 'product'])->name('product');
+    Route::get('/comment', [CommunicationController::class, 'comment'])->name('comment');
+    Route::post('/store/{product}', [CommunicationController::class, 'store'])->name('store');
 
 });

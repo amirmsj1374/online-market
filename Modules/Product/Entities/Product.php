@@ -9,6 +9,7 @@ use Spatie\Tags\HasTags;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Cviebrock\EloquentSluggable\Sluggable;
+use Modules\Communication\Entities\Communication;
 use Modules\Product\Database\factories\ProductFactory;
 
 class Product extends Model implements HasMedia
@@ -88,5 +89,9 @@ class Product extends Model implements HasMedia
     public function downloads()
     {
         return $this->hasMany(Download::class);
+    }
+    public function communication()
+    {
+        return $this->morphMany(Communication::class, 'communicationable');
     }
 }

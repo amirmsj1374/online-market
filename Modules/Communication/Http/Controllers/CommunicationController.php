@@ -7,15 +7,20 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
 use Modules\Communication\Entities\Communication;
 use Modules\Product\Entities\Product;
+use Modules\User\Entities\User;
 
 class CommunicationController extends Controller
 {
-    public function index()
+    public function comment(Request $request)
     {
-        $comments = Communication::latest()->paginate(20);
+        $comments = $this->attachdatatoComment(Product::find($request->product_id)->communication()->get());
+        // Log::info([
+        //     'comments' => $comments,
+        // ]);
 
         return response()->json([
-            'comments' => $comments
+            'comments' => $comments,
+            'user_id' => auth()->id()
         ]);
     }
     public function product()
@@ -37,12 +42,15 @@ class CommunicationController extends Controller
         //
     }
 
-    public function store(Request $request)
+    public function store(Request $request, Product $product)
     {
-        $data = $request->validate([
-            'Communicationid' => 'required',
-            'responce'  => 'required',
+        Log::info([
+            'request' => $request->all()
         ]);
+        // $data = $request->validate([
+        //     'Communicationid' => 'required',
+        //     'responce'  => 'required',
+        // ]);
         $Communication = Communication::Find($data['Communicationid']);
 
         auth()->user()->Communications()->create([
@@ -85,5 +93,13 @@ class CommunicationController extends Controller
             $product->getFirstMedia('product-gallery')->getFullUrl() : '';
         }
         return $products;
+    }
+    public function attachdatatoComment($comments)
+    {
+        foreach ($comments as $key => $comment) {
+            $comment['name'] = User::find($comment->user_id)->name;
+            $comment['image'] =  'https://picsum.photos/200/300';
+        }
+        return $comments;
     }
 }
