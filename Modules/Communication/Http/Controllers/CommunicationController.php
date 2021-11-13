@@ -4,13 +4,27 @@ namespace Modules\Communication\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Log;
 use Modules\Communication\Entities\Communication;
+use Modules\Product\Entities\Product;
 
 class CommunicationController extends Controller
 {
     public function index()
     {
-        $Communications = Communication::where('approved', 1)->latest()->paginate(20);      
+        $comments = Communication::latest()->paginate(20);
+
+        return response()->json([
+            'comments' => $comments
+        ]);
+    }
+    public function product()
+    {
+        $products = $this->attachImagetoProduct(Product::latest()->paginate(2));
+
+        return response()->json([
+            'products' => $products
+        ]);
     }
 
     public function unapproved()
@@ -44,9 +58,9 @@ class CommunicationController extends Controller
             'is_response' => 1
         ]);
 
-      
+
     }
-   
+
     public function update(Request $request, Communication $Communication)
     {
         $Communication->update(['approved' => 1]);
@@ -55,12 +69,21 @@ class CommunicationController extends Controller
         ]);
     }
 
-  
+
     public function destroy(Communication $Communication)
     {
         $Communication->delete();
         return response()->json([
             'message' => 'متن نظر حذف شد',
         ]);
+    }
+
+    public function attachImagetoProduct($products)
+    {
+        foreach ($products as $key => $product) {
+            $product['image'] =  $product->getFirstMedia('product-gallery') ?
+            $product->getFirstMedia('product-gallery')->getFullUrl() : '';
+        }
+        return $products;
     }
 }

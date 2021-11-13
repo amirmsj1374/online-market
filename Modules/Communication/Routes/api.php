@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use Modules\Communication\Http\Controllers\CommunicationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,6 +15,8 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/communication', function (Request $request) {
-    return $request->user();
+Route::prefix('/v1/communication')->name('communication.')->group(function () {
+
+    Route::get('/product', [CommunicationController::class, 'product'])->name('product');
+
 });
