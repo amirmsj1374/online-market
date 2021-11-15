@@ -4,100 +4,77 @@ namespace Modules\Communication\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Log;
 use Modules\Communication\Entities\Communication;
 use Modules\Product\Entities\Product;
 use Modules\User\Entities\User;
+use Illuminate\Http\Response;
+use Modules\Communication\Facades\ResponderFacade;
 
 class CommunicationController extends Controller
 {
+    
     public function comment(Request $request)
     {
         $comments = $this->attachdatatoComment(Product::find($request->product_id)->communication()->get());
-        // Log::info([
-        //     'comments' => $comments,
-        // ]);
-
-        return response()->json([
-            'comments' => $comments,
-            'user_id' => auth()->id()
-        ]);
+        $product = product::find($request->product_id);
+        return  ResponderFacade::comment($comments, $product);
     }
+
     public function product()
     {
         $products = $this->attachImagetoProduct(Product::latest()->paginate(2));
-
-        return response()->json([
-            'products' => $products
-        ]);
-    }
-
-    public function unapproved()
-    {
-        $Communications = Communication::where('approved', 0)->latest()->paginate(20);
-    }
-
-    public function show($id)
-    {
-        //
+        return  ResponderFacade::product($products);
     }
 
     public function store(Request $request, Product $product)
     {
-        Log::info([
-            'request' => $request->all()
-        ]);
-        // $data = $request->validate([
-        //     'Communicationid' => 'required',
-        //     'responce'  => 'required',
-        // ]);
-        $Communication = Communication::Find($data['Communicationid']);
 
-        auth()->user()->Communications()->create([
-            'Communicationable_id'   => $Communication->Communicationable_id,
-            'Communicationable_type' => $Communication->Communicationable_type,
+        $request->validate([
+            'text' => 'required',
+            'comment_id'  => 'required',
+        ]);
+
+        auth()->user()->communications()->create([
+            'communicationable_id'   =>  $product->id,
+            'communicationable_type' =>  get_class($product),
             'approved'         => 1,
             'is_response'      => 1,
-            'parent_id'        => $Communication->id,
-            'Communication'          => $data['responce'],
+            'parent_id'        => $request->comment_id,
+            'comment'          => $request->text,
         ]);
 
-        $Communication->update([
-            'is_response' => 1
-        ]);
-
-
+        return  ResponderFacade::store();
     }
 
-    public function update(Request $request, Communication $Communication)
+    public function changeCommentMode(Request $request, Communication $Communication)
     {
-        $Communication->update(['approved' => 1]);
-        return response()->json([
-            'message' => 'متن نظر تایید شد',
-        ]);
+        $Communication->update(['approved' => $request->message_id]);
+        return  ResponderFacade::changeCommentMode();
     }
 
-
-    public function destroy(Communication $Communication)
+    public function delete(Communication $Communication)
     {
         $Communication->delete();
-        return response()->json([
-            'message' => 'متن نظر حذف شد',
-        ]);
+        return  ResponderFacade::delete();
     }
 
     public function attachImagetoProduct($products)
     {
-        foreach ($products as $key => $product) {
+        foreach ($products as $product) {
             $product['image'] =  $product->getFirstMedia('product-gallery') ?
-            $product->getFirstMedia('product-gallery')->getFullUrl() : '';
+                $product->getFirstMedia('product-gallery')->getFullUrl() : '';
         }
         return $products;
     }
     public function attachdatatoComment($comments)
     {
-        foreach ($comments as $key => $comment) {
+        foreach ($comments as  $comment) {
             $comment['name'] = User::find($comment->user_id)->name;
+            if ($comment->parent_id != 0) {
+                $comment['parent_name'] = User::find($comment->parent_id)->name;
+                $comment['parent_comment'] = Communication::find($comment->parent_id)->comment;
+            }
+
             $comment['image'] =  'https://picsum.photos/200/300';
         }
         return $comments;

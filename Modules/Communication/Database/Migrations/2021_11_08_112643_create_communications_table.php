@@ -19,8 +19,8 @@ class CreateCommunicationsTable extends Migration
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             //Polymorphic Relationships
-            $table->integer('communicationable_id')->unsigned();
-            $table->string('communicationable_type');
+            $table->integer('communicationable_id')->unsigned(); //product_id
+            $table->string('communicationable_type'); // product_type
             $table->boolean('approved')->default(0);
             $table->integer('is_response')->default(0);
             $table->integer('parent_id')->unsigned()->default(0);

@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
 
-
 class CartCacheService
 {
 
@@ -200,7 +199,7 @@ class CartCacheService
         if (isset($item['subject_id']) && isset($item['subject_type'])) {
             $class = $item['subject_type'];
             $subject = (new $class())->find($item['subject_id']);
-
+          
             $item[strtolower(class_basename($class))] = $subject;
 
             unset($item['subject_id']);
