@@ -10,6 +10,7 @@ use Modules\User\Entities\User;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use Modules\Communication\Facades\ResponderFacade;
+use Modules\Product\Facades\ProductRepositoryFacade;
 
 class CommunicationController extends Controller
 {
@@ -21,10 +22,14 @@ class CommunicationController extends Controller
         return  ResponderFacade::comment($comments, $product);
     }
 
-    public function product()
+    public function filterProducts(Request $request)
     {
-        $products = $this->attachImagetoProduct(Product::latest()->paginate(2));
-        return  ResponderFacade::product($products);
+        
+        $products = ProductRepositoryFacade::filterProducts($request);
+      
+        $products = $this->attachImagetoProduct($products);
+       
+        return ResponderFacade::filterProducts($products);
     }
 
     public function store(Request $request, Product $product)
@@ -49,7 +54,7 @@ class CommunicationController extends Controller
 
     public function changeCommentMode(Request $request, Communication $Communication)
     {
-        $Communication->update(['approved' => $request->message_id]);
+         $Communication->update(['approved' => $Communication->approved === 1 ? 0 : 1]);
         return  ResponderFacade::changeCommentMode();
     }
 
@@ -70,6 +75,7 @@ class CommunicationController extends Controller
         }
         return $products;
     }
+
     public function attachdatatoComment($comments)
     {
         foreach ($comments as  $comment) {

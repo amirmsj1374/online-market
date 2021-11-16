@@ -41,4 +41,11 @@ class VueResponses
         return response()->json(['message' => 'نظر کاربر حذف شد',
         ]);
     }
+
+    public function filterProducts($products)
+    {
+        return response()->json([
+            'products' => $products,
+        ], Response::HTTP_OK);
+    }
 }

@@ -270,7 +270,7 @@ class ProductRepository implements ProductRepositoryInterface
             ])
 
             ->thenReturn()
-            ->paginate(7);
+            ->paginate(10);
 
         return $products;
     }
