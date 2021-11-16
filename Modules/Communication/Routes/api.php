@@ -20,7 +20,7 @@ Route::prefix('/v1/communication')->name('communication.')->group(function () {
     Route::get('/product', [CommunicationController::class, 'product'])->name('product');
     Route::get('/comment', [CommunicationController::class, 'comment'])->name('comment');
     Route::post('/store/{product}', [CommunicationController::class, 'store'])->name('store');
-    Route::post('/delete/comment/{communication}', [CommunicationController::class, 'delete'])->name('store');
-    Route::post('/change/status/comment/{communication}', [CommunicationController::class, 'changeCommentMode'])->name('store');
+    Route::post('/delete/comment/{communication}', [CommunicationController::class, 'delete'])->name('delete');
+    Route::post('/change/status/comment/{communication}', [CommunicationController::class, 'changeCommentMode'])->name('change.status');
 
 });

@@ -8,11 +8,12 @@ use Modules\Communication\Entities\Communication;
 use Modules\Product\Entities\Product;
 use Modules\User\Entities\User;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 use Modules\Communication\Facades\ResponderFacade;
 
 class CommunicationController extends Controller
 {
-    
+
     public function comment(Request $request)
     {
         $comments = $this->attachdatatoComment(Product::find($request->product_id)->communication()->get());
@@ -31,7 +32,7 @@ class CommunicationController extends Controller
 
         $request->validate([
             'text' => 'required',
-            'comment_id'  => 'required',
+            'comment_id'  => 'nullable',
         ]);
 
         auth()->user()->communications()->create([
@@ -39,7 +40,7 @@ class CommunicationController extends Controller
             'communicationable_type' =>  get_class($product),
             'approved'         => 1,
             'is_response'      => 1,
-            'parent_id'        => $request->comment_id,
+            'parent_id'        => $request->comment_id ?? 0,
             'comment'          => $request->text,
         ]);
 
@@ -54,6 +55,9 @@ class CommunicationController extends Controller
 
     public function delete(Communication $Communication)
     {
+        Log::info([
+            'Communication' => $Communication
+        ]);
         $Communication->delete();
         return  ResponderFacade::delete();
     }
@@ -71,8 +75,9 @@ class CommunicationController extends Controller
         foreach ($comments as  $comment) {
             $comment['name'] = User::find($comment->user_id)->name;
             if ($comment->parent_id != 0) {
-                $comment['parent_name'] = User::find($comment->parent_id)->name;
-                $comment['parent_comment'] = Communication::find($comment->parent_id)->comment;
+                $parent = Communication::find($comment->parent_id);
+                $comment['parent_name'] = User::find($parent->user_id)->name;
+                $comment['parent_comment'] = $parent->comment;
             }
 
             $comment['image'] =  'https://picsum.photos/200/300';

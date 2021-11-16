@@ -10,7 +10,7 @@ class VueResponses
     {
         return response()->json([
             'comments' => $comments,
-            'product' => $product,
+            'numberOfComments' => count($comments),
             'user_id' => auth()->id()
         ], Response::HTTP_OK);
     }
@@ -38,8 +38,7 @@ class VueResponses
 
     public function delete()
     {
-        return response()->json([
-            'message' => 'متن نظر حذف شد',
+        return response()->json(['message' => 'نظر کاربر حذف شد',
         ]);
     }
 }
