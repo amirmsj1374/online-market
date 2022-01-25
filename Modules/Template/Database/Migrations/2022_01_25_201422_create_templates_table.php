@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateContentsTable extends Migration
+class CreateTemplatesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,10 +12,11 @@ class CreateContentsTable extends Migration
      * @return void
      */
     public function up()
-    {  
-        Schema::create('contents', function (Blueprint $table) {
+    {
+        Schema::create('templates', function (Blueprint $table) {
             $table->id();
-
+            $table->string('name');
+            $table->tinyInteger('selected')->default(0);
             $table->timestamps();
         });
     }
@@ -27,6 +28,6 @@ class CreateContentsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('contents');
+        Schema::dropIfExists('templates');
     }
 }
