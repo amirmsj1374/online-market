@@ -1,38 +1,35 @@
 <?php
 
 namespace Modules\Template\Http\Controllers\Api\V1;
+
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
+use Modules\Template\Entities\Page;
+use Modules\Template\Entities\Template;
 
 class ManagerController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     * @return Renderable
-     */
-    public function index()
+    public function getAllTemplates()
     {
-       // page order elements
+        return response()->json([
+            'templates' => Template::get()
+        ], Response::HTTP_OK);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     * @return Renderable
-     */
-    public function create()
+    public function getPages(Template $template)
     {
-        return view('template::create');
+        return response()->json([
+            'pages' => $template->pages
+        ], Response::HTTP_OK);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     * @param Request $request
-     * @return Renderable
-     */
-    public function store(Request $request)
+    public function getElements(Page $page)
     {
-        //
+        return response()->json([
+            'elements' => $page->elements
+        ], Response::HTTP_OK);
     }
 
     /**
