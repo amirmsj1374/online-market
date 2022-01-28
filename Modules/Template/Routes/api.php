@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use Modules\Template\Http\Controllers\Api\V1\ManagerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,6 +15,9 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/template', function (Request $request) {
-    return $request->user();
+Route::prefix('/v1/template')->group(function () {
+    Route::get('/get/all/templates', [ManagerController::class, 'getAllTemplates']);
+    Route::post('/select/{template}', [ManagerController::class, 'selectTemplate']);
+    Route::get('/get/pages', [ManagerController::class, 'getPages']);
+    Route::get('/get/elements/of/page/{page}', [ManagerController::class, 'getElements']);
 });

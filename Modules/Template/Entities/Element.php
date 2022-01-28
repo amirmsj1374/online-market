@@ -4,10 +4,12 @@ namespace Modules\Template\Entities;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Element extends Model
+class Element extends Model implements HasMedia
 {
-    use HasFactory;
+    use HasFactory, InteractsWithMedia;
 
     protected $fillable = [
         'label',
@@ -21,6 +23,16 @@ class Element extends Model
     protected static function newFactory()
     {
         return \Modules\Template\Database\factories\ElementFactory::new();
+    }
+
+    /**
+     * registerMediaCollections
+     *
+     * @return void
+     */
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('element');
     }
 
     public function page()

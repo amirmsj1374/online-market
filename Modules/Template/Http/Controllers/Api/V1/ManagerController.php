@@ -6,20 +6,47 @@ use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
+use Modules\Template\Entities\Element;
 use Modules\Template\Entities\Page;
 use Modules\Template\Entities\Template;
+use Faker\Factory as Faker;
+use Illuminate\Support\Facades\Log;
 
 class ManagerController extends Controller
 {
     public function getAllTemplates()
     {
+        $result = $this->dataTemplates();
+
         return response()->json([
-            'templates' => Template::get()
+            'templates' => $result['templates'],
+            'selectedTemplate' => $result['selectedTemplate']
         ], Response::HTTP_OK);
     }
 
-    public function getPages(Template $template)
+    public function selectTemplate(Template $template, Request $request)
     {
+
+        $selected = Template::where('selected', 1)->first()->update([
+            'selected' => 0
+        ]);
+
+        $template->update([
+            'selected' => $request->status
+        ]);
+
+        $result = $this->dataTemplates();
+
+        return response()->json([
+            'message' => 'قالب ' . $template->name . ' فعال شد.',
+            'templates' => $result['templates'],
+            'selectedTemplate' => $result['selectedTemplate']
+        ], Response::HTTP_OK);
+    }
+
+    public function getPages()
+    {
+        $template = Template::where('selected', 1)->first();
         return response()->json([
             'pages' => $template->pages
         ], Response::HTTP_OK);
@@ -27,49 +54,40 @@ class ManagerController extends Controller
 
     public function getElements(Page $page)
     {
+
+        // Element::find(1)->addMediaFromUrl('http://localhost:3000/template/demo-1.jpg')->toMediaCollection('element');
+        $elements = $this->addMediaToModel($page->elements, 'element');
         return response()->json([
-            'elements' => $page->elements
+            'elements' => $elements
         ], Response::HTTP_OK);
     }
 
-    /**
-     * Show the specified resource.
-     * @param int $id
-     * @return Renderable
-     */
-    public function show($id)
+    public function dataTemplates()
     {
-        return view('template::show');
+        $templates = $this->addMediaToModel(Template::get(), 'template');
+
+        $selectedTemplate = $templates->where('selected', 1)->first();
+
+        return [
+            'templates'        => $templates,
+            'selectedTemplate' => $selectedTemplate,
+        ];
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     * @param int $id
-     * @return Renderable
-     */
-    public function edit($id)
+    public function addMediaToModel($data, $gallary)
     {
-        return view('template::edit');
+        foreach ($data as $item) {
+            $images = [];
+            if ($item->getFirstMedia($gallary)) {
+                foreach ($item->getMedia($gallary) as $key => $image) {
+                    $images[$key] = $image->getFullUrl();
+                }
+            }
+            $item['images'] =  $images;
+        }
+
+        return $data;
+
     }
 
-    /**
-     * Update the specified resource in storage.
-     * @param Request $request
-     * @param int $id
-     * @return Renderable
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     * @param int $id
-     * @return Renderable
-     */
-    public function destroy($id)
-    {
-        //
-    }
 }
