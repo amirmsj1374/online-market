@@ -16,8 +16,10 @@ use Modules\Template\Http\Controllers\Api\V1\ManagerController;
 */
 
 Route::prefix('/v1/template')->group(function () {
-    
-    Route::get('/add', [ManagerController::class, 'addNewTemplate']);
+
+    Route::post('/add', [ManagerController::class, 'addNewTemplate']);
+    Route::post('/add/page/to/{template}', [ManagerController::class, 'addPage']);
+    Route::post('/delete/page/{page}', [ManagerController::class, 'deletePage']);
 
     Route::get('/get/all/templates', [ManagerController::class, 'getAllTemplates']);
     Route::post('/select/{template}', [ManagerController::class, 'selectTemplate']);

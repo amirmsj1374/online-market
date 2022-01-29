@@ -63,6 +63,36 @@ class ManagerController extends Controller
         ], Response::HTTP_OK);
     }
 
+    public function addPage(Template $template, Request $request)
+    {
+        $request->validate([
+            'name'  => 'required|min:4',
+            'label' => 'required|min:4',
+            'icon'  => 'nullable|min:4',
+        ]);
+
+        $template->pages()->create([
+            'name'  => $request->name,
+            'label' => $request->label,
+            'icon'  => $request->icon,
+        ]);
+
+        return response()->json([
+            'message' => 'صفحه جدید اضافه شد',
+            'pages' => $template->pages
+        ], Response::HTTP_OK);
+    }
+
+    public function deletePage(Page $page, Request $request)
+    {
+        $page->delete();
+        $pages = Template::find($request->template_id)->pages;
+        return response()->json([
+            'message' => 'صفحه مورد نظر حذف شد',
+            'pages' => $pages
+        ], Response::HTTP_OK);
+    }
+
     public function getPages()
     {
         $template = Template::where('selected', 1)->first();
