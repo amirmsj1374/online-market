@@ -24,6 +24,25 @@ class ManagerController extends Controller
         ], Response::HTTP_OK);
     }
 
+    public function addNewTemplate(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|min:4',
+            'image' => 'mimes:jpeg,jpg,png,gif|required|max:20000'
+        ]);
+
+        $template = Template::create([
+            'name' => $request->name,
+        ]);
+
+        $template->addMedia($request->image)->toMediaCollection('template');
+
+        return response()->json([
+            'message' => 'قالب جدید اضاف شد',
+            'template' => $template->id
+        ], Response::HTTP_OK);
+    }
+
     public function selectTemplate(Template $template, Request $request)
     {
 
@@ -87,7 +106,5 @@ class ManagerController extends Controller
         }
 
         return $data;
-
     }
-
 }
