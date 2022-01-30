@@ -11,6 +11,7 @@ use Modules\Template\Entities\Page;
 use Modules\Template\Entities\Template;
 use Faker\Factory as Faker;
 use Illuminate\Support\Facades\Log;
+use Modules\Template\Entities\ElementType;
 
 class ManagerController extends Controller
 {
@@ -109,6 +110,22 @@ class ManagerController extends Controller
         return response()->json([
             'elements' => $elements
         ], Response::HTTP_OK);
+    }
+
+
+
+    public function addElements(Template $template, Request $request)
+    {
+        Log::info(['template' => $template]);
+        Log::info(['template' => $request->all()]);
+
+        $request->validate([
+            'name' => 'required|min:4',
+            'image' => 'mimes:jpeg,jpg,png,gif|required|max:20000',
+            'type' => 'array'
+        ]);
+
+        
     }
 
     public function dataTemplates()

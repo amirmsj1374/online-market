@@ -18,6 +18,7 @@ class Element extends Model implements HasMedia
         'page_id',
         'status',
         'type',
+        'input'
     ];
 
     protected static function newFactory()

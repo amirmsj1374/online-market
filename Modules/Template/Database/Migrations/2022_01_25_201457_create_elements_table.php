@@ -22,6 +22,7 @@ class CreateElementsTable extends Migration
             $table->tinyInteger('status')->default(1);
             $table->string('type');
             $table->unsignedInteger('order');
+            $table->json('input');
             $table->timestamps();
         });
     }

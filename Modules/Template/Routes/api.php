@@ -20,6 +20,7 @@ Route::prefix('/v1/template')->group(function () {
     Route::post('/add', [ManagerController::class, 'addNewTemplate']);
     Route::post('/add/page/to/{template}', [ManagerController::class, 'addPage']);
     Route::post('/delete/page/{page}', [ManagerController::class, 'deletePage']);
+    Route::post('/add/element/{template}', [ManagerController::class, 'addElements']);
 
     Route::get('/get/all/templates', [ManagerController::class, 'getAllTemplates']);
     Route::post('/select/{template}', [ManagerController::class, 'selectTemplate']);
