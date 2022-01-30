@@ -14,12 +14,13 @@ class Element extends Model implements HasMedia
     protected $fillable = [
         'label',
         'name',
-        'order',
-        'page_id',
+        'template_id',
         'status',
         'type',
         'input'
     ];
+
+    protected $casts  = ['input' => 'array'];
 
     protected static function newFactory()
     {
@@ -36,9 +37,14 @@ class Element extends Model implements HasMedia
         $this->addMediaCollection('element');
     }
 
-    public function page()
+    public function template()
     {
-        return $this->belongsTo(Page::class);
+        return $this->belongsTo(Template::class);
+    }
+
+    public function layout()
+    {
+        return $this->belongsToMany(Layout::class);
     }
 
     public function contents()

@@ -25,8 +25,14 @@ class Page extends Model
         return $this->belongsTo(Template::class);
     }
 
-    public function elements()
+    public function layout()
     {
-        return $this->hasMany(Element::class);
+        return $this->belongsTo(Layout::class);
     }
+
+
+    // public function elements()
+    // {
+    //     return $this->hasMany(Element::class);
+    // }
 }

@@ -36,6 +36,13 @@ class ManagerController extends Controller
             'name' => $request->name,
         ]);
 
+        if (Template::count() == 1) {
+            $template->update([
+                'selected' => 1
+            ]);
+        }
+
+
         $template->addMedia($request->image)->toMediaCollection('template');
 
         return response()->json([
@@ -102,11 +109,24 @@ class ManagerController extends Controller
         ], Response::HTTP_OK);
     }
 
-    public function getElements(Page $page)
+    public function getAllElements(Template $template)
     {
 
-        // Element::find(1)->addMediaFromUrl('http://localhost:3000/template/demo-1.jpg')->toMediaCollection('element');
-        $elements = $this->addMediaToModel($page->elements, 'element');
+        $elements = $this->addMediaToModel($template->elements, 'element');
+        return response()->json([
+            'elements' => $elements
+        ], Response::HTTP_OK);
+    }
+
+    public function getElementsOfPage(Page $page)
+    {
+
+        if ($page->layout) {
+            $elements = $this->addMediaToModel($page->layout->elements, 'element');
+        } else {
+            $elements = collect();
+        }
+
         return response()->json([
             'elements' => $elements
         ], Response::HTTP_OK);
@@ -116,16 +136,30 @@ class ManagerController extends Controller
 
     public function addElements(Template $template, Request $request)
     {
-        Log::info(['template' => $template]);
-        Log::info(['template' => $request->all()]);
+        // Log::info(['template' => $template]);
+        // Log::info(['template' => $request->all()]);
 
         $request->validate([
-            'name' => 'required|min:4',
-            'image' => 'mimes:jpeg,jpg,png,gif|required|max:20000',
-            'type' => 'array'
+            '*.name' => 'required|min:4',
+            '*.image' => 'mimes:jpeg,jpg,png,gif|required|max:20000',
+            '*.type' => 'array'
         ]);
 
-        
+        foreach ($request->all() as $key => $item) {
+            // Log::info(['template' => $item]);
+            $element = $template->elements()->create([
+                'name'  => $item['name'],
+                'label' => $item['label'],
+                'input' => $item['input'],
+            ]);
+
+            $element->addMedia($item['image'])->toMediaCollection('element');
+        }
+
+        return response()->json([
+            'message' => 'اطلاعات قالب با موفقیت ذخیره شد'
+        ], Response::HTTP_OK);
+
     }
 
     public function dataTemplates()

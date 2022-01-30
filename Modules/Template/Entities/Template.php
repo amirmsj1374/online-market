@@ -35,4 +35,9 @@ class Template extends Model implements HasMedia
     {
         return $this->hasMany(Page::class);
     }
+
+    public function elements()
+    {
+        return $this->hasMany(Element::class);
+    }
 }

@@ -15,13 +15,12 @@ class CreateElementsTable extends Migration
     {
         Schema::create('elements', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('page_id');
-            $table->foreign('page_id')->references('id')->on('pages')->onDelete('cascade');
+            $table->unsignedBigInteger('template_id');
+            $table->foreign('template_id')->references('id')->on('templates')->onDelete('cascade');
             $table->string('name');
             $table->string('label');
             $table->tinyInteger('status')->default(1);
-            $table->string('type');
-            $table->unsignedInteger('order');
+            $table->string('type')->nullable();
             $table->json('input');
             $table->timestamps();
         });
