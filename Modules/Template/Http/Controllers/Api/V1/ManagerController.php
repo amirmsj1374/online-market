@@ -136,24 +136,23 @@ class ManagerController extends Controller
 
     public function addElements(Template $template, Request $request)
     {
-        // Log::info(['template' => $template]);
-        // Log::info(['template' => $request->all()]);
-
+       
         $request->validate([
             '*.name' => 'required|min:4',
-            '*.image' => 'mimes:jpeg,jpg,png,gif|required|max:20000',
+            '*.icon_address' => 'required',
             '*.type' => 'array'
         ]);
-
-        foreach ($request->all() as $key => $item) {
-            // Log::info(['template' => $item]);
-            $element = $template->elements()->create([
+       
+        foreach ($request->all() as $item) {
+          
+            $template->elements()->create([
                 'name'  => $item['name'],
                 'label' => $item['label'],
                 'input' => $item['input'],
+                'description' => $item['description'],
+                'icon_address' => $item['icon_address']['address'],
             ]);
 
-            $element->addMedia($item['image'])->toMediaCollection('element');
         }
 
         return response()->json([

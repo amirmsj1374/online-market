@@ -17,7 +17,9 @@ class Element extends Model implements HasMedia
         'template_id',
         'status',
         'type',
-        'input'
+        'input',
+        'description',
+        'icon_address',
     ];
 
     protected $casts  = ['input' => 'array'];
