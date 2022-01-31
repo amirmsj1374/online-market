@@ -150,7 +150,7 @@ class ManagerController extends Controller
             $element = $template->elements()->create([
                 'name'  => $item['name'],
                 'label' => $item['label'],
-                'input' => $item['input'],
+                'inputs' => $item['input'],
             ]);
 
             $element->addMedia($item['image'])->toMediaCollection('element');

@@ -21,7 +21,7 @@ class CreateElementsTable extends Migration
             $table->string('label');
             $table->tinyInteger('status')->default(1);
             $table->string('type')->nullable();
-            $table->json('input');
+            $table->json('inputs');
             $table->timestamps();
         });
     }

@@ -10,15 +10,15 @@ class Content extends Model
     use HasFactory;
 
     protected $fillable = [
-        'button_label',
-        'color',
-        'default_icon',
-        'description',
         'element_id',
+        'buttonLabel',
+        'buttonLink',
+        'class',
+        'cols',
+        'description',
         'icon',
         'link',
         'order',
-        'slug',
         'subtitle',
         'time',
         'title',
