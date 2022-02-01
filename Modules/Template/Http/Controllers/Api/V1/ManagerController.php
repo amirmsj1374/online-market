@@ -136,15 +136,15 @@ class ManagerController extends Controller
 
     public function addElements(Template $template, Request $request)
     {
-       
+
         $request->validate([
             '*.name' => 'required|min:4',
             '*.icon_address' => 'required',
             '*.type' => 'array'
         ]);
-       
+
         foreach ($request->all() as $item) {
-          
+
             $template->elements()->create([
                 'name'  => $item['name'],
                 'label' => $item['label'],
@@ -158,6 +158,30 @@ class ManagerController extends Controller
         return response()->json([
             'message' => 'اطلاعات قالب با موفقیت ذخیره شد'
         ], Response::HTTP_OK);
+
+    }
+
+    public function getContents(Element $element)
+    {
+        $data = collect();
+        $inputs = json_decode($element->inputs, true);
+
+        if (is_null($element->contents) || $element->contents->isEmpty()) {
+            foreach ($inputs as $key => $input) {
+                $data->put($input['name'], null);
+            }
+        } else {
+            foreach ($element->contents as $key => $content) {
+                foreach ($inputs as $key => $input) {
+                    $data->put($input['name'], $content->get($input['name']));
+                }
+            }
+        }
+
+
+        return response()->json([
+            'contents' => $data
+        ]);
 
     }
 
