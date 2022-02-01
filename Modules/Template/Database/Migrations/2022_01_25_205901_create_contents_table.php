@@ -17,17 +17,17 @@ class CreateContentsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('element_id');
             $table->foreign('element_id')->references('id')->on('elements')->onDelete('cascade');
-            $table->string('icon')->nullable();
-            $table->string('default_icon')->nullable();
-            $table->string('title')->nullable();
-            $table->string('subtitle')->nullable();
-            $table->string('slug')->nullable();
-            $table->string('time')->nullable();
-            $table->string('button_label')->nullable();
-            $table->string('color')->nullable();
+            $table->string('buttonLabel')->nullable();
+            $table->string('buttonLink')->nullable();
+            $table->string('class')->nullable();
+            $table->unsignedTinyInteger('cols')->nullable();
             $table->string('description')->nullable();
+            $table->string('icon')->nullable();
             $table->string('link')->nullable();
             $table->unsignedInteger('order')->nullable();
+            $table->string('subtitle')->nullable();
+            $table->string('time')->nullable();
+            $table->string('title')->nullable();
             $table->timestamps();
         });
     }

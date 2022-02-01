@@ -148,9 +148,9 @@ class ManagerController extends Controller
             $template->elements()->create([
                 'name'  => $item['name'],
                 'label' => $item['label'],
-                'input' => $item['input'],
                 'description' => $item['description'],
                 'icon_address' => $item['icon_address']['address'],
+                'inputs' => $item['input'],
             ]);
 
         }
