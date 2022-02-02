@@ -19,10 +19,9 @@ class CreateContentsTable extends Migration
             $table->foreign('element_id')->references('id')->on('elements')->onDelete('cascade');
             $table->string('buttonLabel')->nullable();
             $table->string('buttonLink')->nullable();
-            $table->string('class')->nullable();
+            $table->string('customClass')->nullable();
             $table->unsignedTinyInteger('cols')->nullable();
             $table->string('description')->nullable();
-            $table->string('icon')->nullable();
             $table->string('link')->nullable();
             $table->unsignedInteger('order')->nullable();
             $table->string('subtitle')->nullable();
