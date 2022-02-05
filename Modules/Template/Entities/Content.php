@@ -10,17 +10,15 @@ class Content extends Model
     use HasFactory;
 
     protected $fillable = [
-        'element_id',
+        'body',
         'buttonLabel',
-        'buttonLink',
         'customClass',
         'cols',
-        'description',
         'link',
         'order',
-        'subtitle',
+        'section_id',
         'time',
-        'title',
+        'type',
     ];
 
     protected static function newFactory()
@@ -28,8 +26,8 @@ class Content extends Model
         return \Modules\Template\Database\factories\ContentFactory::new();
     }
 
-    public function element()
+    public function section()
     {
-        return $this->belongsTo(Element::class);
+        return $this->belongsTo(Section::class);
     }
 }

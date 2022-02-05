@@ -29,10 +29,4 @@ class Page extends Model
     {
         return $this->belongsTo(Layout::class);
     }
-
-
-    // public function elements()
-    // {
-    //     return $this->hasMany(Element::class);
-    // }
 }

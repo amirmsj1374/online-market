@@ -22,7 +22,7 @@ class Element extends Model implements HasMedia
         'inputs'
     ];
 
-    protected $casts  = ['input' => 'array'];
+    protected $casts  = ['inputs' => 'array'];
 
     protected static function newFactory()
     {
@@ -49,8 +49,8 @@ class Element extends Model implements HasMedia
         return $this->belongsToMany(Layout::class);
     }
 
-    public function contents()
+    public function sections()
     {
-        return $this->hasMany(Content::class);
+        return $this->hasMany(Section::class);
     }
 }

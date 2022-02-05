@@ -140,7 +140,7 @@ class ManagerController extends Controller
         $request->validate([
             '*.name' => 'required|min:4',
             '*.icon_address' => 'required',
-            '*.type' => 'array'
+            '*.type' => 'required|string'
         ]);
 
         foreach ($request->all() as $item) {
@@ -148,9 +148,10 @@ class ManagerController extends Controller
             $template->elements()->create([
                 'name'  => $item['name'],
                 'label' => $item['label'],
+                'type' => $item['type'],
                 'description' => $item['description'],
                 'icon_address' => $item['icon_address']['address'],
-                'inputs' => $item['input'],
+                'inputs' => $item['inputs'],
             ]);
 
         }
@@ -164,16 +165,18 @@ class ManagerController extends Controller
     public function getContents(Element $element)
     {
         $data = collect();
-        $inputs = json_decode($element->inputs, true);
+        $inputs = $element->inputs;
 
-        if (is_null($element->contents) || $element->contents->isEmpty()) {
-            foreach ($inputs as $key => $input) {
+        if (is_null($element->sections) || $element->sections->isEmpty()) {
+            foreach ($inputs as $input) {
                 $data->put($input['name'], null);
             }
         } else {
-            foreach ($element->contents as $key => $content) {
-                foreach ($inputs as $key => $input) {
-                    $data->put($input['name'], $content->get($input['name']));
+            foreach ($element->sections as $section) {
+                foreach ($section->contents as $content) {
+                    foreach ($inputs as $key => $input) {
+                        $data->put($input['name'], $content->get($input['name']));
+                    }
                 }
             }
         }

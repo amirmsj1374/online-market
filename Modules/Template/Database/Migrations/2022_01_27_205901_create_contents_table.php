@@ -15,18 +15,16 @@ class CreateContentsTable extends Migration
     {
         Schema::create('contents', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('element_id');
-            $table->foreign('element_id')->references('id')->on('elements')->onDelete('cascade');
+            $table->unsignedBigInteger('section_id')->nullable();
+            $table->foreign('section_id')->references('id')->on('sections')->onDelete('cascade');
+            $table->text('body')->nullable();
             $table->string('buttonLabel')->nullable();
-            $table->string('buttonLink')->nullable();
             $table->string('customClass')->nullable();
             $table->unsignedTinyInteger('cols')->nullable();
-            $table->string('description')->nullable();
             $table->string('link')->nullable();
             $table->unsignedInteger('order')->nullable();
-            $table->string('subtitle')->nullable();
             $table->string('time')->nullable();
-            $table->string('title')->nullable();
+            $table->string('type')->nullable();
             $table->timestamps();
         });
     }
