@@ -185,10 +185,6 @@ class ManagerController extends Controller
             }
         }
 
-        Log::info([
-            'data' => $data
-        ]);
-
         return response()->json([
             'contents' => $data
         ]);
