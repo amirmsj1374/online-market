@@ -165,12 +165,16 @@ class ManagerController extends Controller
     public function getContents(Element $element)
     {
         $data = collect();
+        $array = [];
         $inputs = $element->inputs;
 
         if (is_null($element->sections) || $element->sections->isEmpty()) {
-            foreach ($inputs as $input) {
-                $data->put($input['name'], null);
+            foreach ($inputs as $key => $input) {
+                $array[$input['name']] = null;
+
             }
+            $data->put(0, $array);
+
         } else {
             foreach ($element->sections as $section) {
                 foreach ($section->contents as $content) {
@@ -181,6 +185,9 @@ class ManagerController extends Controller
             }
         }
 
+        Log::info([
+            'data' => $data
+        ]);
 
         return response()->json([
             'contents' => $data
