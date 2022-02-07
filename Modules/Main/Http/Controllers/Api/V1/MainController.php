@@ -8,6 +8,8 @@ use Illuminate\Routing\Controller;
 use DateTime;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
+
 
 class MainController extends Controller
 {
@@ -18,20 +20,16 @@ class MainController extends Controller
     public function saveTemporaryImages(Request $request)
     {
         $urls = [];
-        foreach ($request->files as $key => $file) {
+        foreach ($request->file() as $key => $file) {
             $date = new DateTime();
-            $name = 'temporary/' . $date->format('Y-m-d') . '/';
-            // $path = storage_path('app/public/temporary/' . $file_name);
-            $file = Storage::disk("public")->put($name, $file);
+            $path = 'temporary/' . $date->format('Y-m-d') . '/';
+            File::makeDirectory(storage_path($path), $mode = 0777, true, true);
+            $file = Storage::disk("public")->put($path, $file);
             $urls[$key] = asset(Storage::url($file));
         }
 
-        Log::info([
-            'urllllls' => $urls
-        ]);
-
         return response()->json([
-            'url' => $urls
+            'urls' => $urls
         ]);
     }
 }
