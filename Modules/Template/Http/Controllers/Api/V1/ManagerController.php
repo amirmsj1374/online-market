@@ -191,6 +191,19 @@ class ManagerController extends Controller
 
     }
 
+
+    public function addSection(Element $element,Request $request)
+    {
+        Log::info([
+            'ele' => $element,
+            'requ' => $request->all()
+        ]);
+
+        return response()->json([
+            'message' => 'اطلاعات قالب با موفقیت ذخیره شد'
+        ], Response::HTTP_OK);
+    }
+
     public function dataTemplates()
     {
         $templates = $this->addMediaToModel(Template::get(), 'template');

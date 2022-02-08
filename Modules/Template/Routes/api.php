@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Modules\Template\Http\Controllers\Api\V1\ManagerController;
+use Modules\Template\Http\Controllers\Api\V1\TemplateController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,4 +29,6 @@ Route::prefix('/v1/template')->group(function () {
     Route::get('/get/elements/{template}', [ManagerController::class, 'getAllElements']);
     Route::get('/get/elements/of/{page}', [ManagerController::class, 'getElementsOfPage']);
     Route::get('/get/contents/of/{element}', [ManagerController::class, 'getContents']);
+
+    Route::post('/add/section/{element}', [ManagerController::class, 'addSection']);
 });
