@@ -17,10 +17,9 @@ class CreateLayoutsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('page_id');
             $table->foreign('page_id')->references('id')->on('pages')->onDelete('cascade');
-            $table->unsignedBigInteger('element_id');
-            $table->foreign('element_id')->references('id')->on('elements')->onDelete('cascade');
+            $table->unsignedBigInteger('section_id');
+            $table->foreign('section_id')->references('id')->on('sections')->onDelete('cascade');
             $table->unsignedTinyInteger('order');
-            $table->string('header_title')->nullable();
             $table->tinyInteger('status')->default(1);
             $table->timestamps();
         });

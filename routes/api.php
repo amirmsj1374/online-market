@@ -17,4 +17,4 @@ use Illuminate\Support\Facades\View;
 |
 */
 
-Route::post('temporary/file', [TemporaryController::class, 'save']);
+Route::post('temporary/file', [TemporaryController::class, 'store']);

@@ -12,9 +12,9 @@ use Illuminate\Support\Facades\Storage;
 
 class TemporaryController extends Controller
 {
-    public function save(Request $request)
+    public function store(Request $request)
     {
-        Log::info(['re' => $request->all()]);
+        
         $request->validate([
             'image' => 'mimes:jpeg,jpg,png,gif|required|max:20000'
         ]);
@@ -30,17 +30,6 @@ class TemporaryController extends Controller
         ]);
     }
 
-    public function test()
-    {
 
-        // $directories = Storage::disk('public')->directories('temporary');
-        // foreach ($directories as $key => $directory) {
-        //     unset($directory);
-        // }
-        // dd($directories);
-
-        // return ( \Modules\Product\Entities\Product::find(2)->tags);
-
-    }
 
 }

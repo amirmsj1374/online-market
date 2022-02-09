@@ -10,8 +10,7 @@ class Layout extends Model
     use HasFactory;
 
     protected $fillable = [
-        'element_id',
-        'header_title',
+        'section_id',
         'order',
         'page_id',
         'status',
@@ -26,8 +25,8 @@ class Layout extends Model
     {
         return $this->hasOne(Page::class);
     }
-    public function elements()
+    public function sections()
     {
-        return $this->hasMany(Element::class);
+        return $this->hasMany(Section::class);
     }
 }

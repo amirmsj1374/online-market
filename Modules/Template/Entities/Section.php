@@ -22,9 +22,9 @@ class Section extends Model
         return \Modules\Template\Database\factories\SectionFactory::new();
     }
 
-    public function element()
+    public function section()
     {
-        return $this->belongsTo(Element::class);
+        return $this->belongsTo(Section::class);
     }
 
     public function contents()

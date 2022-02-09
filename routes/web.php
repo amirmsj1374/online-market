@@ -1,8 +1,12 @@
 <?php
 
 use App\Http\Controllers\TemporaryController;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
+use Modules\Template\Entities\Content;
+use Modules\Template\Entities\Element;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -14,8 +18,6 @@ use Illuminate\Support\Facades\View;
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+// Route::get('/test', function () {
 
-Route::get('/test', [TemporaryController::class, 'test']);
+// });
