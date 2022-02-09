@@ -8,21 +8,20 @@ use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Modules\Discount\Entities\Discount;
-use Modules\Product\Entities\Product;
-use Modules\User\Entities\User;
+
 
 class TemporaryController extends Controller
 {
     public function save(Request $request)
     {
+        Log::info(['re' => $request->all()]);
+        $request->validate([
+            'image' => 'mimes:jpeg,jpg,png,gif|required|max:20000'
+        ]);
 
 
-        $date =
-            new DateTime();
-        $name =
-            'temporary/' . $date->format('Y-m-d') . '/';
-        // $path = storage_path('app/public/temporary/' . $file_name);
+        $date = new DateTime();
+        $name ='temporary/' . $date->format('Y-m-d') . '/';
         $file = Storage::disk("public")->put($name, $request->file);
         $url = Storage::url($file);
 

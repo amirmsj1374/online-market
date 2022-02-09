@@ -153,13 +153,11 @@ class ManagerController extends Controller
                 'icon_address' => $item['icon_address']['address'],
                 'inputs' => $item['inputs'],
             ]);
-
         }
 
         return response()->json([
             'message' => 'اطلاعات قالب با موفقیت ذخیره شد'
         ], Response::HTTP_OK);
-
     }
 
     public function getContents(Element $element)
@@ -171,10 +169,8 @@ class ManagerController extends Controller
         if (is_null($element->sections) || $element->sections->isEmpty()) {
             foreach ($inputs as $key => $input) {
                 $array[$input['name']] = null;
-
             }
             $data->put(0, $array);
-
         } else {
             foreach ($element->sections as $section) {
                 foreach ($section->contents as $content) {
@@ -188,19 +184,40 @@ class ManagerController extends Controller
         return response()->json([
             'contents' => $data
         ]);
-
     }
 
 
-    public function addSection(Element $element,Request $request)
+    public function addSection(Element $element, Request $request)
     {
+
         Log::info([
-            'ele' => $element,
-            'requ' => $request->all()
+            'sec' => $request->sections,
+        ]);
+        $request->validate([
+            'sections.*.image' => 'required',
+            'sections.*.body' => 'nullable|string',
+            'sections.*.link' => 'nullable|string',
+            'sections.*.buttonLabel' => 'nullable|string'
         ]);
 
+
+        foreach ($request->sections as $key => $value) {
+
+            Log::info([
+                'sect' => $value,
+            ]);
+
+            $section = $element->sections()->create([
+                'title' => $element->label,
+            ]);
+
+            $content = $section->contents()->create($value);
+
+            $content->addMediaFromUrl($value->image)->toMediaCollection('content');
+        }
+
         return response()->json([
-            'message' => 'اطلاعات قالب با موفقیت ذخیره شد'
+            'message' => 'بخش جدید به صفحه اضافه شد'
         ], Response::HTTP_OK);
     }
 

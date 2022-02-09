@@ -15,6 +15,8 @@ class Section extends Model
         'title',
     ];
 
+
+
     protected static function newFactory()
     {
         return \Modules\Template\Database\factories\SectionFactory::new();
