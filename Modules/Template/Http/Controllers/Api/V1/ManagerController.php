@@ -12,6 +12,8 @@ use Modules\Template\Entities\Template;
 use Illuminate\Support\Facades\Log;
 use Modules\Template\Entities\Section;
 
+use function PHPUnit\Framework\isNull;
+
 class ManagerController extends Controller
 {
     public function getAllTemplates()
@@ -124,22 +126,28 @@ class ManagerController extends Controller
 
     public function getSectionOfPage(Page $page)
     {
-        // Log::info(['getElementsOfPage'=>'getElementsOfPage']);
+
         $sections = collect();
         if ($page->layouts) {
-            foreach ($page->layouts as $key => $layout) {
-                $sections->push($layout->section->element);
+
+           
+         
+            foreach ($page->layouts as  $layout) {
+                // if (!isNull($layout->section)) {
+                    $sections->push($layout->section);
+                    Log::info(['layouts',$layout->section]);
+                // }
             }
         }
 
         return response()->json([
-            'elements' => $sections
+            'sections' => $sections
         ], Response::HTTP_OK);
     }
 
     public function addElements(Template $template, Request $request)
     {
-        // Log::info(['addElements'=>$request->all()]);
+
         $request->validate([
             '*.name' => 'required|min:4',
             '*.icon_address' => 'required',
@@ -163,19 +171,18 @@ class ManagerController extends Controller
         ], Response::HTTP_OK);
     }
 
-    public function getContents(Element $element)
+    public function getIputs(Element $element)
     {
-
 
         $data = collect();
         $array = [];
         $inputs = $element->inputs;
 
-            foreach ($inputs as  $input) {
-                $array[$input['name']] = null;
-            }
+        foreach ($inputs as  $input) {
+            $array[$input['name']] = null;
+        }
 
-            $data->put(0, $array);
+        $data->put(0, $array);
 
         return response()->json([
             'contents' => $data
@@ -184,25 +191,22 @@ class ManagerController extends Controller
     public function getContentsOfSection(Section $section)
     {
 
-
         $data = collect();
         $inputs = $section->element->inputs;
 
-            foreach ($section->contents as $contentKey => $content) {
+        foreach ($section->contents as $contentKey => $content) {
 
-                $contentWithKey = [];
-                foreach ($inputs as  $input) {
-                    Log::info([
-                        'content' => $content->toArray()
-                    ]);
-                    $contentWithKey[$input['name']] = $content->toArray()[$input['name']];
-                }
+            $contentWithKey = [];
+            foreach ($inputs as  $input) {
 
-                $data->put($contentKey, $contentWithKey);
+                $contentWithKey[$input['name']] = $content->toArray()[$input['name']];
             }
 
+            $data->put($contentKey, $contentWithKey);
+        }
+
         return response()->json([
-            'contents' => $data
+            'sections' => $data
         ]);
     }
 
@@ -238,12 +242,12 @@ class ManagerController extends Controller
         }
 
         // add section to  layout
-          $page = Page::find($request->pageId);
+        $page = Page::find($request->pageId);
 
-          $page->layouts()->create([
-              'section_id' => $section->id,
-              'order' => 2,
-          ]);
+        $page->layouts()->create([
+            'section_id' => $section->id,
+            'order' => 2,
+        ]);
 
 
 
