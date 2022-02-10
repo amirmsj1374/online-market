@@ -18,7 +18,6 @@ class ManagerController extends Controller
 {
     public function getAllTemplates()
     {
-        // Log::info(['getAllTemplates'=>'getAllTemplates']);
         $result = $this->dataTemplates();
 
         return response()->json([
@@ -29,7 +28,6 @@ class ManagerController extends Controller
 
     public function addNewTemplate(Request $request)
     {
-        // Log::info(['addNewTemplate'=>$request->all()]);
         $request->validate([
             'name' => 'required|min:4',
             'image' => 'mimes:jpeg,jpg,png,gif|required|max:20000'
@@ -56,7 +54,6 @@ class ManagerController extends Controller
 
     public function selectTemplate(Template $template, Request $request)
     {
-        // Log::info(['selectTemplate'=>$request->all()]);
         $selected = Template::where('selected', 1)->first()->update([
             'selected' => 0
         ]);
@@ -76,7 +73,6 @@ class ManagerController extends Controller
 
     public function addPage(Template $template, Request $request)
     {
-        // Log::info(['addPage'=>$request->all()]);
         $request->validate([
             'name'  => 'required|min:4',
             'label' => 'required|min:4',
@@ -97,7 +93,7 @@ class ManagerController extends Controller
 
     public function deletePage(Page $page, Request $request)
     {
-        // Log::info(['deletePage'=>$request->all()]);
+
         $page->delete();
         $pages = Template::find($request->template_id)->pages;
         return response()->json([
@@ -108,7 +104,7 @@ class ManagerController extends Controller
 
     public function getPages()
     {
-        // Log::info(['getPages'=>'getPages']);
+
         $template = Template::where('selected', 1)->first();
         return response()->json([
             'pages' => $template->pages
@@ -117,7 +113,6 @@ class ManagerController extends Controller
 
     public function getAllElements(Template $template)
     {
-        // Log::info(['getAllElements'=>'getAllElements']);
         $elements = $this->addMediaToModel($template->elements, 'element');
         return response()->json([
             'elements' => $elements
@@ -129,14 +124,8 @@ class ManagerController extends Controller
 
         $sections = collect();
         if ($page->layouts) {
-
-           
-         
             foreach ($page->layouts as  $layout) {
-                // if (!isNull($layout->section)) {
-                    $sections->push($layout->section);
-                    Log::info(['layouts',$layout->section]);
-                // }
+                $sections->push($layout->section);
             }
         }
 
@@ -212,7 +201,6 @@ class ManagerController extends Controller
 
     public function addSection(Element $element, Request $request)
     {
-        // Log::info(['addSection'=>$request->all()]);
         $request->validate([
             'sections.*.image' => 'required',
             'sections.*.body' => 'nullable|string',
@@ -258,7 +246,6 @@ class ManagerController extends Controller
 
     public function dataTemplates()
     {
-        // Log::info(['dataTemplates'=>'dataTemplates']);
         $templates = $this->addMediaToModel(Template::get(), 'template');
 
         $selectedTemplate = $templates->where('selected', 1)->first();
@@ -271,7 +258,6 @@ class ManagerController extends Controller
 
     public function addMediaToModel($data, $gallary)
     {
-        // Log::info(['addMediaToModel'=>'addMediaToModel']);
         foreach ($data as $item) {
             $images = [];
             if ($item->getFirstMedia($gallary)) {
@@ -279,7 +265,6 @@ class ManagerController extends Controller
                     $images[$key] = $image->getFullUrl();
                 }
             }
-            // Log::info(['addMediaToModel items'=> $item]);
             $item['images'] =  $images;
         }
 
