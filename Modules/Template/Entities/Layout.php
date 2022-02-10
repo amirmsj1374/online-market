@@ -23,10 +23,10 @@ class Layout extends Model
 
     public function page()
     {
-        return $this->hasOne(Page::class);
+        return $this->belongsTo(Page::class);
     }
-    public function sections()
+    public function section()
     {
-        return $this->hasMany(Section::class);
+        return $this->belongsTo(Section::class);
     }
 }

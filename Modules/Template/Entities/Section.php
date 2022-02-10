@@ -16,15 +16,26 @@ class Section extends Model
     ];
 
 
+    public $appends = ['icon_address'];
 
     protected static function newFactory()
     {
         return \Modules\Template\Database\factories\SectionFactory::new();
     }
 
-    public function section()
+
+    public function getIconAddressAttribute()
     {
-        return $this->belongsTo(Section::class);
+        return  $this->element->icon_address;
+    }
+    public function element()
+    {
+        return $this->belongsTo(Element::class);
+    }
+
+    public function layout()
+    {
+        return $this->hasOne(Layout::class);
     }
 
     public function contents()

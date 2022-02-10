@@ -10,6 +10,7 @@ use Modules\Template\Entities\Element;
 use Modules\Template\Entities\Page;
 use Modules\Template\Entities\Template;
 use Illuminate\Support\Facades\Log;
+use Modules\Template\Entities\Section;
 
 class ManagerController extends Controller
 {
@@ -121,17 +122,18 @@ class ManagerController extends Controller
         ], Response::HTTP_OK);
     }
 
-    public function getElementsOfPage(Page $page)
+    public function getSectionOfPage(Page $page)
     {
         // Log::info(['getElementsOfPage'=>'getElementsOfPage']);
-        if ($page->layout) {
-            $elements = $this->addMediaToModel($page->layout->elements, 'element');
-        } else {
-            $elements = collect();
+        $sections = collect();
+        if ($page->layouts) {
+            foreach ($page->layouts as $key => $layout) {
+                $sections->push($layout->section->element);
+            }
         }
 
         return response()->json([
-            'elements' => $elements
+            'elements' => $sections
         ], Response::HTTP_OK);
     }
 
@@ -163,35 +165,41 @@ class ManagerController extends Controller
 
     public function getContents(Element $element)
     {
-        
+
 
         $data = collect();
         $array = [];
         $inputs = $element->inputs;
-
-        if (is_null($element->sections) || $element->sections->isEmpty()) {
 
             foreach ($inputs as  $input) {
                 $array[$input['name']] = null;
             }
 
             $data->put(0, $array);
-        } else {
 
-            foreach ($element->sections as $section) {
+        return response()->json([
+            'contents' => $data
+        ]);
+    }
+    public function getContentsOfSection(Section $section)
+    {
 
-                foreach ($section->contents as $contentKey => $content) {
 
-                    $contentWithKey = [];
-                    foreach ($inputs as  $input) {
+        $data = collect();
+        $inputs = $section->element->inputs;
 
-                        $contentWithKey[$input['name']] = $content->toArray()[$input['name']];
-                    }
+            foreach ($section->contents as $contentKey => $content) {
 
-                    $data->put($contentKey, $contentWithKey);
+                $contentWithKey = [];
+                foreach ($inputs as  $input) {
+                    Log::info([
+                        'content' => $content->toArray()
+                    ]);
+                    $contentWithKey[$input['name']] = $content->toArray()[$input['name']];
                 }
+
+                $data->put($contentKey, $contentWithKey);
             }
-        }
 
         return response()->json([
             'contents' => $data
@@ -229,14 +237,14 @@ class ManagerController extends Controller
             $content->addMedia(public_path(str_replace(config('app.url'), '', $value['image'])))->toMediaCollection('content');
         }
 
-        // add section to  layout 
+        // add section to  layout
           $page = Page::find($request->pageId);
-        
-          $page->layout()->create([
+
+          $page->layouts()->create([
               'section_id' => $section->id,
               'order' => 2,
           ]);
-          
+
 
 
         return response()->json([
