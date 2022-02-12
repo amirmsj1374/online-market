@@ -205,7 +205,8 @@ class ManagerController extends Controller
             'sections.*.image' => 'required',
             'sections.*.body' => 'nullable|string',
             'sections.*.link' => 'nullable|string',
-            'sections.*.buttonLabel' => 'nullable|string'
+            'sections.*.buttonLabel' => 'nullable|string',
+            'sections.*.type' => 'nullable|string'
         ]);
 
         $section = $element->sections()->create([
