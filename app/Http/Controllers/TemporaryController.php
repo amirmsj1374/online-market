@@ -14,7 +14,7 @@ class TemporaryController extends Controller
 {
     public function store(Request $request)
     {
-        
+
         $request->validate([
             'image' => 'mimes:jpeg,jpg,png,gif|required|max:20000'
         ]);
