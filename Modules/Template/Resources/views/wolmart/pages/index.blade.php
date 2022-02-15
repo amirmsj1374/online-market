@@ -1,7 +1,7 @@
 @extends('template::wolmart.master')
 @section('content')
 <div>
-    
+
     <!-- Start of Header -->
     @include('template::wolmart.elements.header.header-demo1')
 
@@ -14,7 +14,7 @@
 
     @include('template::wolmart.elements.post-notification.post-demo1')
 
-    @include('template::wolmart.elements.banner.banner-2*6')
+    @include('template::wolmart.elements.banner.banner-26')
 
     @include('template::wolmart.elements.product.hot-product')
 
@@ -23,7 +23,7 @@
 
     @include('template::wolmart.elements.product.favorit-product')
 
-    @include('template::wolmart.elements.banner.banner-2*6-wbtn')
+    @include('template::wolmart.elements.banner.banner-26-wbtn')
     <!-- End of Category Cosmetic Lifestyle -->
     @include('template::wolmart.elements.product.show-more-product')
     <!-- End of Product Wrapper 1 -->
