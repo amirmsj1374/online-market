@@ -20,8 +20,9 @@ class CreateContentsTable extends Migration
             $table->text('body')->nullable();
             $table->string('buttonLabel')->nullable();
             $table->string('customClass')->nullable();
-            $table->unsignedTinyInteger('cols')->nullable();
+            $table->unsignedTinyInteger('col')->nullable();
             $table->string('link')->nullable();
+            $table->string('height')->nullable();
             $table->unsignedInteger('order')->nullable();
             $table->string('time')->nullable();
             $table->string('type')->nullable();

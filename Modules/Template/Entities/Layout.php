@@ -11,6 +11,7 @@ class Layout extends Model
 
     protected $fillable = [
         'section_id',
+        'col',
         'order',
         'page_id',
         'status',

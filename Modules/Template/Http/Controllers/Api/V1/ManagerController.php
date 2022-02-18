@@ -6,10 +6,10 @@ use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Log;
 use Modules\Template\Entities\Element;
 use Modules\Template\Entities\Page;
 use Modules\Template\Entities\Template;
-use Illuminate\Support\Facades\Log;
 use Modules\Template\Entities\Section;
 
 use function PHPUnit\Framework\isNull;
@@ -213,23 +213,6 @@ class ManagerController extends Controller
             'title' => $element->label,
         ]);
 
-        foreach ($request->sections as  $value) {
-
-            $content = $section->contents()->create([
-                'body' => $value['body'] ?? null,
-                'buttonLabel' => $value['buttonLabel'] ?? null,
-                'customClass' => $value['customClass'] ?? null,
-                'cols' => $value['cols'] ?? null,
-                'link' => $value['link'] ?? null,
-                'order' => $value['order'] ?? null,
-                'section_id' => $value['section_id'] ?? null,
-                'time' => $value['time'] ?? null,
-                'type' => $value['type'] ?? null,
-            ]);
-
-            $content->addMedia(public_path(str_replace(config('app.url'), '', $value['image'])))->toMediaCollection('content');
-        }
-
         // add section to  layout
         $page = Page::find($request->pageId);
 
@@ -238,12 +221,65 @@ class ManagerController extends Controller
             'order' => 2,
         ]);
 
+        $this->createContentsOfSection($section, $request->sections);
+
 
 
         return response()->json([
             'message' => 'بخش جدید به صفحه اضافه شد'
         ], Response::HTTP_OK);
     }
+
+    public function addMultipleSections(Element $element, Request $request)
+    {
+
+         // add section to  layout
+         $page = Page::find($request->pageId);
+
+        foreach ($request->sections as  $arrayOfSections) {
+            $section = $element->sections()->create([
+                'title' => $element->label,
+            ]);
+
+            $order = $page->layouts->count() + 1;
+
+            $page->layouts()->create([
+                'section_id' => $section->id,
+                'col'        => 12 / count($request->sections),
+                'order'      => $order,
+            ]);
+
+            $this->createContentsOfSection($section, $arrayOfSections);
+
+        }
+
+        return response()->json([
+            'message' => 'بخش جدید به صفحه اضافه شد'
+        ], Response::HTTP_OK);
+    }
+
+    // this method should put in repository
+    public function createContentsOfSection($section, $arrayOfSections)
+    {
+        foreach ($arrayOfSections as $item) {
+            $content = $section->contents()->create([
+                'body'        => $item['body'] ?? null,
+                'buttonLabel' => $item['buttonLabel'] ?? null,
+                'customClass' => $item['customClass'] ?? null,
+                'col'         => $item['col'] ?? null,
+                'height'      => $item['height'] ?? null,
+                'link'        => $item['link'] ?? null,
+                'order'       => $item['order'] ?? null,
+                'section_id'  => $item['section_id'] ?? null,
+                'time'        => $item['time'] ?? null,
+                'type'        => $item['type'] ?? null,
+            ]);
+
+            $content->addMedia(public_path(str_replace(config('app.url'), '', $item['image'])))
+                    ->toMediaCollection('content');
+        }
+    }
+
 
     public function dataTemplates()
     {
