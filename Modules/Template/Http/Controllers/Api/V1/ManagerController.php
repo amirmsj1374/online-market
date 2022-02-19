@@ -203,11 +203,11 @@ class ManagerController extends Controller
     {
         Log::info(['request',$request->all()]);
         $request->validate([
-            'sections.*.image' => 'required',
-            'sections.*.body' => 'nullable|string',
-            'sections.*.link' => 'nullable|string',
-            'sections.*.buttonLabel' => 'nullable|string',
-            'sections.*.type' => 'nullable|string'
+            'section.*.image' => 'required',
+            'section.*.body' => 'nullable|string',
+            'section.*.link' => 'nullable|string',
+            'section.*.buttonLabel' => 'nullable|string',
+            'section.*.type' => 'nullable|string'
         ]);
 
         $section = $element->sections()->create([
@@ -222,7 +222,7 @@ class ManagerController extends Controller
             'order' => 2,
         ]);
 
-        $this->createContentsOfSection($section, $request->sections);
+        $this->createContentsOfSection($section, $request->section);
 
 
 

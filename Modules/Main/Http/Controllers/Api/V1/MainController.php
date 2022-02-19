@@ -23,7 +23,6 @@ class MainController extends Controller
         foreach ($request->file() as $key => $file) {
             $date = new DateTime();
             $path = 'temporary/' . $date->format('Y-m-d') . '/';
-            File::makeDirectory(storage_path($path), $mode = 0777, true, true);
             $file = Storage::disk("public")->put($path, $file);
             $urls[$key] = asset(Storage::url($file));
         }
