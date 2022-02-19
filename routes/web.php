@@ -1,11 +1,7 @@
 <?php
 
-use App\Http\Controllers\TemporaryController;
-use Illuminate\Support\Facades\Log;
+use AliBayat\LaravelCategorizable\Category;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\View;
-use Modules\Template\Entities\Content;
-use Modules\Template\Entities\Element;
 
 /*
 |--------------------------------------------------------------------------

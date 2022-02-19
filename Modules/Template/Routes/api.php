@@ -34,4 +34,7 @@ Route::prefix('/v1/template')->group(function () {
     Route::post('/add/section/{element}', [ManagerController::class, 'addSection'])->name('add.section');
 
     Route::post('/add/multiple/sections/{element}', [ManagerController::class, 'addMultipleSections']);
+
+    Route::get('/show/menu', [ManagerController::class, 'showMenuItem']);
+    Route::post('/add/menu', [ManagerController::class, 'addMenu']);
 });

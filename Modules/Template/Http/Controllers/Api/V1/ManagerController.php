@@ -2,6 +2,7 @@
 
 namespace Modules\Template\Http\Controllers\Api\V1;
 
+use AliBayat\LaravelCategorizable\Category;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -201,7 +202,6 @@ class ManagerController extends Controller
 
     public function addSection(Element $element, Request $request)
     {
-        Log::info(['request',$request->all()]);
         $request->validate([
             'section.*.image' => 'required',
             'section.*.body' => 'nullable|string',
@@ -235,8 +235,8 @@ class ManagerController extends Controller
     public function addMultipleSections(Element $element, Request $request)
     {
 
-         // add section to  layout
-         $page = Page::find($request->pageId);
+        // add section to  layout
+        $page = Page::find($request->pageId);
 
         foreach ($request->sections as  $arrayOfSections) {
             $section = $element->sections()->create([
@@ -252,11 +252,42 @@ class ManagerController extends Controller
             ]);
 
             $this->createContentsOfSection($section, $arrayOfSections);
-
         }
 
         return response()->json([
             'message' => 'بخش جدید به صفحه اضافه شد'
+        ], Response::HTTP_OK);
+    }
+
+    public function addMenu(Request $request)
+    {
+        if (is_null($request->parent)) {
+            Category::create([
+                'name' => $request->name,
+                'link' => $request->link,
+                'type' => "Menu"
+            ]);
+        } else {
+            Category::create([
+                'name' => $request->name,
+                'link' => $request->link,
+                'type' => "Menu"
+            ]);
+            $parent = Category::findById($request->parent);
+            $child = Category::findByName($request->name);
+            $parent->appendNode($child);
+        }
+
+        return response()->json([
+            'message' => 'بخش جدید به صفحه اضافه شد'
+        ], Response::HTTP_OK);
+    }
+
+    public function showMenuItem()
+    {
+        $menuItem = Category::where('type', 'Category')->get()->toTree()->toArray();
+        return response()->json([
+            'menuItem' => $menuItem
         ], Response::HTTP_OK);
     }
 
@@ -278,7 +309,7 @@ class ManagerController extends Controller
             ]);
 
             $content->addMedia(public_path(str_replace(config('app.url'), '', $item['image'])))
-                    ->toMediaCollection('content');
+                ->toMediaCollection('content');
         }
     }
 

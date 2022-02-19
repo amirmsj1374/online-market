@@ -2,11 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use AliBayat\LaravelCategorizable\Category;
-use Carbon\Carbon;
 use DateTime;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 
