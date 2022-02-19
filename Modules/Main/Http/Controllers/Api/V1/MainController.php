@@ -19,9 +19,6 @@ class MainController extends Controller
      */
     public function saveTemporaryImages(Request $request)
     {
-        Log::info([
-            'images' => $request->file()
-        ]);
         $urls = [];
         foreach ($request->file() as $key => $file) {
             $date = new DateTime();

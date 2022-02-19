@@ -201,6 +201,7 @@ class ManagerController extends Controller
 
     public function addSection(Element $element, Request $request)
     {
+        Log::info(['request',$request->all()]);
         $request->validate([
             'sections.*.image' => 'required',
             'sections.*.body' => 'nullable|string',
@@ -230,6 +231,7 @@ class ManagerController extends Controller
         ], Response::HTTP_OK);
     }
 
+    // related to banner-advance
     public function addMultipleSections(Element $element, Request $request)
     {
 

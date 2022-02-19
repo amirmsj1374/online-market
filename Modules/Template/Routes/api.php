@@ -1,9 +1,7 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Modules\Template\Http\Controllers\Api\V1\ManagerController;
-use Modules\Template\Http\Controllers\Api\V1\TemplateController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,7 +31,7 @@ Route::prefix('/v1/template')->group(function () {
 
     Route::get('/get/contents/of/{section}', [ManagerController::class, 'getContentsOfSection']);
 
-    Route::post('/add/section/{element}', [ManagerController::class, 'addSection']);
+    Route::post('/add/section/{element}', [ManagerController::class, 'addSection'])->name('add.section');
 
     Route::post('/add/multiple/sections/{element}', [ManagerController::class, 'addMultipleSections']);
 });
