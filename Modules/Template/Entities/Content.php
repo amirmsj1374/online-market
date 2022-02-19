@@ -4,7 +4,6 @@ namespace Modules\Template\Entities;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Support\Facades\Log;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\HasMedia;
 
@@ -16,7 +15,8 @@ class Content extends Model implements HasMedia
         'body',
         'buttonLabel',
         'customClass',
-        'cols',
+        'col',
+        'height',
         'link',
         'order',
         'section_id',
