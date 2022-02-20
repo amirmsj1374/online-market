@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Modules\Template\Http\Controllers\Api\V1\ManagerController;
+use Modules\Template\Http\Controllers\Api\V1\MenuController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,6 +36,11 @@ Route::prefix('/v1/template')->group(function () {
 
     Route::post('/add/multiple/sections/{element}', [ManagerController::class, 'addMultipleSections']);
 
-    Route::get('/show/menu', [ManagerController::class, 'showMenuItem']);
-    Route::post('/add/menu', [ManagerController::class, 'addMenu']);
+    Route::get('/show/menu', [MenuController::class, 'showMenu']);
+    Route::post('/add/menu', [MenuController::class, 'addMenu']);
+    Route::post('/add/submenu', [MenuController::class, 'addSubmenu']);
+    Route::post('/update/menu', [MenuController::class, 'updateMenu']);
+    Route::post('/status/menu', [MenuController::class, 'chnageStatus']);
+    Route::post('/delete/menu', [MenuController::class, 'deleteMenu']);
+    Route::post('/add/header/section/{element}', [MenuController::class, 'addSection']);
 });
