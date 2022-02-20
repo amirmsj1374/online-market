@@ -4,6 +4,12 @@ namespace Modules\Template\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
+use Modules\Template\Facades\ContentRepositoryFacade;
+use Modules\Template\Facades\SectionRepositoryFacade;
+use Modules\Template\Interfaces\ContentRepositoryInterface;
+use Modules\Template\Interfaces\SectionRepositoryInterface;
+use Modules\Template\Repositories\ContentRepository;
+use Modules\Template\Repositories\SectionRepository;
 
 class TemplateServiceProvider extends ServiceProvider
 {
@@ -38,6 +44,12 @@ class TemplateServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->register(RouteServiceProvider::class);
+
+        $this->app->bind(ContentRepositoryInterface::class, ContentRepository::class,
+                         SectionRepositoryInterface::class, SectionRepository::class);
+
+        ContentRepositoryFacade::shouldProxyTo(ContentRepository::class);
+        SectionRepositoryFacade::shouldProxyTo(SectionRepository::class);
     }
 
     /**
