@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Modules\Template\Http\Controllers\Api\V1\ManagerController;
+use Modules\Template\Http\Controllers\Api\V1\SectionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,9 +32,9 @@ Route::prefix('/v1/template')->group(function () {
 
     Route::get('/get/contents/of/{section}', [ManagerController::class, 'getContentsOfSection']);
 
-    Route::post('/add/section/{element}', [ManagerController::class, 'addSection'])->name('add.section');
+    Route::post('/add/section/{element}', [SectionController::class, 'addSection'])->name('add.section');
 
-    Route::post('/add/multiple/sections/{element}', [ManagerController::class, 'addMultipleSections']);
+    Route::post('/add/multiple/sections/{element}', [SectionController::class, 'addMultipleSections']);
 
     Route::get('/show/menu', [ManagerController::class, 'showMenuItem']);
     Route::post('/add/menu', [ManagerController::class, 'addMenu']);

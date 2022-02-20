@@ -200,65 +200,6 @@ class ManagerController extends Controller
         ]);
     }
 
-    public function addSection(Element $element, Request $request)
-    {
-        $request->validate([
-            'section.*.image' => 'required',
-            'section.*.body' => 'nullable|string',
-            'section.*.link' => 'nullable|string',
-            'section.*.buttonLabel' => 'nullable|string',
-            'section.*.type' => 'nullable|string'
-        ]);
-
-        $section = $element->sections()->create([
-            'title' => $element->label,
-        ]);
-
-        // add section to  layout
-        $page = Page::find($request->pageId);
-
-        $page->layouts()->create([
-            'section_id' => $section->id,
-            'order' => 2,
-        ]);
-
-        $this->createContentsOfSection($section, $request->section);
-
-
-
-        return response()->json([
-            'message' => 'بخش جدید به صفحه اضافه شد'
-        ], Response::HTTP_OK);
-    }
-
-    // related to banner-advance
-    public function addMultipleSections(Element $element, Request $request)
-    {
-
-        // add section to  layout
-        $page = Page::find($request->pageId);
-
-        foreach ($request->sections as  $arrayOfSections) {
-            $section = $element->sections()->create([
-                'title' => $element->label,
-            ]);
-
-            $order = $page->layouts->count() + 1;
-
-            $page->layouts()->create([
-                'section_id' => $section->id,
-                'col'        => 12 / count($request->sections),
-                'order'      => $order,
-            ]);
-
-            $this->createContentsOfSection($section, $arrayOfSections);
-        }
-
-        return response()->json([
-            'message' => 'بخش جدید به صفحه اضافه شد'
-        ], Response::HTTP_OK);
-    }
-
     public function addMenu(Request $request)
     {
         if (is_null($request->parent)) {
@@ -290,29 +231,6 @@ class ManagerController extends Controller
             'menuItem' => $menuItem
         ], Response::HTTP_OK);
     }
-
-    // this method should put in repository
-    public function createContentsOfSection($section, $arrayOfSections)
-    {
-        foreach ($arrayOfSections as $item) {
-            $content = $section->contents()->create([
-                'body'        => $item['body'] ?? null,
-                'buttonLabel' => $item['buttonLabel'] ?? null,
-                'customClass' => $item['customClass'] ?? null,
-                'col'         => $item['col'] ?? null,
-                'height'      => $item['height'] ?? null,
-                'link'        => $item['link'] ?? null,
-                'order'       => $item['order'] ?? null,
-                'section_id'  => $item['section_id'] ?? null,
-                'time'        => $item['time'] ?? null,
-                'type'        => $item['type'] ?? null,
-            ]);
-
-            $content->addMedia(public_path(str_replace(config('app.url'), '', $item['image'])))
-                ->toMediaCollection('content');
-        }
-    }
-
 
     public function dataTemplates()
     {
