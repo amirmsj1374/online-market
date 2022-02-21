@@ -7,5 +7,6 @@
     "Order": true,
     "Communication": true,
     "Template": true,
-    "Main": true
+    "Main": true,
+    "Front": true
 }

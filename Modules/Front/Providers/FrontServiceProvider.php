@@ -1,33 +1,21 @@
 <?php
 
-namespace Modules\Template\Providers;
+namespace Modules\Front\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
-use Modules\Template\Facades\ContentRepositoryFacade;
-use Modules\Template\Facades\LayoutRepositoryFacade;
-use Modules\Template\Facades\PageRepositoryFacade;
-use Modules\Template\Facades\SectionRepositoryFacade;
-use Modules\Template\Interfaces\ContentRepositoryInterface;
-use Modules\Template\Interfaces\LayoutRepositoryInterface;
-use Modules\Template\Interfaces\PageRepositoryInterface;
-use Modules\Template\Interfaces\SectionRepositoryInterface;
-use Modules\Template\Repositories\ContentRepository;
-use Modules\Template\Repositories\LayoutRepository;
-use Modules\Template\Repositories\SectionRepository;
-use PageRepository;
 
-class TemplateServiceProvider extends ServiceProvider
+class FrontServiceProvider extends ServiceProvider
 {
     /**
      * @var string $moduleName
      */
-    protected $moduleName = 'Template';
+    protected $moduleName = 'Front';
 
     /**
      * @var string $moduleNameLower
      */
-    protected $moduleNameLower = 'template';
+    protected $moduleNameLower = 'front';
 
     /**
      * Boot the application events.
@@ -50,16 +38,6 @@ class TemplateServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->register(RouteServiceProvider::class);
-
-        $this->app->bind(ContentRepositoryInterface::class, ContentRepository::class,
-                         SectionRepositoryInterface::class, SectionRepository::class,
-                         LayoutRepositoryInterface::class,  LayoutRepository::class,
-                         PageRepositoryInterface::class,    PageRepository::class
-                        );
-
-        ContentRepositoryFacade::shouldProxyTo(ContentRepository::class);
-        SectionRepositoryFacade::shouldProxyTo(SectionRepository::class);
-        PageRepositoryFacade::shouldProxyTo(PageRepository::class);
     }
 
     /**
