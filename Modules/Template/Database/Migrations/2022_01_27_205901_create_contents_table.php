@@ -17,13 +17,16 @@ class CreateContentsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('section_id');
             $table->foreign('section_id')->references('id')->on('sections')->onDelete('cascade');
+
             $table->text('body')->nullable();
             $table->string('buttonLabel')->nullable();
+            $table->json('categories')->nullable();
             $table->string('customClass')->nullable();
             $table->unsignedTinyInteger('col')->nullable();
             $table->string('link')->nullable();
             $table->string('height')->nullable();
             $table->unsignedInteger('order')->nullable();
+            $table->json('products')->nullable();
             $table->string('time')->nullable();
             $table->string('type')->nullable();
             $table->timestamps();

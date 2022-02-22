@@ -21,6 +21,8 @@ class Content extends Model implements HasMedia
         'order',
         'section_id',
         'time',
+        'categories',
+        'products',
         'type',
     ];
 
