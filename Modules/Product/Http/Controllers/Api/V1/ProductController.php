@@ -12,9 +12,9 @@ use Modules\Product\Facades\ResponderFacade;
 
 class ProductController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $products = ProductRepositoryFacade::index();
+        $products = ProductRepositoryFacade::index($request);
         return ResponderFacade::index($products);
     }
 

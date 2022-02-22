@@ -16,9 +16,10 @@ use Modules\Product\QueryFilter\Title;
 
 class ProductRepository implements ProductRepositoryInterface
 {
-    public function index()
+    public function index($request)
     {
-        $product = Product::with('categories', 'media', 'inventories')->orderBy('id', 'desc')->paginate(5);
+        $per_page = $request->input('per_page')  ?? 5;
+        $product = Product::with('categories', 'media', 'inventories')->orderBy('id', 'desc')->paginate($per_page);
         return $this->addExtraDataToProductCollection($product);
     }
 
@@ -187,7 +188,6 @@ class ProductRepository implements ProductRepositoryInterface
 
             $product->attributes()->detach($attr->id, ['value_id' => $attr_value->id]);
             $product->attributes()->attach($attr->id, ['value_id' => $attr_value->id]);
-
         });
     }
 

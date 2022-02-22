@@ -2,18 +2,16 @@
 
 namespace Modules\Template\Http\Controllers\Api\V1;
 
-use AliBayat\LaravelCategorizable\Category;
-use Illuminate\Contracts\Support\Renderable;
+
+
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Log;
 use Modules\Template\Entities\Element;
 use Modules\Template\Entities\Page;
 use Modules\Template\Entities\Template;
 use Modules\Template\Entities\Section;
 
-use function PHPUnit\Framework\isNull;
 
 class ManagerController extends Controller
 {
@@ -178,6 +176,7 @@ class ManagerController extends Controller
             'contents' => $data
         ]);
     }
+
     public function getContentsOfSection(Section $section)
     {
 
@@ -200,38 +199,6 @@ class ManagerController extends Controller
         return response()->json([
             'section' => $contents
         ]);
-    }
-
-    public function addMenu(Request $request)
-    {
-        if (is_null($request->parent)) {
-            Category::create([
-                'name' => $request->name,
-                'link' => $request->link,
-                'type' => "Menu"
-            ]);
-        } else {
-            Category::create([
-                'name' => $request->name,
-                'link' => $request->link,
-                'type' => "Menu"
-            ]);
-            $parent = Category::findById($request->parent);
-            $child = Category::findByName($request->name);
-            $parent->appendNode($child);
-        }
-
-        return response()->json([
-            'message' => 'بخش جدید به صفحه اضافه شد'
-        ], Response::HTTP_OK);
-    }
-
-    public function showMenuItem()
-    {
-        $menuItem = Category::where('type', 'Category')->get()->toTree()->toArray();
-        return response()->json([
-            'menuItem' => $menuItem
-        ], Response::HTTP_OK);
     }
 
     public function dataTemplates()
