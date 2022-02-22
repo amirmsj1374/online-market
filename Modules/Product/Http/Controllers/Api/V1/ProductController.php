@@ -66,7 +66,7 @@ class ProductController extends Controller
 
     public function filterProducts(Request $request)
     {
-        $products = ProductRepositoryFacade::filterProducts($request);
+        $products = ProductRepositoryFacade::filterProducts($request->per_page);
         return ResponderFacade::filterProducts($products);
     }
 }

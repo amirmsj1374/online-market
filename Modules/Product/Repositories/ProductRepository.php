@@ -258,7 +258,7 @@ class ProductRepository implements ProductRepositoryInterface
     {
     }
 
-    public function filterProducts($request)
+    public function filterProducts($per_page = 10)
     {
 
         $products = app(Pipeline::class)
@@ -270,7 +270,7 @@ class ProductRepository implements ProductRepositoryInterface
             ])
 
             ->thenReturn()
-            ->paginate(10);
+            ->paginate($per_page);
 
         return $products;
     }

@@ -9,6 +9,7 @@ use Spatie\Tags\HasTags;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Cviebrock\EloquentSluggable\Sluggable;
+use Illuminate\Support\Facades\Log;
 use Modules\Communication\Entities\Communication;
 use Modules\Product\Database\factories\ProductFactory;
 
@@ -33,6 +34,8 @@ class Product extends Model implements HasMedia
         'weight',
         'width',
     ];
+
+    public $appends = ['images', 'inventories', 'categories'];
 
     protected $casts = [
         'imagesUrl' => 'array',
@@ -72,6 +75,26 @@ class Product extends Model implements HasMedia
                 'source' => 'title'
             ]
         ];
+    }
+
+    public function getImagesAttribute()
+    {
+        $images = array();
+
+        if ($this->getFirstMedia('product-gallery')) {
+            foreach ($this->getMedia('product-gallery') as $key => $image) {
+                $images[$key] = $image->getFullUrl();
+            }
+        }
+        return  $images;
+    }
+    public function getInventoriesAttribute()
+    {
+        return $this->inventories()->get() ?? [];
+    }
+    public function getCategoriesAttribute()
+    {
+        return $this->categories()->get() ?? [];
     }
 
     public function attributes()

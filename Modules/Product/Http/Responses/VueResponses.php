@@ -54,7 +54,7 @@ class VueResponses
     public function filterProducts($products)
     {
         return response()->json([
-            'product' => $products,
+            'products' => $products,
         ], Response::HTTP_OK);
     }
 }

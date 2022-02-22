@@ -14,5 +14,5 @@ interface ProductRepositoryInterface
     public function syncCategories($request, $product);
     public function syncDownloads($links, $product);
     public function attachAttributesToProduct($attributes, $product);
-    public function filterProducts($request);
+    public function filterProducts($per_page);
 }
