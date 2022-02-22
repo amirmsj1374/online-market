@@ -6,7 +6,7 @@ use Modules\Product\Entities\Product;
 
 interface ProductRepositoryInterface
 {
-    public function index();
+    public function index($request);
     public function show(Product $product);
     public function create($request);
     public function update($request, $product);
