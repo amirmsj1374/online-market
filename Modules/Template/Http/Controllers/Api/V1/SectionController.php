@@ -29,15 +29,9 @@ class SectionController extends Controller
         $section = SectionRepositoryFacade::create($element);
 
         // add section to  layout
-        // $page = Page::find($request->pageId);
         $page = PageRepositoryFacade::find($request->pageId);
 
         LayoutRepositoryFacade::create($page, $section->id);
-
-        // $page->layouts()->create([
-        //     'section_id' => $section->id,
-        //     'order' => 2,
-        // ]);
 
         ContentRepositoryFacade::create($section, $request->section);
 
@@ -53,20 +47,12 @@ class SectionController extends Controller
 
         // add section to  layout
         $page = PageRepositoryFacade::find($request->pageId);
-        // $page = Page::find($request->pageId);
 
         foreach ($request->sections as  $arrayOfContents) {
 
             $section = SectionRepositoryFacade::create($element);
 
             LayoutRepositoryFacade::create($page, $section->id, 12 / count($request->sections));
-            // $order = $page->layouts->count() + 1;
-
-            // $page->layouts()->create([
-            //     'section_id' => $section->id,
-            //     'col'        => 12 / count($request->sections),
-            //     'order'      => $order,
-            // ]);
 
             ContentRepositoryFacade::create($section, $arrayOfContents);
 

@@ -181,22 +181,24 @@ class ManagerController extends Controller
     public function getContentsOfSection(Section $section)
     {
 
-        $data = collect();
-        $inputs = $section->element->inputs;
+        $contents = $section->contents;
 
-        foreach ($section->contents as $contentKey => $content) {
+        // $data = collect();
+        // $inputs = $section->element->inputs;
 
-            $contentWithKey = [];
-            foreach ($inputs as  $input) {
+        // foreach ($section->contents as $contentKey => $content) {
 
-                $contentWithKey[$input['name']] = $content->toArray()[$input['name']];
-            }
+        //     $contentWithKey = [];
+        //     foreach ($inputs as  $input) {
 
-            $data->put($contentKey, $contentWithKey);
-        }
+        //         $contentWithKey[$input['name']] = $content->toArray()[$input['name']];
+        //     }
+
+        //     $data->put($contentKey, $contentWithKey);
+        // }
 
         return response()->json([
-            'sections' => $data
+            'section' => $contents
         ]);
     }
 
