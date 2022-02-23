@@ -6,5 +6,6 @@ use Modules\Template\Entities\Section;
 
 interface ContentRepositoryInterface
 {
-    public function create(Section $section, $arrayOfContents);
+    public function createMultipleContents(Section $section, $arrayOfContents);
+    public function createContent(Section $section, $data);
 }

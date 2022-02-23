@@ -2,9 +2,7 @@
 
 namespace Modules\Template\Interfaces;
 
-use Modules\Template\Entities\Element;
-
 interface SectionRepositoryInterface
 {
-    public function create(Element $element);
+    public function create($element_id, $title);
 }

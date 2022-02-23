@@ -26,6 +26,11 @@ class Content extends Model implements HasMedia
         'type',
     ];
 
+    protected $casts = [
+        'products' => 'array',
+        'categories' => 'array',
+    ];
+
     public $appends = ['image'];
 
     public function getImageAttribute()

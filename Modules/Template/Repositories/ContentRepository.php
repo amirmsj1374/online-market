@@ -7,7 +7,7 @@ use Modules\Template\Interfaces\ContentRepositoryInterface;
 
 class ContentRepository implements ContentRepositoryInterface
 {
-    public function create(Section $section, $arrayOfContents) {
+    public function createMultipleContents(Section $section, $arrayOfContents) {
         foreach ($arrayOfContents as $item) {
             $content = $section->contents()->create([
                 'body'        => $item['body'] ?? null,
@@ -22,7 +22,23 @@ class ContentRepository implements ContentRepositoryInterface
                 'type'        => $item['type'] ?? null,
             ]);
 
-            $content->addMedia(public_path(str_replace(config('app.url'), '', $item['image'])))
+            if ($item['image']) {
+                $content->addMedia(public_path(str_replace(config('app.url'), '', $item['image'])))
+                    ->toMediaCollection('content');
+            }
+        }
+    }
+
+    public function createContent(Section $section, $data)
+    {
+        $content = $section->contents()->create([
+            'categories'  => array_key_exists('categories',  $data) && $data['categories'] && !empty($data['categories']) ? $data['categories'] : null,
+            'col'         => array_key_exists('col',  $data)  && $data['col'] ?? null,
+            'products'    => array_key_exists('products',  $data)  && $data['products'] && !empty($data['products']) ? $data['products'] : null,
+        ]);
+
+        if (array_key_exists('image',  $data) && $data['image']) {
+            $content->addMedia(public_path(str_replace(config('app.url'), '', $data['image'])))
                 ->toMediaCollection('content');
         }
     }

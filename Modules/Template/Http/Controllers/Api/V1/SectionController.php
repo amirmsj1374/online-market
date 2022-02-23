@@ -6,6 +6,7 @@ use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Log;
 use Modules\Template\Entities\Element;
 use Modules\Template\Entities\Page;
 use Modules\Template\Facades\ContentRepositoryFacade;
@@ -18,22 +19,39 @@ class SectionController extends Controller
 
     public function addSection(Element $element, Request $request)
     {
+
+        // vlidation for slider or banner type
+        if (str_contains($element->type, 'slider') || str_contains($element->type, 'banner')) {
+            $request->validate([
+                'section.*.image' => 'required',
+            ]);
+        }
+
         $request->validate([
-            'section.*.image' => 'required',
             'section.*.body' => 'nullable|string',
             'section.*.link' => 'nullable|string',
             'section.*.buttonLabel' => 'nullable|string',
             'section.*.type' => 'nullable|string'
         ]);
 
-        $section = SectionRepositoryFacade::create($element);
 
-        // add section to  layout
-        $page = PageRepositoryFacade::find($request->pageId);
+        $section = SectionRepositoryFacade::create($element->id, $request->section['title']);
+
+        // // add section to  layout
+        // $page = PageRepositoryFacade::find($request->pageId);
+        $page = Page::find($request->pageId);
 
         LayoutRepositoryFacade::create($page, $section->id);
 
-        ContentRepositoryFacade::create($section, $request->section);
+        Log::info([
+            'data' => $request->section
+        ]);
+        if (str_contains($element->type, 'slider') || str_contains($element->type, 'banner')) {
+            ContentRepositoryFacade::createMultipleContents($section, $request->section);
+        } else {
+            ContentRepositoryFacade::createContent($section, $request->section);
+        }
+
 
 
         return response()->json([
@@ -54,7 +72,7 @@ class SectionController extends Controller
 
             LayoutRepositoryFacade::create($page, $section->id, 12 / count($request->sections));
 
-            ContentRepositoryFacade::create($section, $arrayOfContents);
+            ContentRepositoryFacade::createMultipleContents($section, $arrayOfContents);
 
         }
 
