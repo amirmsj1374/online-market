@@ -3,10 +3,9 @@
 namespace Modules\Template\Facades;
 
 use Imanghafoori\SmartFacades\Facade;
-use Modules\Template\Entities\Element;
 
 /**
- * @method static \Illuminate\Http\JsonResponse create(Element $element)
+ * @method static \Illuminate\Http\JsonResponse create($element_id, $title)
  *
  * @see \Modules\Template\Repositories\SectionRepository
  */

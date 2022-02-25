@@ -14,8 +14,8 @@ use Modules\Template\Interfaces\PageRepositoryInterface;
 use Modules\Template\Interfaces\SectionRepositoryInterface;
 use Modules\Template\Repositories\ContentRepository;
 use Modules\Template\Repositories\LayoutRepository;
+use Modules\Template\Repositories\PageRepository;
 use Modules\Template\Repositories\SectionRepository;
-use PageRepository;
 
 class TemplateServiceProvider extends ServiceProvider
 {
@@ -59,6 +59,7 @@ class TemplateServiceProvider extends ServiceProvider
 
         ContentRepositoryFacade::shouldProxyTo(ContentRepository::class);
         SectionRepositoryFacade::shouldProxyTo(SectionRepository::class);
+        LayoutRepositoryFacade::shouldProxyTo(LayoutRepository::class);
         PageRepositoryFacade::shouldProxyTo(PageRepository::class);
     }
 
