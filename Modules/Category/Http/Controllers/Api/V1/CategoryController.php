@@ -17,7 +17,9 @@ class CategoryController extends Controller
 
     public function index()
     {
-        $categories = Category::where('type','Category')->get()->toTree()->toArray();
+        $categories = Category::where('type','Category')->withCount('descendants')->get()->toTree()->toArray();
+
+        
         return  ResponderFacade::index($categories);
     }
 
