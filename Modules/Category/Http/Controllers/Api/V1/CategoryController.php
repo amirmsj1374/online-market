@@ -2,12 +2,13 @@
 
 namespace Modules\Category\Http\Controllers\Api\V1;
 
-use AliBayat\LaravelCategorizable\Category;
+// use AliBayat\LaravelCategorizable\Category;
 use Illuminate\Http\Request;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
 use Modules\Category\Facades\ResponderFacade;
+use Modules\Category\Http\Helper\Category;
 use Modules\Category\Http\Requests\CreateRequest;
 use Modules\Category\Http\Requests\EditRequest;
 
@@ -17,9 +18,7 @@ class CategoryController extends Controller
 
     public function index()
     {
-        $categories = Category::where('type','Category')->withCount('descendants')->get()->toTree()->toArray();
-
-        
+        $categories = Category::where('type', 'Category')->withCount('descendants')->get()->toTree()->toArray();
         return  ResponderFacade::index($categories);
     }
 
@@ -29,7 +28,7 @@ class CategoryController extends Controller
 
         if (is_null($request->parent)) {
             Category::create([
-                'name' =>$request->name,
+                'name' => $request->name,
                 'type' => "Category"
             ]);
         } else {
