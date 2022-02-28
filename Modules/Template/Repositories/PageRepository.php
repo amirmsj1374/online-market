@@ -7,11 +7,8 @@ use Modules\Template\Entities\Page;
 use Modules\Template\Interfaces\PageRepositoryInterface;
 
 class PageRepository implements PageRepositoryInterface {
-    public function find(Page $page)
+    public function find($pageId)
     {
-        Log::info([
-            'page indside ' => $page
-        ]);
-        return $page;
+        return Page::find($pageId);
     }
 }

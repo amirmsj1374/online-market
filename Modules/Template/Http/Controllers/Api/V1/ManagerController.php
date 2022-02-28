@@ -7,6 +7,7 @@ namespace Modules\Template\Http\Controllers\Api\V1;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Log;
 use Modules\Template\Entities\Element;
 use Modules\Template\Entities\Page;
 use Modules\Template\Entities\Template;
@@ -123,11 +124,16 @@ class ManagerController extends Controller
 
         $sections = collect();
         if ($page->layouts) {
-            foreach ($page->layouts as  $layout) {
-                $sections->push($layout->section);
+            foreach ($page->layouts as  $key => $layout) {
+                if ($layout->col == null || $key == 0 || ($layout->col != null && $key > 0 && $page->layouts[$key - 1]->col == null)) {
+                    $sections->push($layout->section);
+                }
             }
         }
 
+        Log::info([
+            'sections' =>$sections
+        ]);
         return response()->json([
             'sections' => $sections
         ], Response::HTTP_OK);

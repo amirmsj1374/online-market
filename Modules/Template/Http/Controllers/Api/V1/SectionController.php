@@ -67,6 +67,7 @@ class SectionController extends Controller
     {
 
         // add section to  layout
+
         $page = PageRepositoryFacade::find($request->pageId);
 
         foreach ($request->sections as  $arrayOfContents) {
