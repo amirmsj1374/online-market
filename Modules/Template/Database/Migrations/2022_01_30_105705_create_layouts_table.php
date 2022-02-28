@@ -19,7 +19,8 @@ class CreateLayoutsTable extends Migration
             $table->foreign('page_id')->references('id')->on('pages')->onDelete('cascade');
             $table->unsignedBigInteger('section_id');
             $table->foreign('section_id')->references('id')->on('sections')->onDelete('cascade');
-            $table->string('col')->nullable();
+            $table->string('col')->default(12);
+            $table->string('row');
             $table->unsignedTinyInteger('order');
             $table->tinyInteger('status')->default(1);
             $table->timestamps();

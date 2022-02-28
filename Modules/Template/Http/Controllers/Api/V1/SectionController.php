@@ -27,7 +27,6 @@ class SectionController extends Controller
             ]);
         }
 
-        Log::info(['ss' => $request->section['title'] ?? $element->name]);
         $request->validate([
             'section.*.body' => 'nullable|string',
             'section.*.link' => 'nullable|string',
@@ -41,8 +40,7 @@ class SectionController extends Controller
         $section = SectionRepositoryFacade::create($element->id, $title);
 
         // // add section to  layout
-        // $page = PageRepositoryFacade::find($request->pageId);
-        $page = Page::find($request->pageId);
+        $page = PageRepositoryFacade::find($request->pageId);
 
         LayoutRepositoryFacade::create($page, $section->id);
 
