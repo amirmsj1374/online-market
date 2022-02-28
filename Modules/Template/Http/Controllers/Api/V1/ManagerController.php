@@ -150,7 +150,6 @@ class ManagerController extends Controller
                 'type' => $item['type'],
                 'description' => $item['description'],
                 'icon_address' => $item['icon_address']['address'],
-                'inputs' => $item['inputs'],
             ]);
         }
 
@@ -159,42 +158,12 @@ class ManagerController extends Controller
         ], Response::HTTP_OK);
     }
 
-    public function getIputs(Element $element)
-    {
 
-        $data = collect();
-        $array = [];
-        $inputs = $element->inputs;
-
-        foreach ($inputs as  $input) {
-            $array[$input['name']] = null;
-        }
-
-        $data->put(0, $array);
-
-        return response()->json([
-            'contents' => $data
-        ]);
-    }
 
     public function getContentsOfSection(Section $section)
     {
 
         $contents = $section->contents;
-
-        // $data = collect();
-        // $inputs = $section->element->inputs;
-
-        // foreach ($section->contents as $contentKey => $content) {
-
-        //     $contentWithKey = [];
-        //     foreach ($inputs as  $input) {
-
-        //         $contentWithKey[$input['name']] = $content->toArray()[$input['name']];
-        //     }
-
-        //     $data->put($contentKey, $contentWithKey);
-        // }
 
         return response()->json([
             'section' => $contents

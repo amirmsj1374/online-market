@@ -2,31 +2,50 @@
 
 namespace Modules\Template\Http\Controllers\Api\V1;
 
-use AliBayat\LaravelCategorizable\Category;
+// use AliBayat\LaravelCategorizable\Category;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
+use Modules\Category\Http\Helper\Category;
 use Modules\Template\Entities\Element;
 use Modules\Template\Entities\Page;
 
 class MenuController extends Controller
 {
+
+    public function showMenu()
+    {
+        $menuItem = Category::where('type', 'Menu')->orWhere('status', '1')->get()->toTree()->toArray();
+
+        return response()->json([
+            'menuItem' => $menuItem
+        ], Response::HTTP_OK);
+    }
+
+
+
     public function addMenu(Request $request)
     {
-        Log::info($request->all());
 
-        if (is_null($request->menuItem['parent'])) {
+        Log::info(['data' => $request->all()]);
+
+        if ($request->menuItem['type'] === 'category') {
+            $category = Category::findById($request->menuItem['category_id']);
+
+            Category::create([
+                'name' =>  $category->name,
+                'link' =>  $category->slug,
+                'type' => "Menu",
+                'status' => 1,
+                'child' => $category->id,
+            ]);
+        } else if ($request->menuItem['type'] === 'link') {
 
             Category::create([
                 'name' => $request->menuItem['name'],
                 'link' => $request->menuItem['link'],
                 'type' => "Menu",
-                'status' => 1,
-            ]);
-        } else {
-
-            Category::where('id', $request->menuItem['parent'])->update([
                 'status' => 1,
             ]);
         }
@@ -38,36 +57,45 @@ class MenuController extends Controller
 
     public function addSubmenu(Request $request)
     {
-        Log::info($request->all());
 
-        $childId = Category::create([
-            'name' => $request->menuItem['name'],
-            'link' => $request->menuItem['link'],
-            'type' => "Menu",
-            'status' => 1,
-        ]);
+
+
+        if ($request->menuItem['type'] === 'category') {
+
+
+            $category = Category::findById($request->menuItem['category_id']);
+
+            $childId =  Category::create([
+                'name' =>  $category->name,
+                'link' =>  $category->slug,
+                'type' => "Menu",
+                'status' => 1,
+                'child' => $category->id,
+            ]);
+        } else if ($request->menuItem['type'] === 'link') {
+
+            $childId = Category::create([
+                'name' => $request->menuItem['name'],
+                'link' => $request->menuItem['link'],
+                'type' => "Menu",
+                'status' => 1,
+            ]);
+        }
+
+
 
         $parent = Category::findById($request->menuItem['parent']);
         $child = Category::findById($childId->id);
         $parent->appendNode($child);
 
-
         return response()->json([
-            'message' => 'بخش جدید به صفحه اضافه شد'
-        ], Response::HTTP_OK);
-    }
-
-    public function showMenu()
-    {
-        $menuItem = Category::where('type', 'Menu')->orWhere('status', '1')->orWhere('status', '0')->get()->toTree()->toArray();
-
-        return response()->json([
-            'menuItem' => $menuItem
+            'message' => 'دسته  بندی به منو افزوده شد'
         ], Response::HTTP_OK);
     }
 
     public function updateMenu(Request $request)
     {
+
         $menuItem = Category::findById($request->menuItem['parent']);
 
         $menuItem->update([
@@ -108,7 +136,6 @@ class MenuController extends Controller
             'message' => 'بخش جدید به صفحه حذف شد'
         ], Response::HTTP_OK);
     }
-
 
     public function addSection(Element $element, Request $request)
     {

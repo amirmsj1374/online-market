@@ -9,6 +9,10 @@ class Category extends LaravelCategorizableCategory
 {
     public $appends = ['height'];
 
+    protected $casts = [
+        'childGroup' => 'array'
+    ];
+
     public function getHeightAttribute()
     {
 

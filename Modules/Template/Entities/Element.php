@@ -19,10 +19,7 @@ class Element extends Model implements HasMedia
         'type',
         'description',
         'icon_address',
-        'inputs'
     ];
-
-    protected $casts  = ['inputs' => 'array'];
 
     protected static function newFactory()
     {
