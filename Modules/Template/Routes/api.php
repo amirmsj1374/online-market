@@ -29,14 +29,13 @@ Route::prefix('/v1/template')->group(function () {
     Route::get('/get/elements/{template}', [ManagerController::class, 'getAllElements']);
     Route::get('/get/section/of/{page}', [ManagerController::class, 'getSectionOfPage']);
 
-    Route::get('/get/all/inputs/{element}', [ManagerController::class, 'getIputs']);
-
     Route::get('/get/contents/of/{section}', [ManagerController::class, 'getContentsOfSection']);
 
     Route::post('/add/section/{element}', [SectionController::class, 'addSection'])->name('add.section');
     Route::post('/add/multiple/sections/{element}', [SectionController::class, 'addMultipleSections']);
 
     Route::get('/show/menu', [MenuController::class, 'showMenu']);
+    Route::get('/show/sub/menu', [MenuController::class, 'showSubMenu']);
     Route::post('/add/menu', [MenuController::class, 'addMenu']);
     Route::post('/add/submenu', [MenuController::class, 'addSubmenu']);
     Route::post('/update/menu', [MenuController::class, 'updateMenu']);

@@ -19,7 +19,6 @@ class CreateElementsTable extends Migration
             $table->foreign('template_id')->references('id')->on('templates')->onDelete('cascade');
             $table->string('name');
             $table->string('label');
-            $table->json('inputs');
             $table->tinyInteger('status')->default(1);
             $table->string('type')->nullable();
             $table->string('description')->nullable();
