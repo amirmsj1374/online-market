@@ -27,7 +27,6 @@ class SectionController extends Controller
             ]);
         }
 
-        Log::info(['ss' => $request->section['title'] ?? $element->name]);
         $request->validate([
             'section.*.body' => 'nullable|string',
             'section.*.link' => 'nullable|string',
@@ -41,14 +40,11 @@ class SectionController extends Controller
         $section = SectionRepositoryFacade::create($element->id, $title);
 
         // // add section to  layout
-        // $page = PageRepositoryFacade::find($request->pageId);
-        $page = Page::find($request->pageId);
+        $page = PageRepositoryFacade::find($request->pageId);
+        $order = $page->layouts->count()+ 1;
 
-        LayoutRepositoryFacade::create($page, $section->id);
+        LayoutRepositoryFacade::create($page, $section->id, $order);
 
-        Log::info([
-            'data' => $request->section
-        ]);
         if (str_contains($element->type, 'slider') || str_contains($element->type, 'banner')) {
             ContentRepositoryFacade::createMultipleContents($section, $request->section);
         } else {
@@ -70,12 +66,14 @@ class SectionController extends Controller
 
         $page = PageRepositoryFacade::find($request->pageId);
 
-        foreach ($request->sections as  $arrayOfContents) {
+        foreach ($request->sections as $key => $arrayOfContents) {
 
             $title = $request->section['title'] ?? null;
             $section = SectionRepositoryFacade::create($element->id, $title);
 
-            LayoutRepositoryFacade::create($page, $section->id, 12 / count($request->sections));
+            $order = $page->layouts->count()+ $key +1;
+
+            LayoutRepositoryFacade::create($page, $section->id, $order, 12 / count($request->sections));
 
             ContentRepositoryFacade::createMultipleContents($section, $arrayOfContents);
 

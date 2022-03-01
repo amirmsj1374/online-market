@@ -14,6 +14,7 @@ class Layout extends Model
         'col',
         'order',
         'page_id',
+        'row',
         'status',
     ];
 

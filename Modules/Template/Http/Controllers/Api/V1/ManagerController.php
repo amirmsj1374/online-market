@@ -9,6 +9,7 @@ use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
 use Modules\Template\Entities\Element;
+use Modules\Template\Entities\Layout;
 use Modules\Template\Entities\Page;
 use Modules\Template\Entities\Template;
 use Modules\Template\Entities\Section;
@@ -169,7 +170,21 @@ class ManagerController extends Controller
     public function getContentsOfSection(Section $section)
     {
 
-        $contents = $section->contents;
+        $layouts = Layout::where('order', $section->layout->order)->get();
+
+        $contents = collect();
+        foreach ($layouts as $layout) {
+            $contents->push($layout->section->contents);
+        }
+
+        // if ($section->col === 6) {
+
+        // } elseif ($section->col === 4) {
+
+        // } else {
+        //     $contents = $section->contents;
+        // }
+
 
         return response()->json([
             'section' => $contents
