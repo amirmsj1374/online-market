@@ -8,5 +8,7 @@
     "Communication": true,
     "Template": true,
     "Main": true,
-    "Front": true
+    "Front": true,
+    "Content": true,
+    "Article": true
 }
