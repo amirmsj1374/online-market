@@ -7,6 +7,7 @@ namespace Modules\Template\Http\Controllers\Api\V1;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Modules\Template\Entities\Element;
 use Modules\Template\Entities\Layout;
@@ -122,19 +123,10 @@ class ManagerController extends Controller
 
     public function getSectionOfPage(Page $page)
     {
+        $sections = $page->layouts->groupBy('row')->map(function ($q) {
+            return $q->first()->section;
+        });
 
-        $sections = collect();
-        if ($page->layouts) {
-            foreach ($page->layouts as  $key => $layout) {
-                if ($layout->col == null || $key == 0 || ($layout->col != null && $key > 0 && $page->layouts[$key - 1]->col == null)) {
-                    $sections->push($layout->section);
-                }
-            }
-        }
-
-        Log::info([
-            'sections' =>$sections
-        ]);
         return response()->json([
             'sections' => $sections
         ], Response::HTTP_OK);
