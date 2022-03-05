@@ -45,9 +45,11 @@ class SectionController extends Controller
 
         LayoutRepositoryFacade::create($page, $section->id, $order);
 
-        if (str_contains($element->type, 'slider') || str_contains($element->type, 'banner')) {
+        if (str_contains($element->type, 'slider') || str_contains($element->type, 'banner') ||  str_contains($element->type, 'footer')) {
+
             ContentRepositoryFacade::createMultipleContents($section, $request->section);
         } else {
+
             ContentRepositoryFacade::createContent($section, $request->section);
         }
 

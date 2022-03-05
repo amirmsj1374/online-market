@@ -2,13 +2,16 @@
 
 namespace Modules\Template\Repositories;
 
+use Illuminate\Support\Facades\Log;
 use Modules\Template\Entities\Section;
 use Modules\Template\Interfaces\ContentRepositoryInterface;
 
 class ContentRepository implements ContentRepositoryInterface
 {
-    public function createMultipleContents(Section $section, $arrayOfContents) {
+    public function createMultipleContents(Section $section, $arrayOfContents)
+    {
         foreach ($arrayOfContents as $item) {
+
             $content = $section->contents()->create([
                 'body'        => $item['body'] ?? null,
                 'buttonLabel' => $item['buttonLabel'] ?? null,
@@ -20,9 +23,10 @@ class ContentRepository implements ContentRepositoryInterface
                 'section_id'  => $item['section_id'] ?? null,
                 'time'        => $item['time'] ?? null,
                 'type'        => $item['type'] ?? null,
+                'label'       => $item['label'] ?? null,
             ]);
 
-            if ($item['image']) {
+            if (array_key_exists('image', $item) && $item['image']) {
                 $content->addMedia(public_path(str_replace(config('app.url'), '', $item['image'])))
                     ->toMediaCollection('content');
             }

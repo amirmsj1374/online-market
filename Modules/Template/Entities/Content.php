@@ -24,6 +24,7 @@ class Content extends Model implements HasMedia
         'categories',
         'products',
         'type',
+        'label',
     ];
 
     protected $casts = [
