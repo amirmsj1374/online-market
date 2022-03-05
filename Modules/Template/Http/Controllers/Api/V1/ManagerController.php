@@ -159,27 +159,16 @@ class ManagerController extends Controller
 
 
 
-    public function getContentsOfSection(Section $section)
+    public function getContentsOfSection(Section $section, Request $request)
     {
 
-        $layouts = Layout::where('order', $section->layout->order)->get();
-
-        $contents = collect();
-        foreach ($layouts as $layout) {
-            $contents->push($layout->section->contents);
-        }
-
-        // if ($section->col === 6) {
-
-        // } elseif ($section->col === 4) {
-
-        // } else {
-        //     $contents = $section->contents;
-        // }
-
+        $contents = Layout::where('page_id', $request->page_id)->where('row', $section->layout->row)->get()
+        ->map(function ($q) {
+            return $q->section->contents;
+        });
 
         return response()->json([
-            'section' => $contents
+            'sections' => $contents
         ]);
     }
 
