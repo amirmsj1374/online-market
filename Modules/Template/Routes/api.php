@@ -1,8 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Modules\Template\Http\Controllers\Api\V1\FooterController;
+use Modules\Template\Http\Controllers\Api\V1\HeaderController;
 use Modules\Template\Http\Controllers\Api\V1\ManagerController;
-use Modules\Template\Http\Controllers\Api\V1\MenuController;
 use Modules\Template\Http\Controllers\Api\V1\SectionController;
 
 /*
@@ -34,12 +35,18 @@ Route::prefix('/v1/template')->group(function () {
     Route::post('/add/section/{element}', [SectionController::class, 'addSection'])->name('add.section');
     Route::post('/add/multiple/sections/{element}', [SectionController::class, 'addMultipleSections']);
 
-    Route::get('/show/menu', [MenuController::class, 'showMenu']);
-    Route::get('/show/sub/menu', [MenuController::class, 'showSubMenu']);
-    Route::post('/add/menu', [MenuController::class, 'addMenu']);
-    Route::post('/add/submenu', [MenuController::class, 'addSubmenu']);
-    Route::post('/update/menu', [MenuController::class, 'updateMenu']);
-    Route::post('/status/menu', [MenuController::class, 'chnageStatus']);
-    Route::post('/delete/menu', [MenuController::class, 'deleteMenu']);
-    Route::post('/add/header/section/{element}', [MenuController::class, 'addSection']);
+    Route::get('/show/menu', [HeaderController::class, 'showMenu']);
+    Route::get('/show/sub/menu', [HeaderController::class, 'showSubMenu']);
+    Route::post('/add/menu', [HeaderController::class, 'addMenu']);
+    Route::post('/add/submenu', [HeaderController::class, 'addSubmenu']);
+    Route::post('/update/menu', [HeaderController::class, 'updateMenu']);
+    Route::post('/status/menu', [HeaderController::class, 'chnageStatus']);
+    Route::post('/delete/menu', [HeaderController::class, 'deleteMenu']);
+
+    Route::post('/add/header', [HeaderController::class, 'addHeader']);
+    Route::post('/show/header', [HeaderController::class, 'showHeader']);
+
+    Route::post('/add/footer', [FooterController::class, 'addFooter']);
+    Route::post('/show/footer', [FooterController::class, 'showFooter']);
+
 });

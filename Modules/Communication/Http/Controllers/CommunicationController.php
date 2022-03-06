@@ -24,11 +24,11 @@ class CommunicationController extends Controller
 
     public function filterProducts(Request $request)
     {
-        
+
         $products = ProductRepositoryFacade::filterProducts($request);
-      
+
         $products = $this->attachImagetoProduct($products);
-       
+        Log::info(['product'=> $products]);
         return ResponderFacade::filterProducts($products);
     }
 
