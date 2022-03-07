@@ -10,6 +10,8 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Modules\Template\Entities\Element;
+use Modules\Template\Entities\Footer;
+use Modules\Template\Entities\Header;
 use Modules\Template\Entities\Layout;
 use Modules\Template\Entities\Page;
 use Modules\Template\Entities\Template;
@@ -128,7 +130,9 @@ class ManagerController extends Controller
         });
 
         return response()->json([
-            'sections' => $sections
+            'header' => Header::first(),
+            'sections' => $sections,
+            'footer' => Footer::first()
         ], Response::HTTP_OK);
     }
 
@@ -163,9 +167,9 @@ class ManagerController extends Controller
     {
 
         $contents = Layout::where('page_id', $request->page_id)->where('row', $section->layout->row)->get()
-        ->map(function ($q) {
-            return $q->section->contents;
-        });
+            ->map(function ($q) {
+                return $q->section->contents;
+            });
 
         return response()->json([
             'sections' => $contents

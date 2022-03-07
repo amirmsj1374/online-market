@@ -6,6 +6,7 @@ namespace Modules\Template\Http\Controllers\Api\V1;
 use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 use Modules\Template\Entities\Footer;
 
 class FooterController extends Controller
@@ -28,7 +29,7 @@ class FooterController extends Controller
             'section.*.type' => 'nullable|string',
         ]);
 
-        $links = json_decode($request->section, true); // Needs to be decoded
+        $links = json_encode($request->section, true); // Needs to be decoded
 
         Footer::updateOrCreate([
             'link' => $links,
