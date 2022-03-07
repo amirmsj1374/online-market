@@ -7,8 +7,10 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
+use Modules\Template\Entities\Content;
 use Modules\Template\Entities\Element;
 use Modules\Template\Entities\Page;
+use Modules\Template\Entities\Section;
 use Modules\Template\Facades\ContentRepositoryFacade;
 use Modules\Template\Facades\LayoutRepositoryFacade;
 use Modules\Template\Facades\PageRepositoryFacade;
@@ -45,9 +47,14 @@ class SectionController extends Controller
 
         LayoutRepositoryFacade::create($page, $section->id, $order);
 
-        if (str_contains($element->type, 'slider') || str_contains($element->type, 'banner') ||  str_contains($element->type, 'footer')) {
+        if (str_contains($element->type, 'slider') || str_contains($element->type, 'banner')) {
 
-            ContentRepositoryFacade::createMultipleContents($section, $request->section);
+            foreach ($request->section as $item) {
+
+                ContentRepositoryFacade::createMultipleContents($section, $item);
+
+            }
+
         } else {
 
             ContentRepositoryFacade::createContent($section, $request->section);
@@ -77,7 +84,9 @@ class SectionController extends Controller
 
             LayoutRepositoryFacade::create($page, $section->id, $order, 12 / count($request->sections));
 
-            ContentRepositoryFacade::createMultipleContents($section, $arrayOfContents);
+            foreach ($arrayOfContents as $item) {
+                ContentRepositoryFacade::createMultipleContents($section, $item);
+            }
 
         }
 
@@ -86,4 +95,40 @@ class SectionController extends Controller
         ], Response::HTTP_OK);
     }
 
+    public function updateSection(Section $section,Request $request)
+    {
+
+        $contentIds = $section->contents->pluck('id')->toArray();
+
+        foreach ($request->section as $item) {
+            if (array_key_exists('section_id', $item)) {
+                $remainingContentIds[] = $item['id'];
+
+                $content = ContentRepositoryFacade::find($item['id']);
+
+                ContentRepositoryFacade::update($content, $item);
+
+            } else {
+                ContentRepositoryFacade::createMultipleContents($section, $item);
+            }
+        }
+
+        foreach (array_diff($contentIds, $remainingContentIds) as $id) {
+            ContentRepositoryFacade::delete($id);
+        }
+
+        return response()->json([
+            'message' => 'ویرایش با موفقیت انجام شد.'
+        ], Response::HTTP_OK);
+
+    }
+
+    public function updateContent(Content $content,Request $request) {
+
+        ContentRepositoryFacade::updateProductContent($content, $request->section);
+
+        return response()->json([
+            'message' => 'ویرایش با موفقیت انجام شد.'
+        ], Response::HTTP_OK);
+    }
 }
