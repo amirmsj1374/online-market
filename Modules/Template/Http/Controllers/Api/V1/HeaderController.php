@@ -2,16 +2,15 @@
 
 namespace Modules\Template\Http\Controllers\Api\V1;
 
-// use AliBayat\LaravelCategorizable\Category;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use Modules\Category\Http\Helper\Category;
 use Modules\Template\Entities\Element;
-use Modules\Template\Entities\Page;
+use Modules\Template\Entities\Header;
 
-class MenuController extends Controller
+class HeaderController extends Controller
 {
 
     public function showMenu()
@@ -23,12 +22,8 @@ class MenuController extends Controller
         ], Response::HTTP_OK);
     }
 
-
-
     public function addMenu(Request $request)
     {
-
-        Log::info(['data' => $request->all()]);
 
         if ($request->menuItem['type'] === 'category') {
             $category = Category::findById($request->menuItem['category_id']);
@@ -137,35 +132,34 @@ class MenuController extends Controller
         ], Response::HTTP_OK);
     }
 
-    public function addSection(Element $element, Request $request)
+    public function showHeader()
+    {
+        $header =  Header::get();
+        return response()->json([
+            'footer' => $header
+        ], Response::HTTP_OK);
+    }
+
+    public function addHeader(Request $request)
     {
 
         $request->validate([
-            'section.*.image' => 'nullable',
-            'section.*.message' => 'nullable|string',
+            'section.*.notification' => 'nullable|string',
+            'section.*.link' => 'nullable|string',
+            'section.*.siteTitle' => 'nullable|string',
+            'section.*.PhoneNumber' => 'nullable|string',
         ]);
 
-        $section = $element->sections()->create([
-            'title' => $element->label,
-        ]);
 
-        // add section to  layout
-        $page = Page::find($request->pageId);
-
-        $page->layouts()->create([
-            'section_id' => $section->id,
-            'order' => 1,
-        ]);
-
-        $content = $section->contents()->create([
-            'body' => $request->message,
-        ]);
-
-        $content->addMedia($request->image)
-            ->toMediaCollection('content');
+        Header::updateOrCreate([
+            'notification' => $request->notification,
+            'link' => $request->link,
+            'siteTitle' => $request->siteTitle,
+            'PhoneNumber' => $request->PhoneNumber,
+        ], ['id' => 1]);
 
         return response()->json([
-            'message' => 'بخش جدید به صفحه اضافه شد'
+            'message' => 'اطلاعات هدر صفحه بروز رسانی شد'
         ], Response::HTTP_OK);
     }
 }
