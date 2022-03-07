@@ -42,4 +42,9 @@ Route::prefix('/v1/template')->group(function () {
     Route::post('/status/menu', [MenuController::class, 'chnageStatus']);
     Route::post('/delete/menu', [MenuController::class, 'deleteMenu']);
     Route::post('/add/header/section/{element}', [MenuController::class, 'addSection']);
+
+
+    // update content
+    Route::post('/update/contents/of/{section}', [SectionController::class, 'updateSection']);
+    Route::post('/update/content/{content}', [SectionController::class, 'updateContent']);
 });

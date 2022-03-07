@@ -29,7 +29,6 @@ class CreateContentsTable extends Migration
             $table->json('products')->nullable();
             $table->string('time')->nullable();
             $table->string('type')->nullable();
-            $table->string('label')->nullable();
             $table->timestamps();
         });
     }
