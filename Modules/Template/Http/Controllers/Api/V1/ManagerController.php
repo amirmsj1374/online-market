@@ -130,9 +130,7 @@ class ManagerController extends Controller
         });
 
         return response()->json([
-            'header' => Header::first(),
             'sections' => $sections,
-            'footer' => Footer::first()
         ], Response::HTTP_OK);
     }
 

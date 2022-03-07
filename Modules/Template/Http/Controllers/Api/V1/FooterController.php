@@ -14,7 +14,7 @@ class FooterController extends Controller
 
     public function showFooter()
     {
-        $footer =  Footer::get();
+        $footer =  Footer::first();
         return response()->json([
             'footer' => $footer
         ], Response::HTTP_OK);
@@ -29,11 +29,10 @@ class FooterController extends Controller
             'section.*.type' => 'nullable|string',
         ]);
 
-        $links = json_encode($request->section, true); // Needs to be decoded
-
-        Footer::updateOrCreate([
-            'link' => $links,
-        ], ['id' => 1]);
+        Footer::updateOrCreate(
+            ['id' => 1],
+            ['link' => $request->section]
+        );
 
         return response()->json([
             'message' => 'اطلاعات هدر صفحه بروز رسانی شد'

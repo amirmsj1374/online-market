@@ -134,9 +134,9 @@ class HeaderController extends Controller
 
     public function showHeader()
     {
-        $header =  Header::get();
+        $header =  Header::first();
         return response()->json([
-            'footer' => $header
+            'header' => $header
         ], Response::HTTP_OK);
     }
 
@@ -151,12 +151,15 @@ class HeaderController extends Controller
         ]);
 
 
-        Header::updateOrCreate([
-            'notification' => $request->notification,
-            'link' => $request->link,
-            'siteTitle' => $request->siteTitle,
-            'PhoneNumber' => $request->PhoneNumber,
-        ], ['id' => 1]);
+        Header::updateOrCreate(
+            ['id' => 1],
+            [
+                'notification' => $request->notification,
+                'link' => $request->link,
+                'siteTitle' => $request->siteTitle,
+                'PhoneNumber' => $request->PhoneNumber,
+            ]
+        );
 
         return response()->json([
             'message' => 'اطلاعات هدر صفحه بروز رسانی شد'
