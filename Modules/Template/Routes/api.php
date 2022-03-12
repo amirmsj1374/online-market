@@ -27,7 +27,9 @@ Route::prefix('/v1/template')->group(function () {
     Route::get('/get/all/templates', [ManagerController::class, 'getAllTemplates']);
     Route::post('/select/{template}', [ManagerController::class, 'selectTemplate']);
     Route::get('/get/pages', [ManagerController::class, 'getPages']);
-    Route::get('/get/elements/{template}', [ManagerController::class, 'getAllElements']);
+
+    Route::get('/get/elements', [ManagerController::class, 'getElementsByType']);
+
     Route::get('/get/section/of/{page}', [ManagerController::class, 'getSectionOfPage']);
 
     Route::get('/get/contents/of/{section}', [ManagerController::class, 'getContentsOfSection']);
