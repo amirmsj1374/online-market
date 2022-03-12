@@ -115,12 +115,15 @@ class ManagerController extends Controller
         ], Response::HTTP_OK);
     }
 
-    public function getAllElements(Template $template)
+    public function getElementsByType(Request $request)
     {
-        $elements = $this->addMediaToModel($template->elements, 'element');
+
+        $elements = Element::where('type', 'like',  $request->type . '%')
+        ->where('template_id', Template::where('selected', 1)->first()->id)->get();
         return response()->json([
             'elements' => $elements
         ], Response::HTTP_OK);
+
     }
 
     public function getSectionOfPage(Page $page)
