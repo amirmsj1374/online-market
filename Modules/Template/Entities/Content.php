@@ -32,15 +32,20 @@ class Content extends Model implements HasMedia
         'categories' => 'array',
     ];
 
-    public $appends = ['image'];
+    public $appends = ['image', 'title'];
 
     public function getImageAttribute()
     {
 
         if ($this->getFirstMedia('content')) {
 
-            return  $this->getFirstMedia('content')->getFullUrl();
+            return $this->getFirstMedia('content')->getFullUrl();
         }
+    }
+    public function getTitleAttribute()
+    {
+
+        return $this->section->title;
     }
 
     protected static function newFactory()

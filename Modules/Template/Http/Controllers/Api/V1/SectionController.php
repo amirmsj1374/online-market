@@ -9,6 +9,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
 use Modules\Template\Entities\Content;
 use Modules\Template\Entities\Element;
+use Modules\Template\Entities\Layout;
 use Modules\Template\Entities\Page;
 use Modules\Template\Entities\Section;
 use Modules\Template\Facades\ContentRepositoryFacade;
@@ -55,12 +56,38 @@ class SectionController extends Controller
 
             }
 
-        } else {
-
-            ContentRepositoryFacade::createContent($section, $request->section);
         }
 
 
+
+        return response()->json([
+            'message' => 'بخش جدید به صفحه اضافه شد'
+        ], Response::HTTP_OK);
+    }
+
+    public function addContent(Element $element, Request $request)
+    {
+        if (empty($request->section['categories'])) {
+            $request->validate([
+               'section.products'     =>  'required|array|min:1',
+            ]);
+        } else {
+            $request->validate([
+               'section.categories'   =>  'required|array|min:1',
+            ]);
+        }
+
+        $title = $request->section['title'] ?? null;
+
+        $section = SectionRepositoryFacade::create($element->id, $title);
+
+        // // add section to  layout
+        $page = PageRepositoryFacade::find($request->pageId);
+        $order = $page->layouts->count()+ 1;
+
+        LayoutRepositoryFacade::create($page, $section->id, $order);
+
+        ContentRepositoryFacade::createContent($section, $request->section);
 
         return response()->json([
             'message' => 'بخش جدید به صفحه اضافه شد'
@@ -125,10 +152,69 @@ class SectionController extends Controller
 
     public function updateContent(Content $content,Request $request) {
 
+        if (empty($request->section['categories'])) {
+            $request->validate([
+               'section.products'     =>  'required|array|min:1',
+            ]);
+        } else {
+            $request->validate([
+               'section.categories'   =>  'required|array|min:1',
+            ]);
+        }
+
+        $section = SectionRepositoryFacade::find($content->section_id);
+
+        SectionRepositoryFacade::update($section, [ 'title' => $request->section['title']]);
+
         ContentRepositoryFacade::updateProductContent($content, $request->section);
 
         return response()->json([
             'message' => 'ویرایش با موفقیت انجام شد.'
         ], Response::HTTP_OK);
     }
+
+    public function updateMultipleSections(Request $request)
+    {
+        $row = 3;
+        $page_id = 3;
+        $layoutIds = [21, 22];
+
+        Layout::where('page_id', $page_id)->where('row' > $row)->get()->map(function ($layout)use($layoutIds, $request) {
+            $layout->order  = $layout->order + count($request->sections) - count($layoutIds);
+            $layout->save();
+        });
+
+        $order = Layout::where('page_id', $page_id)->where('row' > $row)->first()->order;
+        foreach ($layoutIds as $key => $id) {
+            $section = Layout::find($id)->section;
+            $element_id = $section->element_id;
+            $section->delete();
+        }
+
+        $page = PageRepositoryFacade::find($page_id);
+
+        foreach ($request->sections as $key => $arrayOfContents) {
+
+            $title = $request->section['title'] ?? null;
+            $section = SectionRepositoryFacade::create($element_id, $title);
+
+            $page->layouts()->create([
+                'section_id' => $section_id,
+                'order'      => $order + $key,
+                'row'        => $row,
+                'col'        => $col
+            ]);
+
+            foreach ($arrayOfContents as $item) {
+                ContentRepositoryFacade::createMultipleContents($section, $item);
+            }
+
+        }
+
+        return response()->json([
+            'message' => 'ویرایش با موفقیت انجام شد.'
+        ], Response::HTTP_OK);
+
+    }
+
 }

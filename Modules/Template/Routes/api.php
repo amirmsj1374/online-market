@@ -35,6 +35,8 @@ Route::prefix('/v1/template')->group(function () {
     Route::post('/add/section/{element}', [SectionController::class, 'addSection'])->name('add.section');
     Route::post('/add/multiple/sections/{element}', [SectionController::class, 'addMultipleSections']);
 
+    Route::post('/add/content/{element}', [SectionController::class, 'addContent'])->name('add.content');
+
     Route::get('/show/menu', [HeaderController::class, 'showMenu']);
     Route::get('/show/sub/menu', [HeaderController::class, 'showSubMenu']);
     Route::post('/add/menu', [HeaderController::class, 'addMenu']);
@@ -53,4 +55,5 @@ Route::prefix('/v1/template')->group(function () {
     // update content
     Route::post('/update/contents/of/{section}', [SectionController::class, 'updateSection']);
     Route::post('/update/content/{content}', [SectionController::class, 'updateContent']);
+    Route::post('/update/multiple/sections', [SectionController::class, 'updateMultipleSections']);
 });
