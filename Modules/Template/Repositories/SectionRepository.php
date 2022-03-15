@@ -34,4 +34,10 @@ class SectionRepository implements SectionRepositoryInterface
         $section->save();
 
     }
+
+    public function delete($section)
+    {
+        Log::info(['delec sec',$section]);
+        $section->delete();
+    }
 }

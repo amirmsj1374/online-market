@@ -27,14 +27,25 @@ class SectionController extends Controller
         if (str_contains($element->type, 'slider') || str_contains($element->type, 'banner')) {
             $request->validate([
                 'section.*.image' => 'required',
-            ]);
+            ],
+        [
+            'section.*.image' => 'فیلد تصویر الزامی است.',
+        ]);
         }
 
-        $request->validate([
+        $request->validate(
+        [
+            'section' => 'array|min:1',
             'section.*.body' => 'nullable|string',
             'section.*.link' => 'nullable|string',
             'section.*.buttonLabel' => 'nullable|string',
             'section.*.type' => 'nullable|string'
+        ],
+        [
+            'section.*.body.string' => 'فیلد متن باید رشته باشد.',
+            'section.*.link.string' => 'فیلد لینک باید رشته باشد.',
+            'section.*.buttonLabel.string' => 'فیلد عنوان دکمه باید رشته باشد.',
+            'section.*.type.string' => 'نوع باید رشته باشد.',
         ]);
 
 
@@ -122,14 +133,41 @@ class SectionController extends Controller
         ], Response::HTTP_OK);
     }
 
-    public function updateSection(Section $section,Request $request)
+    public function updateSection(Section $section, Request $request)
     {
+
+         // vlidation for slider or banner type
+         if (str_contains($section->element->type, 'slider') || str_contains($section->element->type, 'banner')) {
+            $request->validate([
+                'section.*.image' => 'required',
+            ],
+        [
+            'section.*.image' => 'فیلد تصویر الزامی است.',
+        ]);
+        }
+
+
+        $request->validate(
+            [
+                'section' => 'array|min:1',
+                'section.*.body' => 'nullable|string',
+                'section.*.link' => 'nullable|string',
+                'section.*.buttonLabel' => 'nullable|string',
+                'section.*.type' => 'nullable|string'
+            ],
+            [
+                'section.*.body.string' => 'فیلد متن باید رشته باشد.',
+                'section.*.link.string' => 'فیلد لینک باید رشته باشد.',
+                'section.*.buttonLabel.string' => 'فیلد عنوان دکمه باید رشته باشد.',
+                'section.*.type.string' => 'نوع باید رشته باشد.',
+            ]);
 
         $contentIds = $section->contents->pluck('id')->toArray();
 
         foreach ($request->section as $item) {
-            if (array_key_exists('section_id', $item)) {
-                $remainingContentIds[] = $item['id'];
+            if (array_key_exists('section_id', $item) && $item['section_id']) {
+
+                $remainingContentIds[] = $item['id'] ;
 
                 $content = ContentRepositoryFacade::find($item['id']);
 
@@ -199,7 +237,7 @@ class SectionController extends Controller
             $section = SectionRepositoryFacade::create($element_id, $title);
 
             $page->layouts()->create([
-                'section_id' => $section_id,
+                'section_id' => $section->id,
                 'order'      => $order + $key,
                 'row'        => $row,
                 'col'        => $col
@@ -215,6 +253,16 @@ class SectionController extends Controller
             'message' => 'ویرایش با موفقیت انجام شد.'
         ], Response::HTTP_OK);
 
+    }
+
+    public function deleteSection(Section $section)
+    {
+        Log::info(['id',$section]);
+        SectionRepositoryFacade::delete($section);
+
+        return response()->json([
+            'message' => 'قسمت با موفقیت حذف شد.'
+        ], Response::HTTP_OK);
     }
 
 }

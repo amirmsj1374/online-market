@@ -58,4 +58,6 @@ Route::prefix('/v1/template')->group(function () {
     Route::post('/update/contents/of/{section}', [SectionController::class, 'updateSection']);
     Route::post('/update/content/{content}', [SectionController::class, 'updateContent']);
     Route::post('/update/multiple/sections', [SectionController::class, 'updateMultipleSections']);
+
+    Route::post('/delete/section/{section}', [SectionController::class, 'deleteSection']);
 });
