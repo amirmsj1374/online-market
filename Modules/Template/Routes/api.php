@@ -60,4 +60,6 @@ Route::prefix('/v1/template')->group(function () {
     Route::post('/update/multiple/sections', [SectionController::class, 'updateMultipleSections']);
 
     Route::post('/delete/section/{section}', [SectionController::class, 'deleteSection']);
+
+    Route::post('/order/sections', [SectionController::class, 'orderSections']);
 });

@@ -16,7 +16,7 @@ class Section extends Model
     ];
 
 
-    public $appends = ['icon_address'];
+    public $appends = ['icon_address', 'row'];
 
     protected static function newFactory()
     {
@@ -27,6 +27,10 @@ class Section extends Model
     public function getIconAddressAttribute()
     {
         return  $this->element->icon_address;
+    }
+    public function getRowAttribute()
+    {
+        return  $this->layout->row;
     }
     public function element()
     {

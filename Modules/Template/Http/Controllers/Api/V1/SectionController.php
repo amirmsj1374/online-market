@@ -265,4 +265,16 @@ class SectionController extends Controller
         ], Response::HTTP_OK);
     }
 
+
+    public function orderSections(Request $request)
+    {
+        Log::info([
+            '$request' => $request->sections
+        ]);
+
+        return response()->json([
+            'message' => 'قسمت با موفقیت حذف شد.'
+        ], Response::HTTP_OK);
+    }
+
 }
