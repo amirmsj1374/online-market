@@ -61,5 +61,5 @@ Route::prefix('/v1/template')->group(function () {
 
     Route::post('/delete/section/{section}', [SectionController::class, 'deleteSection']);
 
-    Route::post('/order/sections', [SectionController::class, 'orderSections']);
+    Route::post('/order/sections/{page}', [SectionController::class, 'orderSections']);
 });

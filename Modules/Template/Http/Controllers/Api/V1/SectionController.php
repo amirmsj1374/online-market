@@ -266,11 +266,29 @@ class SectionController extends Controller
     }
 
 
-    public function orderSections(Request $request)
+    public function orderSections(Page $page, Request $request)
     {
+
         Log::info([
-            '$request' => $request->sections
+            'row' => $request->sections
         ]);
+        $rows = [];
+        foreach ($request->sections as $section) {
+            array_push($rows, $section['row']);
+        }
+
+        $groups = $page->layouts->groupBy('row');
+
+        foreach ($groups as $group) {
+            foreach ($group as $key => $layout) {
+                $key = array_search($layout->row, $rows);
+                $layout->update([
+                    'row' => $key + 1
+                ]);
+            }
+        }
+
+
 
         return response()->json([
             'message' => 'قسمت با موفقیت حذف شد.'

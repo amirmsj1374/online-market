@@ -128,9 +128,10 @@ class ManagerController extends Controller
 
     public function getSectionOfPage(Page $page)
     {
-        $sections = $page->layouts->groupBy('row')->map(function ($q) {
+        $sections = $page->layouts()->orderBy('row')->get()->groupBy('row')->map(function ($q) {
             return $q->first()->section;
         });
+
 
         return response()->json([
             'sections' => $sections,
