@@ -36,7 +36,6 @@ class Content extends Model implements HasMedia
 
     public function getImageAttribute()
     {
-
         if ($this->getFirstMedia('content')) {
 
             return $this->getFirstMedia('content')->getFullUrl();

@@ -11,3 +11,7 @@
 |
 */
 
+use Illuminate\Support\Facades\Route;
+use Modules\Website\Http\Controllers\Api\V1\HomeController;
+
+Route::get('/', [HomeController::class, 'index']);

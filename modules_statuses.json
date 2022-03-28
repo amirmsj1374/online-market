@@ -10,5 +10,7 @@
     "Main": true,
     "Front": true,
     "Content": true,
-    "Article": true
+    "Article": true,
+    "Website": true,
+    "Setting": true
 }
