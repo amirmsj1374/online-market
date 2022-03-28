@@ -1,6 +1,6 @@
 <main class="main">
-    <div class="container">
-        {{-- {{dd($section['contents'])}} --}}
+    {{-- <div class="container"> --}}
+
         <div class="banner banner-fashion appear-animate br-sm mb-9" style="
                 background-image: url({{$section['contents'][0]['image']}});
                 background-color: #383839;
@@ -24,5 +24,5 @@
                 </div>
             </div>
         </div>
-    </div>
+    {{-- </div> --}}
 </main>
