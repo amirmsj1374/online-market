@@ -37,7 +37,7 @@ Route::prefix('/v1/template')->group(function () {
     Route::post('/add/section/{element}', [SectionController::class, 'addSection'])->name('add.section');
     Route::post('/add/multiple/sections/{element}', [SectionController::class, 'addMultipleSections']);
 
-    Route::post('/add/content/{element}', [SectionController::class, 'addContent'])->name('add.content');
+    Route::post('/add/content/{element}', [SectionController::class, 'addContentProductCategory'])->name('add.content.product.category');
 
     Route::get('/show/menu', [HeaderController::class, 'showMenu']);
     Route::get('/show/sub/menu', [HeaderController::class, 'showSubMenu']);
