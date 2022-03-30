@@ -34,12 +34,12 @@
 
     {{-- @include('website::wolmart.elements.post-notification.post-demo1') --}}
 
-    {{-- @include('website::wolmart.elements.product.hot-product') --}}
+    {{-- @include('website::wolmart.elements.product.hot-product')  --}}
 
     {{-- @include('website::wolmart.elements.category.category-demo1') --}}
     <!-- End of .category-section top-category -->
 
-    {{-- @include('website::wolmart.elements.product.favorit-product') --}}
+    @include('website::wolmart.elements.product.favorit-product')
 
     {{-- @include('website::wolmart.elements.banner.banner-26-wbtn') --}}
     <!-- End of Category Cosmetic Lifestyle -->
