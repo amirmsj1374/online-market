@@ -27,7 +27,6 @@ class HeaderController extends Controller
 
         if ($request->menuItem['type'] === 'category') {
             $category = Category::findById($request->menuItem['category_id']);
-
             Category::create([
                 'name' =>  $category->name,
                 'link' =>  $category->slug,

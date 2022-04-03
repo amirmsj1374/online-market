@@ -41,9 +41,7 @@ class ProductRequest extends FormRequest
         }
 
         $this->request->set('inventories', $inventories);
-        // Log::info([
-        //     'key invne' => $this->request->input('inventories')
-        // ]);
+
         // $this->request->all()['inventories'][$key]['price'] = str_replace(',', '', json_decode($inventory, true)['price']);
         // $this->request->set('inventories.*' . '[price]', str_replace(',', '', json_decode($inventory, true)['price']));
 

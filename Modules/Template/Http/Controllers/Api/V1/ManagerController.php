@@ -115,15 +115,12 @@ class ManagerController extends Controller
         ], Response::HTTP_OK);
     }
 
-    public function getElementsByType(Request $request)
+    public function getElements()
     {
-
-        $elements = Element::where('type', 'like',  $request->type . '%')
-        ->where('template_id', Template::where('selected', 1)->first()->id)->get();
+        $elements = Element::where('template_id', Template::where('selected', 1)->first()->id)->get();
         return response()->json([
             'elements' => $elements
         ], Response::HTTP_OK);
-
     }
 
     public function getSectionOfPage(Page $page)
