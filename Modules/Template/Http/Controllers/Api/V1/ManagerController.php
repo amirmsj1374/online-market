@@ -39,6 +39,8 @@ class ManagerController extends Controller
 
         $template = Template::create([
             'name' => $request->name,
+            'label' => $request->label,
+            'description' => $request->description,
         ]);
 
         if (Template::count() == 1) {
