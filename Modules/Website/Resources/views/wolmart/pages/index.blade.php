@@ -3,7 +3,9 @@
 <div>
 
     <!-- Start of Header -->
-    @include('website::wolmart.elements.header.header-demo1')
+    @if ($menu && $header)
+        @include('website::wolmart.elements.header.header-demo1')
+    @endif
 
     <!-- End of Header -->
 

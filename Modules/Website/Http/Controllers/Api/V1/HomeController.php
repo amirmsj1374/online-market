@@ -2,11 +2,13 @@
 
 namespace Modules\Website\Http\Controllers\Api\V1;
 
+use AliBayat\LaravelCategorizable\Category;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\Template\Entities\Content;
 use Modules\Template\Entities\Footer;
+use Modules\Template\Entities\Header;
 use Modules\Template\Entities\Template;
 
 class HomeController extends Controller
@@ -33,7 +35,10 @@ class HomeController extends Controller
         });
 
         $footer = Footer::first();
-        return view('website::' . $template->name . '.pages.index', compact('template', 'layouts', 'footer'));
+        $header = Header::first();
+        $menu = Category::get()->toTree();
+        // dd($menu->where('type', 'Menu'));
+        return view('website::' . $template->name . '.pages.index', compact('template', 'layouts', 'header', 'menu', 'footer'));
     }
 
     /**
