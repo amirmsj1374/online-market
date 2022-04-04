@@ -20,11 +20,12 @@ class HomeController extends Controller
         // dd(Content::find(83)->toArray());
         // dd(Content::find(83)->getFirstMedia('content')->getFullUrl());
         $template = Template::where('selected', 1)->first();
-        $page = $template->pages()->orWhere('name', 'home')->orWhere('name', 'index')->first();
+        $page = $template->pages()->whereIn('name', ['home', 'index'])->first();
         $layouts = $page->layouts()->orderBy('row')->get()->groupBy('row')->map(function ($q) {
             return $q->map(function ($sec) {
                 $data['row'] = $sec->row;
                 $data['col'] = $sec->col;
+                $data['title'] = $sec->section->title;
                 $data['type'] = $sec->section->element->type;
                 $data['contents'] = $sec->section->contents->toArray();
                 return $data;
