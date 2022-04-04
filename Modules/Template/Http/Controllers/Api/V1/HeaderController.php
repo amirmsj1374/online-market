@@ -29,7 +29,6 @@ class HeaderController extends Controller
             $category = Category::findById($request->menuItem['category_id']);
             Category::create([
                 'name' =>  $category->name,
-                'link' =>  $category->slug,
                 'type' => "Menu",
                 'status' => 1,
                 'child' => $category->id,
@@ -61,7 +60,6 @@ class HeaderController extends Controller
 
             $childId =  Category::create([
                 'name' =>  $category->name,
-                'link' =>  $category->slug,
                 'type' => "Menu",
                 'status' => 1,
                 'child' => $category->id,
