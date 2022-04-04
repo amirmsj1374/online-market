@@ -28,7 +28,7 @@ class CommunicationController extends Controller
         $products = ProductRepositoryFacade::filterProducts($request);
 
         $products = $this->attachImagetoProduct($products);
-        Log::info(['product'=> $products]);
+
         return ResponderFacade::filterProducts($products);
     }
 
@@ -54,15 +54,13 @@ class CommunicationController extends Controller
 
     public function changeCommentMode(Request $request, Communication $Communication)
     {
-         $Communication->update(['approved' => $Communication->approved === 1 ? 0 : 1]);
+        $Communication->update(['approved' => $Communication->approved === 1 ? 0 : 1]);
         return  ResponderFacade::changeCommentMode();
     }
 
     public function delete(Communication $Communication)
     {
-        Log::info([
-            'Communication' => $Communication
-        ]);
+
         $Communication->delete();
         return  ResponderFacade::delete();
     }

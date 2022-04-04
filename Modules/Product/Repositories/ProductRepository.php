@@ -74,7 +74,7 @@ class ProductRepository implements ProductRepositoryInterface
 
     public function update($request, $product)
     {
-        // Log::info(['requaest all' => $request->all()]);
+
 
         if ($product->imagesUrl == null) {
 

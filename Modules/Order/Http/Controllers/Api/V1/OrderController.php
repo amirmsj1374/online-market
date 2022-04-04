@@ -17,13 +17,13 @@ class OrderController extends Controller
     public function index()
     {
         $order = Order::orderBy('id', 'desc')->paginate(5);
-        // Log::info(['order' => $order]);
+
         return  ResponderFacade::index($order);
     }
 
     public function show(Order $order)
     {
-        Log::info($this->attachInventoryData($order->orderItems));
+
         return response()->json([
             'order'  => $order,
             'address' => $order->address,

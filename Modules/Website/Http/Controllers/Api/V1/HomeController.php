@@ -22,7 +22,7 @@ class HomeController extends Controller
         $template = Template::where('selected', 1)->first();
         $page = $template->pages()->whereIn('name', ['home', 'index'])->first();
         $layouts = $page->layouts()->orderBy('row')->get()->groupBy('row')->map(function ($q) {
-            return $q->map(function($sec) {
+            return $q->map(function ($sec) {
                 $data['row'] = $sec->row;
                 $data['col'] = $sec->col;
                 $data['title'] = $sec->section->title;
@@ -33,7 +33,7 @@ class HomeController extends Controller
         });
 
         $footer = Footer::first();
-        return view('website::wolmart.pages.index', compact('template', 'layouts', 'footer'));
+        return view('website::' . $template->name . '.pages.index', compact('template', 'layouts', 'footer'));
     }
 
     /**

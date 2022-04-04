@@ -69,8 +69,7 @@ class ArticleController extends Controller
 
     public function update(Request $request, Article $article)
     {
-        Log::info(['data', $article]);
-        Log::info(['req', $request->all()]);
+
         $data = $request->validate([
             'name' => 'required|string',
             'status.status' => 'required|boolean',

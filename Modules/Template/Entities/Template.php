@@ -14,6 +14,8 @@ class Template extends Model implements HasMedia
     protected $fillable = [
         'name',
         'selected',
+        'label',
+        'description',
     ];
 
     protected static function newFactory()

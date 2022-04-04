@@ -8,7 +8,8 @@ use Modules\Template\Interfaces\SectionRepositoryInterface;
 
 class SectionRepository implements SectionRepositoryInterface
 {
-    public function create($element_id, $title = null) {
+    public function create($element_id, $title = null)
+    {
         $section = Section::create([
             'element_id' => $element_id,
             'title' => $title,
@@ -32,12 +33,11 @@ class SectionRepository implements SectionRepositoryInterface
         }
 
         $section->save();
-
     }
 
     public function delete($section)
     {
-        Log::info(['delec sec',$section]);
+
         $section->delete();
     }
 }

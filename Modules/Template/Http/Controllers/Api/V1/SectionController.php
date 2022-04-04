@@ -83,10 +83,12 @@ class SectionController extends Controller
         if (empty($request->section['categories'])) {
             $request->validate([
                 'section.products'     =>  'required|array|min:1',
+                'pageId'     =>  'required',
             ]);
         } else {
             $request->validate([
                 'section.categories'   =>  'required|array|min:1',
+                'pageId'   =>  'required',
             ]);
         }
 
@@ -258,7 +260,7 @@ class SectionController extends Controller
 
     public function deleteSection(Section $section)
     {
-        Log::info(['id', $section]);
+
         SectionRepositoryFacade::delete($section);
 
         return response()->json([
@@ -287,9 +289,7 @@ class SectionController extends Controller
             }
         }
 
-        Log::info([
-            'row' => $page->layouts()->orderBy('row')->get()
-        ]);
+
         foreach ($page->layouts()->orderBy('row')->get() as $key => $layout) {
             $layout->order = $key + 1;
             $layout->save();
