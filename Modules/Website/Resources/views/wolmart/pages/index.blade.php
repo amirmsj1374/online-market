@@ -4,7 +4,7 @@
 
     <!-- Start of Header -->
     @if ($menu && $header)
-        @include('website::wolmart.elements.header.header-demo1')
+    @include('website::wolmart.elements.header.header-demo1')
     @endif
 
     <!-- End of Header -->
@@ -12,31 +12,34 @@
     <!-- Start of Main-->
     @foreach ($layouts as $sections)
     {{-- {{dd($sections)}} --}}
-        @foreach ($sections as $section)
-            @if ($section['type'] === 'slider-fullsize')
-                @include('website::wolmart.elements.slider.slider-demo1', ['section' => $section])
-            @endif
-            <!-- End of .intro-section -->
-            @if ($section['type'] === 'banner-fullsize')
-                @include('website::wolmart.elements.banner.baner-fw', ['section' => $section])
-            @endif
+    @foreach ($sections as $section)
+    @if ($section['type'] === 'slider-full-size')
+    @include('website::wolmart.elements.slider.slider-demo1', ['section' => $section])
+    @endif
+    <!-- End of .intro-section -->
+    @if ($section['type'] === 'banner-full-size')
+    @include('website::wolmart.elements.banner.baner-fw', ['section' => $section])
+    @endif
 
-            @if ($section['type'] === 'banner-two-col-one-row')
-                @include('website::wolmart.elements.banner.banner-26', ['section' => $section])
-            @endif
+    @if ($section['type'] === 'banner-two-cols')
+    @include('website::wolmart.elements.banner.banner-26', ['section' => $section])
+    @endif
 
-            @if ($section['type'] === 'product-simple')
-                @include('website::wolmart.elements.product.favorit-product', ['section' => $section])
-            @endif
-            <!-- End of Banner Fashion -->
-        @endforeach
+    @if ($section['type'] === 'product-category')
+    @include('website::wolmart.elements.product.favorit-product', ['section' => $section])
+    @endif
+    @if ($section['type'] === 'product-simple')
+    @include('website::wolmart.elements.product.simple-product', ['section' => $section])
+    @endif
+    <!-- End of Banner Fashion -->
+    @endforeach
 
 
     @endforeach
-  <!-- Start of Footer -->
-        @if($footer)
-            @include('website::wolmart.elements.footer.footer-demo1', ['footer' => $footer])
-        @endif
+    <!-- Start of Footer -->
+    @if($footer)
+    @include('website::wolmart.elements.footer.footer-demo1', ['footer' => $footer])
+    @endif
 
     {{-- @include('website::wolmart.elements.post-notification.post-demo1') --}}
 
@@ -63,4 +66,4 @@
 
 
 </div>
-    @endsection
+@endsection
