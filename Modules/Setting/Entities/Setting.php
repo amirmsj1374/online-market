@@ -12,11 +12,11 @@ class Setting extends Model implements HasMedia
     use HasFactory, InteractsWithMedia;
 
     protected $fillable = [
-        'website',
-        'email',
-        'phone',
-        'mobile',
-        'socialNetwork',
+        'name',
+        'economicCode',
+        'registrationNumber',
+        'description',
+        'socialMedia',
     ];
 
     protected $casts = [
@@ -36,5 +36,10 @@ class Setting extends Model implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('setting');
+    }
+
+    public function address()
+    {
+        return $this->hasOne(MarketAddress::class);
     }
 }

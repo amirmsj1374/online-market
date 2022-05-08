@@ -5,75 +5,61 @@ namespace Modules\Setting\Http\Controllers;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Log;
+use Modules\Setting\Entities\MarketAddress;
+use Modules\Setting\Entities\Setting;
 
 class SettingController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     * @return Renderable
-     */
-    public function index()
+    public function saveMarketInfo(Request $request)
     {
-        return view('setting::index');
+
+        $setting = Setting::first();
+
+        $settingData = [
+            'name'               => $request->name,
+            'economicCode'       => $request->economicCode,
+            'registrationNumber' => $request->registrationNumber,
+            'description'        => $request->description,
+            'socialMedia'        => $request->socialMedia,
+        ];
+
+        if (is_null($setting)) {
+            Setting::create($settingData);
+        } else {
+            $setting->update($settingData);
+        }
+
+        $addressData = [
+            'email'    => $request->email,
+            'phone'    => $request->phone,
+            'mobile'   => $request->mobile,
+            'zipcode'  => $request->zipcode,
+            'city'     => $request->city['townName'],
+            'province' => $request->province['stateName'],
+            'address'  => $request->address,
+        ];
+        $address = $setting->address;
+
+        if (is_null($address)) {
+            $setting->address()->create($addressData);
+        } else {
+            $address->update($addressData);
+        }
+
+        return response()->json([
+            'message' => 'اطلاعات فروشگاه با موفقیت ذخیره شد.'
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     * @return Renderable
-     */
-    public function create()
+    public function getMarketInfo()
     {
-        return view('setting::create');
-    }
+        $setting = Setting::first();
+        $address = MarketAddress::first();
 
-    /**
-     * Store a newly created resource in storage.
-     * @param Request $request
-     * @return Renderable
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Show the specified resource.
-     * @param int $id
-     * @return Renderable
-     */
-    public function show($id)
-    {
-        return view('setting::show');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     * @param int $id
-     * @return Renderable
-     */
-    public function edit($id)
-    {
-        return view('setting::edit');
-    }
-
-    /**
-     * Update the specified resource in storage.
-     * @param Request $request
-     * @param int $id
-     * @return Renderable
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     * @param int $id
-     * @return Renderable
-     */
-    public function destroy($id)
-    {
-        //
+        return response()->json([
+            'setting' => $setting,
+            'address' => $address,
+        ]);
     }
 }

@@ -4,6 +4,8 @@ namespace Modules\Setting\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
+use Modules\Setting\Facades\TransportFacade;
+use Modules\Setting\Transport\Postex;
 
 class SettingServiceProvider extends ServiceProvider
 {
@@ -38,6 +40,9 @@ class SettingServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->register(RouteServiceProvider::class);
+        $this->app->bind(Postex::class);
+
+        TransportFacade::shouldProxyTo(Postex::class);
     }
 
     /**

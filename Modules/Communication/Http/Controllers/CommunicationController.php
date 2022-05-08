@@ -24,6 +24,9 @@ class CommunicationController extends Controller
 
     public function filterProducts(Request $request)
     {
+        Log::info([
+            'product' => $request->all()
+        ]);
 
         $products = ProductRepositoryFacade::filterProducts($request);
 

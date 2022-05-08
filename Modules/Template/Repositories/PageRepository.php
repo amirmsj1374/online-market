@@ -2,7 +2,6 @@
 
 namespace Modules\Template\Repositories;
 
-use Illuminate\Support\Facades\Log;
 use Modules\Template\Entities\Page;
 use Modules\Template\Interfaces\PageRepositoryInterface;
 
